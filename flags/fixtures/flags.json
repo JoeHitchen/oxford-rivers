@@ -1,0 +1,50 @@
+[
+  {
+    "model": "flags.reach",
+    "pk": 1,
+    "fields": {
+      "name": "The Isis",
+      "tag": "isis"
+    }
+  },
+  {
+    "model": "flags.reach",
+    "pk": 2,
+    "fields": {
+      "name": "Godstow",
+      "tag": "godstow"
+    }
+  },
+  {
+    "model": "flags.reach",
+    "pk": 3,
+    "fields": {
+      "name": "Radley",
+      "tag": "radley"
+    }
+  },
+  {
+    "model": "flags.reach",
+    "pk": 4,
+    "fields": {
+      "name": "Abingdon",
+      "tag": "abingdon"
+    }
+  },
+  {
+    "model": "flags.reach",
+    "pk": 5,
+    "fields": {
+      "name": "Wallingford",
+      "tag": "wallingford"
+    }
+  },
+  {
+    "model": "flags.reach",
+    "pk": 6,
+    "fields": {
+      "name": "Sandford",
+      "tag": "sandford"
+    }
+  }
+]
