@@ -16,7 +16,7 @@ class Advisory(models.Model):
     
     reach = models.ForeignKey(Reach, models.CASCADE, related_name = 'advisories')
     board = models.CharField(max_length = 4, choices = Boards.choices)
-    active_from = models.DateTimeField()
+    active_from = models.DateTimeField(default=timezone.now)
     active_until = models.DateTimeField(null = True)
     
     def __str__(self):
