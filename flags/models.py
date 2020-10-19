@@ -1,9 +1,14 @@
 from django.db import models
+from django.utils import timezone
 
 
 class Reach(models.Model):
     name = models.CharField(max_length = 12)
     tag = models.SlugField(max_length = 12, unique = True)  # Implicit db index
+    
+    @property
+    def current_advisory(self):
+        return self.advisories.filter(Advisory.Q_filter_active()).first()
 
 
 class Advisory(models.Model):
@@ -21,4 +26,14 @@ class Advisory(models.Model):
     
     def __str__(self):
         return self.get_board_display()
+    
+    @staticmethod
+    def Q_filter_active():
+        return models.Q(
+            models.Q(active_from__lte = timezone.now())
+            & (
+                models.Q(active_until__isnull = True)
+                | models.Q(active_until__gte = timezone.now())
+            )
+        )
 
