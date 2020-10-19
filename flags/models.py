@@ -27,6 +27,9 @@ class Advisory(models.Model):
     active_from = models.DateTimeField(default=timezone.now)
     active_until = models.DateTimeField(null = True)
     
+    class Meta:
+        ordering = ['reach', '-active_from']
+    
     def __str__(self):
         return self.get_board_display()
     
