@@ -6,6 +6,9 @@ class Reach(models.Model):
     name = models.CharField(max_length = 12)
     tag = models.SlugField(max_length = 12, unique = True)  # Implicit db index
     
+    def __str__(self):
+        return self.name
+    
     @property
     def current_advisory(self):
         return self.advisories.filter(Advisory.Q_filter_active()).first()
@@ -36,4 +39,12 @@ class Advisory(models.Model):
                 | models.Q(active_until__gte = timezone.now())
             )
         )
+    
+    def styling(self):
+        return {
+            self.Boards.NONE: {'text': 'text-dark', 'background': 'bg-light'},
+            self.Boards.INC: {'text': 'text-light', 'background': 'bg-warning'},
+            self.Boards.DEC: {'text': 'text-light', 'background': 'bg-warning'},
+            self.Boards.RED: {'text': 'text-light', 'background': 'bg-danger'},
+        }[self.board]
 
