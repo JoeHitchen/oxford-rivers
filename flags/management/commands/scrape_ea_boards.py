@@ -39,7 +39,7 @@ class Command(BaseCommand):
         reaches = models.Reach.objects.all()
         for reach in reaches:
             board = extract_board(main_column, downstream_lock_map[reach.tag])
-            print((reach, board))
+            reach.update_advisory(board)
 
 
 def extract_board(main_column, downstream_lock):
