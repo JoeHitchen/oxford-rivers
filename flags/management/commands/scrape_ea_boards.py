@@ -17,10 +17,10 @@ downstream_lock_map = {
 
 
 board_text_map = {
-    'No Stream Warnings': models.Advisory.Boards.NONE,
-    '???': models.Advisory.Boards.INC,
-    '???': models.Advisory.Boards.DEC,
-    '???': models.Advisory.Boards.RED,
+    'no stream warnings': models.Advisory.Boards.NONE,
+    'caution stream increasing': models.Advisory.Boards.INC,
+    'caution stream decreasing': models.Advisory.Boards.DEC,
+    'caution strong stream': models.Advisory.Boards.RED,
 }
 
 
@@ -48,5 +48,5 @@ def extract_board(main_column, downstream_lock):
     board_outer = reach_row.contents[1].contents[0]
     board_inner = board_outer.contents[0].contents[0].contents[0].contents[0]
     
-    return board_text_map[board_inner]
+    return board_text_map[board_inner.lower()]
 
