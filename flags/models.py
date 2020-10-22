@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, transaction
 from django.utils import timezone
 
 
@@ -12,6 +12,16 @@ class Reach(models.Model):
     @property
     def current_advisory(self):
         return self.advisories.filter(Advisory.Q_filter_active()).first()
+    
+    
+    def update_advisory(self, new_board, as_of = timezone.now()):
+        
+        if self.current_advisory and self.current_advisory.board == new_board:
+            return
+        
+        with transaction.atomic():
+            self.advisories.filter(Advisory.Q_filter_active()).update(active_until = as_of)
+            self.advisories.create(board = new_board, active_from = as_of)
 
 
 class Advisory(models.Model):
