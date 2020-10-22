@@ -44,7 +44,7 @@ class Command(BaseCommand):
 
 def extract_board(main_column, downstream_lock):
     
-    reach_row = main_column.find(text = 'Osney Lock').parent.parent.parent
+    reach_row = main_column.find(text = downstream_lock).parent.parent.parent
     board_outer = reach_row.contents[1].contents[0]
     board_inner = board_outer.contents[0].contents[0].contents[0].contents[0]
     
