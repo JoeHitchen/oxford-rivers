@@ -34,10 +34,9 @@ class Command(BaseCommand):
             print('Error fetching EA boards page')
         
         soup = BeautifulSoup(response.text, 'html.parser')
-        main_column = soup.find(class_ = 'primary-column')
         
-        reaches = models.Reach.objects.all()
-        for reach in reaches:
+        main_column = soup.find(class_ = 'primary-column')
+        for reach in models.Reach.objects.all():
             board = extract_board(main_column, downstream_lock_map[reach.tag])
             reach.update_advisory(board)
 
