@@ -1,7 +1,9 @@
+from datetime import datetime
+
 from django.core.management.base import BaseCommand
-from django.utils import timezone
 import requests
 from bs4 import BeautifulSoup
+import pytz
 
 from ... import models
 
@@ -35,10 +37,15 @@ class Command(BaseCommand):
         
         soup = BeautifulSoup(response.text, 'html.parser')
         
+        last_updated_element = soup.find(class_ = 'last-update')
+        last_updated_string = last_updated_element.contents[0].split(': ')[1]
+        last_updated = datetime.strptime(last_updated_string, '%d %B %Y %H:%M')
+        last_updated = last_updated.astimezone(pytz.timezone('Europe/London'))
+        
         main_column = soup.find(class_ = 'primary-column')
         for reach in models.Reach.objects.all():
             board = extract_board(main_column, downstream_lock_map[reach.tag])
-            reach.update_advisory(board)
+            reach.update_advisory(board, as_of = last_updated)
 
 
 def extract_board(main_column, downstream_lock):
