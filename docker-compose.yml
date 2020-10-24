@@ -1,0 +1,13 @@
+version: "3.7"
+
+services:
+  django:
+    build: .
+    command: gunicorn core.wsgi:application --bind 0.0.0.0:8000
+    restart: always
+    ports:
+      - 8083:8000
+    env_file: .env
+    environment:
+      - DJANGO_DEBUG=1
+
