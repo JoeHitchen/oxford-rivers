@@ -4,7 +4,8 @@
     "pk": 1,
     "fields": {
       "name": "The Isis",
-      "tag": "isis"
+      "tag": "isis",
+      "downstream_order": 2
     }
   },
   {
@@ -12,7 +13,8 @@
     "pk": 2,
     "fields": {
       "name": "Godstow",
-      "tag": "godstow"
+      "tag": "godstow",
+      "downstream_order": 1
     }
   },
   {
@@ -20,7 +22,8 @@
     "pk": 3,
     "fields": {
       "name": "Radley",
-      "tag": "radley"
+      "tag": "radley",
+      "downstream_order": 4
     }
   },
   {
@@ -28,7 +31,8 @@
     "pk": 4,
     "fields": {
       "name": "Abingdon",
-      "tag": "abingdon"
+      "tag": "abingdon",
+      "downstream_order": 5
     }
   },
   {
@@ -36,7 +40,8 @@
     "pk": 5,
     "fields": {
       "name": "Wallingford",
-      "tag": "wallingford"
+      "tag": "wallingford",
+      "downstream_order": 10
     }
   },
   {
@@ -44,7 +49,8 @@
     "pk": 6,
     "fields": {
       "name": "Sandford",
-      "tag": "sandford"
+      "tag": "sandford",
+      "downstream_order": 3
     }
   }
 ]

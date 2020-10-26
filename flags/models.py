@@ -5,6 +5,10 @@ from django.utils import timezone
 class Reach(models.Model):
     name = models.CharField(max_length = 12)
     tag = models.SlugField(max_length = 12, unique = True)  # Implicit db index
+    downstream_order = models.PositiveSmallIntegerField()
+    
+    class Meta:
+        ordering = ['downstream_order']
     
     def __str__(self):
         return self.name
