@@ -15,7 +15,7 @@ class Reach(models.Model):
     
     @property
     def current_advisory(self):
-        return self.advisories.filter(Advisory.Q_filter_active()).first()
+        return self.advisories.filter(first_updated__lte = timezone.now()).first()
     
     
     def update_advisory(self, new_board, board_shown = timezone.now()):
@@ -45,12 +45,6 @@ class Advisory(models.Model):
     
     def __str__(self):
         return self.get_board_display()
-    
-    @staticmethod
-    def Q_filter_active():
-        return models.Q(
-            models.Q(first_updated__lte = timezone.now())
-        )
     
     def styling(self):
         return {
