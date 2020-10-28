@@ -24,7 +24,6 @@ class Reach(models.Model):
             return
         
         with transaction.atomic():
-            self.advisories.filter(Advisory.Q_filter_active()).update(active_until = board_shown)
             self.advisories.create(board = new_board, first_updated = board_shown)
 
 
@@ -40,7 +39,6 @@ class Advisory(models.Model):
     board = models.CharField(max_length = 4, choices = Boards.choices)
     
     first_updated = models.DateTimeField(default=timezone.now)
-    active_until = models.DateTimeField(null = True)
     
     class Meta:
         ordering = ['reach', '-first_updated']
@@ -52,10 +50,6 @@ class Advisory(models.Model):
     def Q_filter_active():
         return models.Q(
             models.Q(first_updated__lte = timezone.now())
-            & (
-                models.Q(active_until__isnull = True)
-                | models.Q(active_until__gte = timezone.now())
-            )
         )
     
     def styling(self):
