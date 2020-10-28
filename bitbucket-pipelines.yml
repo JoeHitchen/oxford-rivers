@@ -1,0 +1,9 @@
+pipelines:
+  default:
+    - step:
+        name: Test
+        caches:
+          - pip
+        script:
+          - pip install -r requirements.txt
+          - python manage.py test
