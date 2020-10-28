@@ -21,10 +21,16 @@ class Reach(models.Model):
     def update_advisory(self, new_board, board_shown = timezone.now()):
         
         if self.current_advisory and self.current_advisory.board == new_board:
-            return
+            self.current_advisory.last_updated = board_shown
+            self.current_advisory.last_seen = timezone.now()
+            self.save()
         
-        with transaction.atomic():
-            self.advisories.create(board = new_board, first_updated = board_shown)
+        else:
+            self.advisories.create(
+                board = new_board,
+                first_updated = board_shown,
+                last_updated = board_shown,
+            )
 
 
 class Advisory(models.Model):
@@ -38,7 +44,10 @@ class Advisory(models.Model):
     reach = models.ForeignKey(Reach, models.CASCADE, related_name = 'advisories')
     board = models.CharField(max_length = 4, choices = Boards.choices)
     
-    first_updated = models.DateTimeField(default=timezone.now)
+    first_seen = models.DateTimeField(default=timezone.now)     # When board first seen (by our retrievals)
+    first_updated = models.DateTimeField(default=timezone.now)  # When board first displayed (according to EA)
+    last_seen = models.DateTimeField(default=timezone.now)      # When board last seen (by our retrievals)
+    last_updated = models.DateTimeField(default=timezone.now)   # When board last affirmed (according to EA)
     
     class Meta:
         ordering = ['reach', '-first_updated']
