@@ -24,6 +24,14 @@ pipelines:
             - django-flags.docker
       
       - step:
+          name: Verify
+          services:
+            - docker
+          script:
+            - docker load --input django-flags.docker
+            - docker run --rm joehitchen/django-flags python manage.py test
+      
+      - step:
           name: Publish
           deployment: Docker
           services:
