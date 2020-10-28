@@ -15,17 +15,22 @@ class Reach(models.Model):
     
     @property
     def current_advisory(self):
-        return self.advisories.filter(Advisory.Q_filter_active()).first()
+        return self.advisories.filter(first_updated__lte = timezone.now()).first()
     
     
-    def update_advisory(self, new_board, as_of = timezone.now()):
+    def update_advisory(self, new_board, board_shown = timezone.now()):
         
         if self.current_advisory and self.current_advisory.board == new_board:
-            return
+            self.current_advisory.last_updated = board_shown
+            self.current_advisory.last_seen = timezone.now()
+            self.save()
         
-        with transaction.atomic():
-            self.advisories.filter(Advisory.Q_filter_active()).update(active_until = as_of)
-            self.advisories.create(board = new_board, active_from = as_of)
+        else:
+            self.advisories.create(
+                board = new_board,
+                first_updated = board_shown,
+                last_updated = board_shown,
+            )
 
 
 class Advisory(models.Model):
@@ -38,24 +43,17 @@ class Advisory(models.Model):
     
     reach = models.ForeignKey(Reach, models.CASCADE, related_name = 'advisories')
     board = models.CharField(max_length = 4, choices = Boards.choices)
-    active_from = models.DateTimeField(default=timezone.now)
-    active_until = models.DateTimeField(null = True)
+    
+    first_seen = models.DateTimeField(default=timezone.now)     # When board first seen (by our retrievals)
+    first_updated = models.DateTimeField(default=timezone.now)  # When board first displayed (according to EA)
+    last_seen = models.DateTimeField(default=timezone.now)      # When board last seen (by our retrievals)
+    last_updated = models.DateTimeField(default=timezone.now)   # When board last affirmed (according to EA)
     
     class Meta:
-        ordering = ['reach', '-active_from']
+        ordering = ['reach', '-first_updated']
     
     def __str__(self):
         return self.get_board_display()
-    
-    @staticmethod
-    def Q_filter_active():
-        return models.Q(
-            models.Q(active_from__lte = timezone.now())
-            & (
-                models.Q(active_until__isnull = True)
-                | models.Q(active_until__gte = timezone.now())
-            )
-        )
     
     def styling(self):
         return {
