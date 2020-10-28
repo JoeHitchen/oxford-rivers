@@ -25,7 +25,7 @@ class Reach(models.Model):
         
         with transaction.atomic():
             self.advisories.filter(Advisory.Q_filter_active()).update(active_until = as_of)
-            self.advisories.create(board = new_board, active_from = as_of)
+            self.advisories.create(board = new_board, first_updated = as_of)
 
 
 class Advisory(models.Model):
@@ -38,11 +38,12 @@ class Advisory(models.Model):
     
     reach = models.ForeignKey(Reach, models.CASCADE, related_name = 'advisories')
     board = models.CharField(max_length = 4, choices = Boards.choices)
-    active_from = models.DateTimeField(default=timezone.now)
+    
+    first_updated = models.DateTimeField(default=timezone.now)
     active_until = models.DateTimeField(null = True)
     
     class Meta:
-        ordering = ['reach', '-active_from']
+        ordering = ['reach', '-first_updated']
     
     def __str__(self):
         return self.get_board_display()
@@ -50,7 +51,7 @@ class Advisory(models.Model):
     @staticmethod
     def Q_filter_active():
         return models.Q(
-            models.Q(active_from__lte = timezone.now())
+            models.Q(first_updated__lte = timezone.now())
             & (
                 models.Q(active_until__isnull = True)
                 | models.Q(active_until__gte = timezone.now())

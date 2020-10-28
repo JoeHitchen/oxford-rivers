@@ -23,7 +23,7 @@
     {% for advisory in reach.advisories.all %}<div class="card {{ advisory.styling.text }} {{ advisory.styling.background }}">
       <div class="card-body">
         <h5 class="card-title">{{ advisory }}</h5>
-        {{ advisory.active_from|date:"d/m/Y H:i" }}
+        {{ advisory.first_updated|date:"d/m/Y H:i" }}
       </div>
     </div>{% endfor %}
   </div>{% endfor %}
