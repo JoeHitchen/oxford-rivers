@@ -3,8 +3,8 @@ FROM python:3.7
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-RUN useradd django
 WORKDIR /usr/src/app
+RUN useradd django && chown -R django:django /usr/src/app
 
 RUN pip install mysqlclient gunicorn
 
