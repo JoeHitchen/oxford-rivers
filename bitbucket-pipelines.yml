@@ -1,0 +1,42 @@
+image: python:3.7
+
+pipelines:
+  default:
+    - step: &test
+        name: Test
+        caches:
+          - pip
+        script:
+          - pip install -r requirements.txt
+          - python manage.py test
+  
+  branches:
+    master:
+      - step: *test
+      - step:
+          name: Build
+          services:
+            - docker
+          script:
+            - docker build -t joehitchen/django-flags .
+            - docker save --output django-flags.docker joehitchen/django-flags
+          artifacts:
+            - django-flags.docker
+      
+      - step:
+          name: Verify
+          services:
+            - docker
+          script:
+            - docker load --input django-flags.docker
+            - docker run --rm joehitchen/django-flags python manage.py test
+      
+      - step:
+          name: Publish
+          deployment: Docker
+          services:
+            - docker
+          script:
+            - docker load --input django-flags.docker
+            - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+            - docker push joehitchen/django-flags
