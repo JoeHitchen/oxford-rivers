@@ -18,14 +18,14 @@ class Reach(models.Model):
         return self.advisories.filter(Advisory.Q_filter_active()).first()
     
     
-    def update_advisory(self, new_board, as_of = timezone.now()):
+    def update_advisory(self, new_board, board_shown = timezone.now()):
         
         if self.current_advisory and self.current_advisory.board == new_board:
             return
         
         with transaction.atomic():
-            self.advisories.filter(Advisory.Q_filter_active()).update(active_until = as_of)
-            self.advisories.create(board = new_board, first_updated = as_of)
+            self.advisories.filter(Advisory.Q_filter_active()).update(active_until = board_shown)
+            self.advisories.create(board = new_board, first_updated = board_shown)
 
 
 class Advisory(models.Model):

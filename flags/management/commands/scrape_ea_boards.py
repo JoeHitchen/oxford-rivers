@@ -45,7 +45,7 @@ class Command(BaseCommand):
         main_column = soup.find(class_ = 'primary-column')
         for reach in models.Reach.objects.all():
             board = extract_board(main_column, downstream_lock_map[reach.tag])
-            reach.update_advisory(board, as_of = last_updated)
+            reach.update_advisory(board, board_shown = last_updated)
 
 
 def extract_board(main_column, downstream_lock):
