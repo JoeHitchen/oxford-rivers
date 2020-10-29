@@ -19,12 +19,16 @@ class Reach(models.Model):
     
     
     def update_advisory(self, new_board, board_shown = timezone.now()):
+        """Updates advisory records to reflect `new_board` being displayed at `board_shown`."""
         
+        # Update existing matching advisory
         if self.current_advisory and self.current_advisory.board == new_board:
-            self.current_advisory.last_updated = board_shown
-            self.current_advisory.last_seen = timezone.now()
-            self.save()
+            advisory = self.current_advisory
+            advisory.last_updated = board_shown
+            advisory.last_seen = timezone.now()
+            advisory.save()
         
+        # Create new advisory if mismatched or missing
         else:
             self.advisories.create(
                 board = new_board,
