@@ -21,9 +21,10 @@ class Reach(models.Model):
     def update_advisory(self, new_board, board_shown = timezone.now()):
         
         if self.current_advisory and self.current_advisory.board == new_board:
-            self.current_advisory.last_updated = board_shown
-            self.current_advisory.last_seen = timezone.now()
-            self.save()
+            advisory = self.current_advisory
+            advisory.last_updated = board_shown
+            advisory.last_seen = timezone.now()
+            advisory.save()
         
         else:
             self.advisories.create(
