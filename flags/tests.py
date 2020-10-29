@@ -1,6 +1,90 @@
+from datetime import timedelta
+
 from django.test import TestCase
+from django.utils import timezone
 
 from . import models, utils
+
+
+class Test_Models_Reach(TestCase):
+    fixtures = ['flags']
+    
+    def setUp(self):
+        self.reach = models.Reach.objects.first()
+        self.right_now = timezone.now()
+        self.updated_time = self.right_now - timedelta(minutes = 17)
+        self.original_time = self.right_now - timedelta(hours = 29)
+    
+    
+    def test__update_advisory__no_previous(self):
+        """Creates a new advisory."""
+        
+        # Prepare & run
+        self.assertIsNone(self.reach.current_advisory)
+        
+        self.reach.update_advisory(models.Advisory.Boards.INC, board_shown = self.updated_time)
+        
+        # Check new advisory
+        self.assertIsNotNone(self.reach.current_advisory)
+        self.assertTrue(self.reach.current_advisory.first_seen > self.right_now)
+        self.assertEqual(self.reach.current_advisory.first_updated, self.updated_time)
+        self.assertTrue(self.reach.current_advisory.last_seen > self.right_now)
+        self.assertEqual(self.reach.current_advisory.last_updated, self.updated_time)
+    
+    
+    def test__update_advisory__different_advisory(self):
+        """Creates a new advisory, leaving the previous advisory unchanged."""
+        
+        # Prepare & run
+        previous_advisory = self.reach.advisories.create(
+            board = models.Advisory.Boards.INC,
+            first_seen = self.original_time,
+            first_updated = self.original_time,
+            last_seen = self.original_time,
+            last_updated = self.original_time,
+        )
+        self.assertEqual(self.reach.current_advisory, previous_advisory)
+        
+        self.reach.update_advisory(models.Advisory.Boards.RED, board_shown = self.updated_time)
+        
+        # Check previous advisory
+        previous_advisory.refresh_from_db()
+        self.assertNotEqual(self.reach.current_advisory, previous_advisory)
+        self.assertEqual(previous_advisory.first_seen, self.original_time)
+        self.assertEqual(previous_advisory.first_updated, self.original_time)
+        self.assertEqual(previous_advisory.last_seen, self.original_time)
+        self.assertEqual(previous_advisory.last_updated, self.original_time)
+        
+        # Check new advisory
+        self.assertIsNotNone(self.reach.current_advisory)
+        self.assertTrue(self.reach.current_advisory.first_seen > self.right_now)
+        self.assertEqual(self.reach.current_advisory.first_updated, self.updated_time)
+        self.assertTrue(self.reach.current_advisory.last_seen > self.right_now)
+        self.assertEqual(self.reach.current_advisory.last_updated, self.updated_time)
+    
+    
+    def test__update_advisory__same_advisory(self):
+        """The `last_seen` and `last_updated` fields of the current advisory should be updated."""
+        
+        # Prepare & run
+        previous_advisory = self.reach.advisories.create(
+            board = models.Advisory.Boards.RED,
+            first_seen = self.original_time,
+            first_updated = self.original_time,
+            last_seen = self.original_time,
+            last_updated = self.original_time,
+        )
+        self.assertEqual(self.reach.current_advisory, previous_advisory)
+        
+        self.reach.update_advisory(models.Advisory.Boards.RED, board_shown = self.updated_time)
+        
+        # Check previous advisory
+        previous_advisory.refresh_from_db()
+        self.assertEqual(self.reach.current_advisory, previous_advisory)
+        self.assertEqual(previous_advisory.first_seen, self.original_time)
+        self.assertEqual(previous_advisory.first_updated, self.original_time)
+        self.assertTrue(previous_advisory.last_seen > self.right_now)
+        self.assertEqual(previous_advisory.last_updated, self.updated_time)
 
 
 class Test_Utils(TestCase):
