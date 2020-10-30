@@ -1,4 +1,6 @@
 from datetime import datetime
+from random import randrange
+from time import sleep
 
 from django.core.management.base import BaseCommand
 import requests
@@ -29,8 +31,15 @@ board_text_map = {
 class Command(BaseCommand):
     help = 'Retrieves stream advisory boards from the EA website'
     
+    def add_arguments(self, parser):
+        parser.add_argument('--delay', action = 'store_true', help = 'Delay collection by between 60 and 180 seconds')
+    
     def handle(self, *args, **kwargs):
         
+        # Optionally delay data collection (to be a good netizen)
+        if kwargs.get('delay', False):
+            delay = randrange(60, 180)
+            sleep(delay)
         response = requests.get('http://riverconditions.environment-agency.gov.uk/')
         if not response.ok:
             print('Error fetching EA boards page')
