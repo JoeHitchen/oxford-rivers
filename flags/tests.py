@@ -1,9 +1,14 @@
+from unittest.mock import patch
 from datetime import timedelta
+import logging
 
 from django.test import TestCase
 from django.utils import timezone
+from django.core.management import call_command
 
 from . import models, utils
+
+logging.disable(logging.CRITICAL)
 
 
 class Test_Models_Reach(TestCase):
@@ -191,4 +196,19 @@ class Test_Utils(TestCase):
             'launches': utils.Transit.PROHIBITED,
         }
         self.assertEqual(transit_object, expected_object)
+
+
+class Test_Management_EABoards(TestCase):
+    fixtures = ['flags']
+    
+    
+    @patch('flags.management.commands.scrape_ea_boards.randrange', return_value = 35)
+    @patch('flags.management.commands.scrape_ea_boards.sleep')
+    def test__with_delay(self, sleep_mock, range_mock):
+        """Generates a random delay between 60 and 180 seconds."""
+        
+        call_command('scrape_ea_boards', '--delay')
+        
+        range_mock.assert_called_once_with(60, 180)
+        sleep_mock.assert_called_once_with(35)
 
