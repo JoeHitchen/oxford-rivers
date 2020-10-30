@@ -210,7 +210,9 @@ class Test_Management_EABoards(TestCase):
     
     @patch('flags.management.commands.scrape_ea_boards.requests')
     @patch.object(models.Reach, 'update_advisory')
-    def test__standard(self, update_mock, requests_mock):
+    @patch('flags.management.commands.scrape_ea_boards.randrange', return_value = 35)
+    @patch('flags.management.commands.scrape_ea_boards.sleep')
+    def test__standard(self, sleep_mock, range_mock, update_mock, requests_mock):
         """Parses the EA page and updates each reach appropriately."""
         
         boards_shown = datetime(2020, 10, 30, 11, 15).astimezone(pytz.timezone('Europe/London'))
@@ -226,6 +228,9 @@ class Test_Management_EABoards(TestCase):
         update_mock.assert_any_call(reach_map['abingdon'], 'NONE', board_shown = boards_shown)
         update_mock.assert_any_call(reach_map['wallingford'], 'INC', board_shown = boards_shown)
         update_mock.assert_any_call(reach_map['sandford'], 'DEC', board_shown = boards_shown)
+        
+        range_mock.assert_not_called()
+        sleep_mock.assert_not_called()
     
     
     @patch('flags.management.commands.scrape_ea_boards.requests')
