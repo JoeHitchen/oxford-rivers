@@ -1,10 +1,11 @@
 from unittest.mock import patch
-from datetime import timedelta
+from datetime import datetime, timedelta
 import logging
 
 from django.test import TestCase
 from django.utils import timezone
 from django.core.management import call_command
+import pytz
 
 from . import models, utils
 
@@ -200,6 +201,23 @@ class Test_Utils(TestCase):
 
 class Test_Management_EABoards(TestCase):
     fixtures = ['flags']
+    
+    @patch.object(models.Reach, 'update_advisory')
+    def test__standard(self, update_mock):
+        """Parses the EA page and updates each reach appropriately."""
+        
+        boards_shown = datetime(2020, 10, 30, 11, 15).astimezone(pytz.timezone('Europe/London'))
+        reach_map = {reach.tag: reach for reach in models.Reach.objects.all()}
+        
+        call_command('scrape_ea_boards')
+        
+        self.assertEqual(update_mock.call_count, 6)
+        update_mock.assert_any_call(reach_map['isis'], 'INC', board_shown = boards_shown)
+        update_mock.assert_any_call(reach_map['godstow'], 'RED', board_shown = boards_shown)
+        update_mock.assert_any_call(reach_map['radley'], 'DEC', board_shown = boards_shown)
+        update_mock.assert_any_call(reach_map['abingdon'], 'DEC', board_shown = boards_shown)
+        update_mock.assert_any_call(reach_map['wallingford'], 'INC', board_shown = boards_shown)
+        update_mock.assert_any_call(reach_map['sandford'], 'DEC', board_shown = boards_shown)
     
     
     @patch('flags.management.commands.scrape_ea_boards.randrange', return_value = 35)
