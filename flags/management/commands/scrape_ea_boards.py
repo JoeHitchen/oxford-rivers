@@ -36,9 +36,12 @@ class Command(BaseCommand):
     help = 'Retrieves stream advisory boards from the EA website'
     
     def add_arguments(self, parser):
+        """Defines the optional arguments to the command."""
         parser.add_argument('--delay', action = 'store_true', help = 'Delay collection by between 60 and 180 seconds')
     
+    
     def handle(self, *args, **kwargs):
+        """Main execution routine."""
         
         # Optionally delay data collection (to be a good netizen)
         if kwargs.get('delay', False):
@@ -54,12 +57,14 @@ class Command(BaseCommand):
         
         soup = BeautifulSoup(response.text, 'html.parser')
         
+        # Extract last-updated datetime
         last_updated_element = soup.find(class_ = 'last-update')
         last_updated_string = last_updated_element.contents[0].split(': ')[1]
         last_updated = datetime.strptime(last_updated_string, '%d %B %Y %H:%M')
         last_updated = last_updated.astimezone(pytz.timezone('Europe/London'))
         logger.info('Boards updated {}'.format(last_updated))
         
+        # Extract boards
         main_column = soup.find(class_ = 'primary-column')
         for reach in models.Reach.objects.all():
             board = self.extract_board(main_column, downstream_lock_map[reach.tag])
@@ -71,6 +76,7 @@ class Command(BaseCommand):
     
     @staticmethod
     def extract_board(main_column, downstream_lock):
+        """Extracts the board for a reach above a specific lock."""
         
         reach_row = main_column.find(text = downstream_lock).parent.parent.parent
         board_outer = reach_row.contents[1].contents[0]
