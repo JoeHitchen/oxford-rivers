@@ -1,6 +1,7 @@
 from datetime import datetime
 from random import randrange
 from time import sleep
+import logging
 
 from django.core.management.base import BaseCommand
 import requests
@@ -8,6 +9,9 @@ from bs4 import BeautifulSoup
 import pytz
 
 from ... import models
+
+logger = logging.getLogger('EA Boards')
+logger.setLevel('INFO')
 
 
 downstream_lock_map = {
@@ -39,10 +43,14 @@ class Command(BaseCommand):
         # Optionally delay data collection (to be a good netizen)
         if kwargs.get('delay', False):
             delay = randrange(60, 180)
+            logger.info('Delaying collection for {} seconds'.format(delay))
             sleep(delay)
+        logger.info('Running data collection')
+        
+        # Request and parse EA Boards page
         response = requests.get('http://riverconditions.environment-agency.gov.uk/')
         if not response.ok:
-            print('Error fetching EA boards page')
+            logger.error('Error fetching EA boards page')
         
         soup = BeautifulSoup(response.text, 'html.parser')
         
@@ -50,11 +58,15 @@ class Command(BaseCommand):
         last_updated_string = last_updated_element.contents[0].split(': ')[1]
         last_updated = datetime.strptime(last_updated_string, '%d %B %Y %H:%M')
         last_updated = last_updated.astimezone(pytz.timezone('Europe/London'))
+        logger.info('Boards updated {}'.format(last_updated))
         
         main_column = soup.find(class_ = 'primary-column')
         for reach in models.Reach.objects.all():
             board = extract_board(main_column, downstream_lock_map[reach.tag])
+            logger.info('{:11s} {}'.format(str(reach), models.Advisory.Boards(board).label))
             reach.update_advisory(board, board_shown = last_updated)
+        
+        logger.info('Collection completed')
 
 
 def extract_board(main_column, downstream_lock):
