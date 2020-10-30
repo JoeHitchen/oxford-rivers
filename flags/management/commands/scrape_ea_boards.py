@@ -62,18 +62,19 @@ class Command(BaseCommand):
         
         main_column = soup.find(class_ = 'primary-column')
         for reach in models.Reach.objects.all():
-            board = extract_board(main_column, downstream_lock_map[reach.tag])
+            board = self.extract_board(main_column, downstream_lock_map[reach.tag])
             logger.info('{:11s} {}'.format(str(reach), models.Advisory.Boards(board).label))
             reach.update_advisory(board, board_shown = last_updated)
         
         logger.info('Collection completed')
-
-
-def extract_board(main_column, downstream_lock):
     
-    reach_row = main_column.find(text = downstream_lock).parent.parent.parent
-    board_outer = reach_row.contents[1].contents[0]
-    board_inner = board_outer.contents[0].contents[0].contents[0].contents[0]
     
-    return board_text_map[board_inner.lower()]
+    @staticmethod
+    def extract_board(main_column, downstream_lock):
+        
+        reach_row = main_column.find(text = downstream_lock).parent.parent.parent
+        board_outer = reach_row.contents[1].contents[0]
+        board_inner = board_outer.contents[0].contents[0].contents[0].contents[0]
+        
+        return board_text_map[board_inner.lower()]
 
