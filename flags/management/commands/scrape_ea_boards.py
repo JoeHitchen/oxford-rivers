@@ -54,6 +54,7 @@ class Command(BaseCommand):
         response = requests.get('http://riverconditions.environment-agency.gov.uk/')
         if not response.ok:
             logger.error('Error fetching EA boards page')
+            response.raise_for_status()
         
         soup = BeautifulSoup(response.text, 'html.parser')
         

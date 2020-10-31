@@ -209,6 +209,18 @@ class Test_Management_EABoards(TestCase):
     
     
     @patch('flags.management.commands.scrape_ea_boards.requests')
+    def test__fetch_error(self, requests_mock):
+        """Throws an error when the page retrieval fails."""
+        
+        requests_mock.get.return_value.text = self.page_contents
+        requests_mock.get.return_value.ok = False
+        
+        call_command('scrape_ea_boards')
+        
+        self.assertEqual(requests_mock.get.return_value.raise_for_status.call_count, 1)
+    
+    
+    @patch('flags.management.commands.scrape_ea_boards.requests')
     @patch.object(models.Reach, 'update_advisory')
     @patch('flags.management.commands.scrape_ea_boards.randrange', return_value = 35)
     @patch('flags.management.commands.scrape_ea_boards.sleep')
@@ -229,6 +241,7 @@ class Test_Management_EABoards(TestCase):
         update_mock.assert_any_call(reach_map['wallingford'], 'INC', board_shown = boards_shown)
         update_mock.assert_any_call(reach_map['sandford'], 'DEC', board_shown = boards_shown)
         
+        requests_mock.get.return_value.raise_for_status.assert_not_called()
         range_mock.assert_not_called()
         sleep_mock.assert_not_called()
     
