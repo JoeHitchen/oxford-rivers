@@ -83,9 +83,9 @@ DATABASES = {
         'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
         'NAME': os.environ.get('DATABASE_NAME', 'database.sqlite3'),
         'TEST': {
-            'NAME': os.environ.get('DATABASE_NAME_TEST', 'test.sqlite3')
-        }
-    }
+            'NAME': os.environ.get('DATABASE_NAME_TEST', 'test.sqlite3'),
+        },
+    },
 }
 
 

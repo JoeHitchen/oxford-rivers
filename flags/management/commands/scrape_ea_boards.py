@@ -37,7 +37,11 @@ class Command(BaseCommand):
     
     def add_arguments(self, parser):
         """Defines the optional arguments to the command."""
-        parser.add_argument('--delay', action = 'store_true', help = 'Delay collection by between 60 and 180 seconds')
+        parser.add_argument(
+            '--delay',
+            action = 'store_true',
+            help = 'Delay collection by between 60 and 180 seconds',
+        )
     
     
     def handle(self, *args, **kwargs):
