@@ -74,7 +74,9 @@ class Command(BaseCommand):
         for reach in models.Reach.objects.all():
             board = self.extract_board(main_column, downstream_lock_map[reach.tag])
             logger.info('{:11s} {}'.format(str(reach), models.Advisory.Boards(board).label))
-            models.Reach.update_advisory(reach, board, board_shown = last_updated)  # Inverted for testing
+            
+            models.Reach.update_advisory(reach, board, board_shown = last_updated)
+            # ^ Class method used for testing purposes
         
         logger.info('Collection completed')
     
