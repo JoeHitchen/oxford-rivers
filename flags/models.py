@@ -3,6 +3,8 @@ from django.utils import timezone
 
 
 class Reach(models.Model):
+    """Describes a stretch of river."""
+    
     name = models.CharField(max_length = 12)
     tag = models.SlugField(max_length = 12, unique = True)  # Implicit db index
     downstream_order = models.PositiveSmallIntegerField()
@@ -15,11 +17,12 @@ class Reach(models.Model):
     
     @property
     def current_advisory(self):
+        """The most recently shown EA stream advisory for the reach."""
         return self.advisories.filter(first_updated__lte = timezone.now()).first()
     
     
     def update_advisory(self, new_board, board_shown = timezone.now()):
-        """Updates advisory records to reflect `new_board` being displayed at `board_shown`."""
+        """Updates EA advisory records to reflect `new_board` being displayed at `board_shown`."""
         
         # Update existing matching advisory
         if self.current_advisory and self.current_advisory.board == new_board:
@@ -38,6 +41,7 @@ class Reach(models.Model):
 
 
 class Advisory(models.Model):
+    """A private model describing EA stream advisories for use through the Reach model."""
     
     class Boards(models.TextChoices):
         NONE = ('NONE', 'No advisory')
