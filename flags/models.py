@@ -1,4 +1,4 @@
-from django.db import models, transaction
+from django.db import models
 from django.utils import timezone
 
 
@@ -41,7 +41,13 @@ class Reach(models.Model):
 
 
 class Advisory(models.Model):
-    """A private model describing EA stream advisories for use through the Reach model."""
+    """A private model describing EA stream advisories for use through the Reach model.
+    
+    first_seen - When board first seen (by our retrievals)
+    first_updated - When board first displayed (according to EA)
+    last_seen - When board last seen (by our retrievals)
+    last_updated - When board last affirmed (according to EA)
+    """
     
     class Boards(models.TextChoices):
         NONE = ('NONE', 'No advisory')
@@ -52,10 +58,10 @@ class Advisory(models.Model):
     reach = models.ForeignKey(Reach, models.CASCADE, related_name = 'advisories')
     board = models.CharField(max_length = 4, choices = Boards.choices)
     
-    first_seen = models.DateTimeField(default=timezone.now)     # When board first seen (by our retrievals)
-    first_updated = models.DateTimeField(default=timezone.now)  # When board first displayed (according to EA)
-    last_seen = models.DateTimeField(default=timezone.now)      # When board last seen (by our retrievals)
-    last_updated = models.DateTimeField(default=timezone.now)   # When board last affirmed (according to EA)
+    first_seen = models.DateTimeField(default=timezone.now)
+    first_updated = models.DateTimeField(default=timezone.now)
+    last_seen = models.DateTimeField(default=timezone.now)
+    last_updated = models.DateTimeField(default=timezone.now)
     
     class Meta:
         ordering = ['reach', '-first_updated']

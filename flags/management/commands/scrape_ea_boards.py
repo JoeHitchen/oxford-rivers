@@ -37,7 +37,11 @@ class Command(BaseCommand):
     
     def add_arguments(self, parser):
         """Defines the optional arguments to the command."""
-        parser.add_argument('--delay', action = 'store_true', help = 'Delay collection by between 60 and 180 seconds')
+        parser.add_argument(
+            '--delay',
+            action = 'store_true',
+            help = 'Delay collection by between 60 and 180 seconds',
+        )
     
     
     def handle(self, *args, **kwargs):
@@ -70,7 +74,9 @@ class Command(BaseCommand):
         for reach in models.Reach.objects.all():
             board = self.extract_board(main_column, downstream_lock_map[reach.tag])
             logger.info('{:11s} {}'.format(str(reach), models.Advisory.Boards(board).label))
-            models.Reach.update_advisory(reach, board, board_shown = last_updated)  # Inverted for testing
+            
+            models.Reach.update_advisory(reach, board, board_shown = last_updated)
+            # ^ Class method used for testing purposes
         
         logger.info('Collection completed')
     

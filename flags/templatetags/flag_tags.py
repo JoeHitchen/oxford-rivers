@@ -4,6 +4,7 @@ from .. utils import Transit
 
 register = template.Library()
 
+
 @register.inclusion_tag(template.Template('''
   <div class="card-group">
     <div class="card mb-3" style="max-width: 7em;">
@@ -12,7 +13,7 @@ register = template.Library()
     <div class="card {{ text_colour }} {{ background_colour }} mb-3" style="max-width: 18rem;">
       <div class="card-body">{{ main_text }}</div>
     </div>
-  </div>    
+  </div>
 '''))
 def transit_allowed_row(type, allowed):
     switch_selected = {

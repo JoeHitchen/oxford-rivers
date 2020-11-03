@@ -2,6 +2,14 @@ image: python:3.7
 
 pipelines:
   default:
+    - step: &lint
+        name: Lint
+        caches:
+          - pip
+        script:
+          - pip install -r requirements_linting.txt
+          - flake8
+    
     - step: &test
         name: Test
         caches:
@@ -12,6 +20,7 @@ pipelines:
   
   branches:
     master:
+      - step: *lint
       - step: *test
       - step:
           name: Build
