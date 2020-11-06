@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.views.generic.detail import DetailView
 
 from . import models, utils
 
@@ -29,4 +30,12 @@ def index(request):
     }
     
     return render(request, 'flags/index.html', context)
+
+
+class AdvisoryHistory(DetailView):
+    
+    model = models.Reach
+    slug_field = 'tag'
+    slug_url_kwarg = 'tag'
+    template_name = 'flags/advisory_history.html'
 
