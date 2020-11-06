@@ -49,3 +49,25 @@ pipelines:
             - docker load --input django-flags.docker
             - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
             - docker push joehitchen/django-flags
+    
+    static:
+      - step:
+          name: Build
+          services:
+            - docker
+          script:
+            - docker build -t joehitchen/django-flags:static .
+            - docker save --output django-flags.docker joehitchen/django-flags:static
+          artifacts:
+            - django-flags.docker
+      
+      - step:
+          name: Publish
+          deployment: Docker
+          services:
+            - docker
+          script:
+            - docker load --input django-flags.docker
+            - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+            - docker push joehitchen/django-flags:static
+
