@@ -10,6 +10,25 @@
 </head>
 <body>
   <div class="container">
+    <!-- Past advisories table -->
+    <div class="row"><div class="col">
+      <table class="table table-sm table-borderless table-responsive-md text-center">
+        <thead class="thead-light"><tr>
+          <th class="align-middle">Board</th>
+          <th class="align-middle">First Updated</th>
+          <th class="align-middle">First Seen</th>
+          <th class="align-middle">Last Updated</th>
+          <th class="align-middle">Last Seen</th>
+        </tr></thead>
+        {% for advisory in reach.advisories.all %}<tr class="{{ advisory.styling.text }} {{ advisory.styling.background }}">
+          <th class="align-middle">{{ advisory.get_board_display }}</th>
+          <td class="align-middle">{{ advisory.first_updated|date:"d/m/Y H:i" }}</td>
+          <td class="align-middle">{{ advisory.first_seen|date:"d/m/Y H:i" }}</td>
+          <td class="align-middle">{{ advisory.last_updated|date:"d/m/Y H:i" }}</td>
+          <td class="align-middle">{{ advisory.last_seen|date:"d/m/Y H:i" }}</td>
+        </tr>{% endfor %}
+      </table>
+    </div></div>
   </div>
 </body>
 </html>
