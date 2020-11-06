@@ -15,3 +15,5 @@ RUN pip install -r requirements.txt
 COPY --chown=django . .
 
 USER django
+CMD ["gunicorn", "core.wsgi:application", "--bind", "0.0.0.0:8000"]
+EXPOSE 8000
