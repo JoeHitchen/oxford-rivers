@@ -2,9 +2,10 @@ FROM python:3.7
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
+ENV HOME /usr/src/app
 
-WORKDIR /usr/src/app
-RUN useradd django && chown -R django:django /usr/src/app
+WORKDIR $HOME
+RUN useradd django && chown -R django:django $HOME
 
 RUN pip install mysqlclient gunicorn
 
@@ -14,3 +15,5 @@ RUN pip install -r requirements.txt
 COPY --chown=django . .
 
 USER django
+CMD ["gunicorn", "core.wsgi:application", "--bind", "0.0.0.0:8000"]
+EXPOSE 8000
