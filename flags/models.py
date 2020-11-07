@@ -15,6 +15,31 @@ class Reach(models.Model):
     def __str__(self):
         return self.name
     
+    
+    @property
+    def upstream_lock(self):
+        return {
+            'isis': 'Osney',
+            'godstow': 'Godstow',
+            'radley': 'Sandford',
+            'abingdon': 'Abingdon',
+            'wallingford': 'Benson',
+            'sandford': 'Iffley',
+        }[self.tag]
+    
+    
+    @property
+    def downstream_lock(self):
+        return {
+            'isis': 'Iffley',
+            'godstow': 'Osney',
+            'radley': 'Abingdon',
+            'abingdon': 'Culham',
+            'wallingford': 'Cleeve',
+            'sandford': 'Sandford',
+        }[self.tag]
+    
+    
     @property
     def current_advisory(self):
         """The most recently shown EA stream advisory for the reach."""
