@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Django Flags</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+</head>
+<body>
+  <div class="container">
+    <br/>
+    {% if out_of_date %}<div class="alert alert-danger" role="alert">
+      We have not been able to check the boards for this reach in over two hours.
+      For up-to-date information you can <a href="http://riverconditions.environment-agency.gov.uk" class="alert-link">check their website directly</a>.
+    </div>{% endif %}
+    
+    <!-- Overview -->
+    <div class="row">
+      
+      <div class="col">
+        <h1>{{ reach }}</h1>
+        {{ reach.upstream_lock }} Lock to {{ reach.downstream_lock }} Lock
+      </div>
+      
+      <div class="col">
+        <div class="card {{ reach.current_advisory.styling.text }} {{ reach.current_advisory.styling.background }}">
+          <div class="card-body">
+            <h5 class="card-title"><strong>{{ reach.current_advisory }}</strong></h5>
+            Last updated: {{ reach.current_advisory.last_updated|date:"d/m/Y H:i" }}
+            <br/>
+            Last seen: {{ reach.current_advisory.last_seen|date:"d/m/Y H:i" }}
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <br/>
+    
+    <!-- Interpretation guide -->
+    <div class="row"><div class="col">
+      <div class="card">
+        <div class="card-header" type="button" data-toggle="collapse" data-target="#interpretationBody">
+          How to interpret this information
+        </div>
+        <div class="collapse" id="interpretationBody"><div class="card-body small">
+          The EA issues stream advisories for stretches of the Thames between two locks which are displayed to river traffic as physical boards on the lock at each end of the stretch<sup>*</sup>.
+          These are also made available online on their <a href="http://riverconditions.environment-agency.gov.uk/">river conditions website</a> and we collect the information about the boards shown from this website.
+          However, the website does not update automatically, instead providing a "Page Last Updated" indicator so there may be a delay between physical boards changing on the lock and the boards changing on their website<sup>**</sup>.
+          <br/><br/>
+          We poll the river conditions website on a slightly randomised five-minute interval and note both the time the website was last changed (the <em>updated</em> time) and the actual time of the collection run (the <em>seen</em> time)<sup>***</sup>.
+          For each advisory observed, we record the updated and seen times for both the first and last observations of that advisory.
+          <br/><br/>
+          Between the first and last updated times for an advisory, it will have been displayed to traffic transiting onto that stretch, but between the last updated time of one advisory and the first updated time of the next advisory, the boards will have changed on the lock and it is not possible to say precisely when this would have happened.
+          Similarly, between the first and last seen times for an advisory, it will have been shown on the website for that stretch.
+          The website will have changed between the last seen time of one advisory and the first seen time of the next advisory, but since collection is performed roughly every five minutes, the scope for variation here is much lower<sup>****</sup>.
+          <br/><br/>
+          <sup>*</sup> A lock may display different boards to upstream and downstream traffic, since they apply to the next stretch of river, rather than the lock itself.
+          <br/>
+          <sup>**</sup> As far as we are aware, the information shown at the update time will always match what is shown at the lock at that moment.
+          <br/>
+          <sup>***</sup> Both are recorded to to help identify discrepancies between when the EA report the page was updated and when we observed the change, whether caused by technical issues or other systemic delays.
+          <br/>
+          <sup>****</sup> It is possible that a data collection outage might entirely miss a change and change-back of an advisory, but this is unlikely since the boards typically change on a scale of days, and the website only appears to update a couple of times a day.
+        </div></div>
+      </div>
+    </div></div>
+    <br/>
+    
+    <!-- Past advisories table -->
+    <div class="row"><div class="col">
+      <table class="table table-sm table-borderless table-responsive-md text-center">
+        <thead class="thead-light"><tr>
+          <th class="align-middle">Board</th>
+          <th class="align-middle">First Updated</th>
+          <th class="align-middle">First Seen</th>
+          <th class="align-middle">Last Updated</th>
+          <th class="align-middle">Last Seen</th>
+        </tr></thead>
+        {% for advisory in reach.advisories.all %}<tr class="{{ advisory.styling.text }} {{ advisory.styling.background }}">
+          <th class="align-middle">{{ advisory.get_board_display }}</th>
+          <td class="align-middle">{{ advisory.first_updated|date:"d/m/Y H:i" }}</td>
+          <td class="align-middle">{{ advisory.first_seen|date:"d/m/Y H:i" }}</td>
+          <td class="align-middle">{{ advisory.last_updated|date:"d/m/Y H:i" }}</td>
+          <td class="align-middle">{{ advisory.last_seen|date:"d/m/Y H:i" }}</td>
+        </tr>{% endfor %}
+      </table>
+    </div></div>
+  </div>
+</body>
+</html>
