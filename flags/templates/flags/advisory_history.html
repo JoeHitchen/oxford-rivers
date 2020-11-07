@@ -15,6 +15,27 @@
   <div class="container">
     <br/>
     
+    <!-- Overview -->
+    <div class="row">
+      
+      <div class="col">
+        <h1>{{ reach }}</h1>
+      </div>
+      
+      <div class="col">
+        <div class="card {{ reach.current_advisory.styling.text }} {{ reach.current_advisory.styling.background }}">
+          <div class="card-body">
+            <h5 class="card-title"><strong>{{ reach.current_advisory }}</strong></h5>
+            Last updated: {{ reach.current_advisory.last_updated|date:"d/m/Y H:i" }}
+            <br/>
+            Last seen: {{ reach.current_advisory.last_seen|date:"d/m/Y H:i" }}
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <br/>
+    
     <!-- Interpretation guide -->
     <div class="row"><div class="col">
       <div class="card">
