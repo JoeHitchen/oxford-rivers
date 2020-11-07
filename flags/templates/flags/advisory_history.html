@@ -14,6 +14,10 @@
 <body>
   <div class="container">
     <br/>
+    {% if out_of_date %}<div class="alert alert-danger" role="alert">
+      We have not been able to check the boards for this reach in over two hours.
+      For up-to-date information you can <a href="http://riverconditions.environment-agency.gov.uk" class="alert-link">check their website directly</a>.
+    </div>{% endif %}
     
     <!-- Overview -->
     <div class="row">
