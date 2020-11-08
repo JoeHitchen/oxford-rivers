@@ -22,12 +22,12 @@
             <h4 class="card-title text-center"><strong>{{ reach.current_advisory }}</strong></h4>
             <table class="table table-sm table-borderless mb-0">
               <tr>
-                <td class="text-left p-0">Last updated:</td>
-                <td class="text-right p-0">{{ reach.current_advisory.last_updated|date:"d/m/Y H:i" }}</td>
+                <td class="text-left {{ reach.current_advisory.styling.text }} p-0">Last updated:</td>
+                <td class="text-right {{ reach.current_advisory.styling.text }} p-0">{{ reach.current_advisory.last_updated|date:"d/m/Y H:i" }}</td>
               </tr>
               <tr>
-                <td class="text-left p-0">Last seen:</td>
-                <td class="text-right p-0">{{ reach.current_advisory.last_seen|date:"d/m/Y H:i" }}</td>
+                <td class="text-left {{ reach.current_advisory.styling.text }} p-0">Last seen:</td>
+                <td class="text-right {{ reach.current_advisory.styling.text }} p-0">{{ reach.current_advisory.last_seen|date:"d/m/Y H:i" }}</td>
               </tr>
             </table>
           </div>
