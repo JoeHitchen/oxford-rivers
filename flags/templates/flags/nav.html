@@ -1,0 +1,26 @@
+  <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+    
+    <a class="navbar-brand" href="{% url 'index' %}">Django Flags</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_content">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <div class="collapse navbar-collapse" id="navbar_content">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="{% url 'flags:index' %}" role="button" data-toggle="dropdown">
+            EA Advisories
+          </a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="{% url 'flags:index' %}">Overview</a>
+            <div class="dropdown-divider"></div>
+            
+            {% for nav_reach in all_reaches %}<a class="dropdown-item" href="{% url 'flags:advisory_history' nav_reach.tag %}">{{ nav_reach }}</a>
+            {% endfor %}
+          </div>
+        </li>
+      </ul>
+    </div>
+    
+  </nav>
+  <br/>

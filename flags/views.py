@@ -13,6 +13,7 @@ def index(request):
     
     context = {
         'reaches': reaches,
+        'all_reaches': reaches,
         'transits': [
             utils.calculate_transit_permitted(
                 reach_board_map,
@@ -45,6 +46,7 @@ class AdvisoryHistory(DetailView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['all_reaches'] = models.Reach.objects.all()
         
         time_since_last_update = timezone.now() - self.object.current_advisory.last_seen
         context['out_of_date'] = time_since_last_update > timedelta(hours = 2)
