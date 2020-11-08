@@ -218,7 +218,7 @@ class Test_Views(TestCase):
     
     
     def test__advisory_overview(self):
-        """
+        """Lists all the reaches and generates a 200 response.
         
         Expected queries:
         (2) SELECT reaches and all advisories
