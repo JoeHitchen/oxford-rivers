@@ -11,18 +11,25 @@
     <!-- Overview -->
     <div class="row">
       
-      <div class="col">
+      <div class="col-md-7">
         <h1>{{ reach }}</h1>
-        {{ reach.upstream_lock }} Lock to {{ reach.downstream_lock }} Lock
+        <div class="mb-4">{{ reach.upstream_lock }} Lock to {{ reach.downstream_lock }} Lock</div>
       </div>
       
-      <div class="col">
+      <div class="col-md-5">
         <div class="card {{ reach.current_advisory.styling.text }} {{ reach.current_advisory.styling.background }}">
           <div class="card-body">
-            <h5 class="card-title"><strong>{{ reach.current_advisory }}</strong></h5>
-            Last updated: {{ reach.current_advisory.last_updated|date:"d/m/Y H:i" }}
-            <br/>
-            Last seen: {{ reach.current_advisory.last_seen|date:"d/m/Y H:i" }}
+            <h4 class="card-title text-center"><strong>{{ reach.current_advisory }}</strong></h4>
+            <table class="table table-sm table-borderless mb-0">
+              <tr>
+                <td class="text-left p-0">Last updated:</td>
+                <td class="text-right p-0">{{ reach.current_advisory.last_updated|date:"d/m/Y H:i" }}</td>
+              </tr>
+              <tr>
+                <td class="text-left p-0">Last seen:</td>
+                <td class="text-right p-0">{{ reach.current_advisory.last_seen|date:"d/m/Y H:i" }}</td>
+              </tr>
+            </table>
           </div>
         </div>
       </div>
