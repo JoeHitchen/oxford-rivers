@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.utils.functional import cached_property
 
 
 class Reach(models.Model):
@@ -40,7 +41,7 @@ class Reach(models.Model):
         }[self.tag]
     
     
-    @property
+    @cached_property
     def current_advisory(self):
         """The most recently shown EA stream advisory for the reach."""
         return self.advisories.filter(first_updated__lte = timezone.now()).first()
@@ -63,6 +64,9 @@ class Reach(models.Model):
                 first_updated = board_shown,
                 last_updated = board_shown,
             )
+        
+        # Reset current advisory cache
+        del self.current_advisory
 
 
 class Advisory(models.Model):
