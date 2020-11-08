@@ -14,16 +14,6 @@ logger = logging.getLogger('EA Boards')
 logger.setLevel('INFO')
 
 
-downstream_lock_map = {
-    'isis': 'Iffley Lock',
-    'godstow': 'Osney Lock',
-    'radley': 'Abingdon Lock',
-    'abingdon': 'Culham Lock',
-    'wallingford': 'Cleeve Lock',
-    'sandford': 'Sandford Lock',
-}
-
-
 board_text_map = {
     'no stream warnings': models.Advisory.Boards.NONE,
     'caution stream increasing': models.Advisory.Boards.INC,
@@ -72,7 +62,7 @@ class Command(BaseCommand):
         # Extract boards
         main_column = soup.find(class_ = 'primary-column')
         for reach in models.Reach.objects.all():
-            board = self.extract_board(main_column, downstream_lock_map[reach.tag])
+            board = self.extract_board(main_column, reach.downstream_lock)
             logger.info('{:11s} {}'.format(str(reach), models.Advisory.Boards(board).label))
             
             models.Reach.update_advisory(reach, board, board_shown = last_updated)
@@ -85,7 +75,7 @@ class Command(BaseCommand):
     def extract_board(main_column, downstream_lock):
         """Extracts the board for a reach above a specific lock."""
         
-        reach_row = main_column.find(text = downstream_lock).parent.parent.parent
+        reach_row = main_column.find(text = downstream_lock + ' Lock').parent.parent.parent
         board_outer = reach_row.contents[1].contents[0]
         board_inner = board_outer.contents[0].contents[0].contents[0].contents[0]
         
