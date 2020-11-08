@@ -6,14 +6,17 @@ register = template.Library()
 
 
 @register.inclusion_tag(template.Template('''
-  <div class="card-group">
-    <div class="card mb-3" style="max-width: 7em;">
-      <div class="card-body">{{ type }}</div>
-    </div>
-    <div class="card {{ text_colour }} {{ background_colour }} mb-3" style="max-width: 18rem;">
-      <div class="card-body">{{ main_text }}</div>
-    </div>
-  </div>
+            <div class="card-group">
+              <div class="card mb-3" style="max-width: 7em;">
+                <div class="card-body">{{ type }}</div>
+              </div>
+              <div
+                class="card {{ text_colour }} {{ background_colour }} mb-3"
+                style="max-width: 18rem;"
+              >
+                <div class="card-body">{{ main_text }}</div>
+              </div>
+            </div>
 '''))
 def transit_allowed_row(type, allowed):
     switch_selected = {
@@ -37,16 +40,15 @@ def transit_allowed_row(type, allowed):
 
 
 @register.inclusion_tag(template.Template('''
-  {% load flag_tags %}
-  <div class="card">
-    <div class="card-header">
-      {{ destination }} Transit
-    </div>
-    <div class="card-body">
-      {% transit_allowed_row 'Boats' rowing %}
-      {% transit_allowed_row 'Launches' launches %}
-    </div>
-  </div>
+        {% load flag_tags %}
+        <div class="card">
+          <div class="card-header">
+            {{ destination }} Transit
+          </div>
+          <div class="card-body">
+            {% transit_allowed_row 'Boats' rowing %}{% transit_allowed_row 'Launches' launches %}
+          </div>
+        </div>
 '''))
 def transit_card(transit):
     return transit  # Implicitly destructures transit for context
