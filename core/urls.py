@@ -1,13 +1,18 @@
 import os
 
-from django.urls import path, include
+from django.urls import path, include, reverse_lazy
 from django.conf.urls.static import static
+from django.views.generic.base import RedirectView
 
 from . import settings
 
 
 urlpatterns = [
     path('', include('flags.urls')),
+    path('', RedirectView.as_view(  # Dummy view to provide site 'index' name
+        url = reverse_lazy('flags:index'),
+        permanent = True,
+    ), name = 'index'),
 ]
 
 
