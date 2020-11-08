@@ -218,9 +218,8 @@ class Test_Views(TestCase):
     def test__advisory_history__in_date(self):
         """Intentifies the correct reach and generates a 200 response."""
         
-        advisory = self.reach.current_advisory
-        advisory.last_seen = timezone.now() - timedelta(minutes = 115)
-        advisory.save()
+        self.reach.current_advisory.last_seen = timezone.now() - timedelta(minutes = 115)
+        self.reach.current_advisory.save()
         
         response = self.client.get(reverse(
             'flags:advisory_history',
@@ -241,9 +240,8 @@ class Test_Views(TestCase):
     def test__advisory_history__out_of_date(self):
         """Provides an additional flag if the current advisory has not been seen in two hours."""
         
-        advisory = self.reach.current_advisory
-        advisory.last_seen = timezone.now() - timedelta(minutes = 125)
-        advisory.save()
+        self.reach.current_advisory.last_seen = timezone.now() - timedelta(minutes = 125)
+        self.reach.current_advisory.save()
         
         response = self.client.get(reverse(
             'flags:advisory_history',
@@ -265,12 +263,12 @@ class Test_Views(TestCase):
         """Expected queries:
         
         (1) SELECT reach
-        (6) SELECT reach's current advisory
+        (1) SELECT reach's current advisory
         (1) SELECT all reaches
         (1) SELECT all reach's advisories
         """
         
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(4):
             self.client.get(reverse(
                 'flags:advisory_history',
                 kwargs = {'tag': self.reach.tag},
