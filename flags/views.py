@@ -7,7 +7,7 @@ from django.utils import timezone
 from . import models, utils
 
 
-def index(request):
+def advisory_overview(request):
     reaches = models.Reach.objects.prefetch_related('advisories').all()
     reach_board_map = {reach.tag: reach.current_advisory.board for reach in reaches}
     
@@ -33,7 +33,7 @@ def index(request):
         ],
     }
     
-    return render(request, 'flags/index.html', context)
+    return render(request, 'flags/advisory_overview.html', context)
 
 
 class AdvisoryHistory(DetailView):
