@@ -205,13 +205,39 @@ class Test_Views(TestCase):
     
     def setUp(self):
         self.reach = models.Reach.objects.get(tag = 'isis')
-        self.reach.update_advisory(
-            models.Advisory.Boards.NONE,
-            board_shown = timezone.now() - timedelta(2),
+        
+        for reach in models.Reach.objects.all():
+            reach.update_advisory(
+                models.Advisory.Boards.NONE,
+                board_shown = timezone.now() - timedelta(reach.id * 11),
+            )
+            reach.update_advisory(
+                models.Advisory.Boards.RED,
+                board_shown = timezone.now() - timedelta(reach.id * 7),
+            )
+    
+    
+    def test__advisory_overview(self):
+        """
+        
+        Expected queries:
+        (2) SELECT reaches and all advisories
+        (6) SELECT every reach's current advisory
+        """
+        
+        with self.assertNumQueries(8):
+            response = self.client.get(reverse('flags:advisory_overview'))
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertQuerysetEqual(
+            response.context['reaches'],
+            list(models.Reach.objects.all()),
+            transform = lambda item: item,
         )
-        self.reach.update_advisory(
-            models.Advisory.Boards.RED,
-            board_shown = timezone.now() - timedelta(1),
+        self.assertQuerysetEqual(
+            response.context['all_reaches'],
+            list(models.Reach.objects.all()),
+            transform = lambda item: item,
         )
     
     
