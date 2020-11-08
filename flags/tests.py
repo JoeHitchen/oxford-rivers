@@ -4,6 +4,7 @@ import logging
 
 from django.test import TestCase
 from django.utils import timezone
+from django.urls import reverse
 from django.core.management import call_command
 import pytz
 
@@ -197,6 +198,67 @@ class Test_Utils(TestCase):
             'launches': utils.Transit.PROHIBITED,
         }
         self.assertEqual(transit_object, expected_object)
+
+
+class Test_Views(TestCase):
+    fixtures = ['flags']
+    
+    def setUp(self):
+        self.reach = models.Reach.objects.get(tag = 'isis')
+        self.reach.update_advisory(
+            models.Advisory.Boards.NONE,
+            board_shown = timezone.now() - timedelta(2),
+        )
+        self.reach.update_advisory(
+            models.Advisory.Boards.RED,
+            board_shown = timezone.now() - timedelta(1),
+        )
+    
+    
+    def test__advisory_history__in_date(self):
+        """Intentifies the correct reach and generates a 200 response."""
+        
+        advisory = self.reach.current_advisory
+        advisory.last_seen = timezone.now() - timedelta(minutes = 115)
+        advisory.save()
+        
+        response = self.client.get(reverse(
+            'flags:advisory_history',
+            kwargs = {'tag': self.reach.tag},
+        ))
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['reach'], self.reach)
+        self.assertFalse(response.context['out_of_date'])
+        
+        self.assertQuerysetEqual(
+            response.context['all_reaches'],
+            list(models.Reach.objects.all()),
+            transform = lambda item: item,
+        )
+    
+    
+    def test__advisory_history__out_of_date(self):
+        """Provides an additional flag if the current advisory has not been seen in two hours."""
+        
+        advisory = self.reach.current_advisory
+        advisory.last_seen = timezone.now() - timedelta(minutes = 125)
+        advisory.save()
+        
+        response = self.client.get(reverse(
+            'flags:advisory_history',
+            kwargs = {'tag': self.reach.tag},
+        ))
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['reach'], self.reach)
+        self.assertTrue(response.context['out_of_date'])
+        
+        self.assertQuerysetEqual(
+            response.context['all_reaches'],
+            list(models.Reach.objects.all()),
+            transform = lambda item: item,
+        )
 
 
 class Test_Management_EABoards(TestCase):
