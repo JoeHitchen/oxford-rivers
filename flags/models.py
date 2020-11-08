@@ -52,10 +52,9 @@ class Reach(models.Model):
         
         # Update existing matching advisory
         if self.current_advisory and self.current_advisory.board == new_board:
-            advisory = self.current_advisory
-            advisory.last_updated = board_shown
-            advisory.last_seen = timezone.now()
-            advisory.save()
+            self.current_advisory.last_updated = board_shown
+            self.current_advisory.last_seen = timezone.now()
+            self.current_advisory.save()
         
         # Create new advisory if mismatched or missing
         else:

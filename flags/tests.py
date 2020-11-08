@@ -218,9 +218,8 @@ class Test_Views(TestCase):
     def test__advisory_history__in_date(self):
         """Intentifies the correct reach and generates a 200 response."""
         
-        advisory = self.reach.current_advisory
-        advisory.last_seen = timezone.now() - timedelta(minutes = 115)
-        advisory.save()
+        self.reach.current_advisory.last_seen = timezone.now() - timedelta(minutes = 115)
+        self.reach.current_advisory.save()
         
         response = self.client.get(reverse(
             'flags:advisory_history',
@@ -241,9 +240,8 @@ class Test_Views(TestCase):
     def test__advisory_history__out_of_date(self):
         """Provides an additional flag if the current advisory has not been seen in two hours."""
         
-        advisory = self.reach.current_advisory
-        advisory.last_seen = timezone.now() - timedelta(minutes = 125)
-        advisory.save()
+        self.reach.current_advisory.last_seen = timezone.now() - timedelta(minutes = 125)
+        self.reach.current_advisory.save()
         
         response = self.client.get(reverse(
             'flags:advisory_history',
