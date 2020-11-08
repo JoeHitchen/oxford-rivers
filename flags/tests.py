@@ -259,6 +259,22 @@ class Test_Views(TestCase):
             list(models.Reach.objects.all()),
             transform = lambda item: item,
         )
+    
+    
+    def test__advisory_history__query_count(self):
+        """Expected queries:
+        
+        (1) SELECT reach
+        (6) SELECT reach's current advisory
+        (1) SELECT all reaches
+        (1) SELECT all reach's advisories
+        """
+        
+        with self.assertNumQueries(9):
+            self.client.get(reverse(
+                'flags:advisory_history',
+                kwargs = {'tag': self.reach.tag},
+            ))
 
 
 class Test_Management_EABoards(TestCase):
