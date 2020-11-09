@@ -1,13 +1,16 @@
-FROM python:3.7
+FROM python:3.7-alpine
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV HOME /usr/src/app
 
 WORKDIR $HOME
-RUN useradd django && chown -R django:django $HOME
+RUN adduser --disabled-password django && chown -R django:django $HOME
 
-RUN pip install mysqlclient gunicorn
+RUN apk add --no-cache --update mariadb-connector-c-dev \
+ && apk add --no-cache --virtual .build mariadb-dev gcc musl-dev \
+ && pip install mysqlclient gunicorn \
+ && apk --purge del .build
 
 COPY --chown=django requirements.txt .
 RUN pip install -r requirements.txt
