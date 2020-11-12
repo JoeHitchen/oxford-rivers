@@ -3,9 +3,12 @@ FROM python:3.7-alpine
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV HOME /usr/src/app
+ENV STATIC_ROOT /usr/data/static
+ENV MEDIA_ROOT /usr/data/media
 
 WORKDIR $HOME
-RUN adduser --disabled-password python && chown -R python:python $HOME
+RUN adduser --disabled-password python && chown -R python:python $HOME \
+ && mkdir -p $STATIC_ROOT $MEDIA_ROOT && chown -R python:python /usr/data
 
 RUN apk add --no-cache --update mariadb-connector-c-dev \
  && apk add --no-cache --virtual .build mariadb-dev gcc musl-dev \
