@@ -49,3 +49,5 @@ pipelines:
             - docker load --input django-flags.docker
             - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
             - docker push joehitchen/django-flags
+
+
