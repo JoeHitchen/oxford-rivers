@@ -11,9 +11,9 @@ RUN adduser --disabled-password python && chown -R python:python $HOME \
  && mkdir -p $STATIC_ROOT $MEDIA_ROOT && chown -R python:python /usr/data
 
 RUN apk add --no-cache --update mariadb-connector-c-dev \
- && apk add --no-cache --virtual .build mariadb-dev gcc musl-dev \
+ && apk add --no-cache --virtual .build gcc musl-dev mariadb-dev \
  && pip install --no-cache-dir mysqlclient gunicorn \
- && apk --purge del .build
+ && apk del --purge .build
 
 COPY --chown=python requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
