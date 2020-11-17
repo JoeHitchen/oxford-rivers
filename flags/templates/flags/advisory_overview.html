@@ -15,16 +15,22 @@
 
     <div class="row">
       {% for reach in reaches %}
-      <div class="col-md-2">
-        {{ reach }}
-        {% for advisory in reach.advisories.all %}
-        <div class="card {{ advisory.styling.text }} {{ advisory.styling.background }}">
-          <div class="card-body">
-            <h5 class="card-title">{{ advisory }}</h5>
-            {{ advisory.first_updated|date:"d/m/Y H:i" }}
+      <div class="col-lg-2">
+        <div class="card mb-4">
+          <div class="card-header px-3 py-2">
+            {{ reach }}
           </div>
+          <div class="card-body {{ reach.current_advisory.styling.text }} {{ reach.current_advisory.styling.background }} px-3 py-2">
+            <span class="card-title"><strong>{{ reach.current_advisory }}</strong></span>
+            <br/>
+            <span>{{ reach.current_advisory.first_updated|date:"d/m/Y" }}</span>
+            <span>{{ reach.current_advisory.first_updated|date:"H:i" }}</span>
+          </div>
+          <a href="{% url 'flags:advisory_history' reach.tag %}" class="card-footer text-dark d-flex justify-content-between px-3 py-2">
+            <small>View History</small>
+            <small><span class="oi oi-chevron-right"></span></small>
+          </a>
         </div>
-        {% endfor %}
       </div>
       {% endfor %}
     </div>
