@@ -6,19 +6,16 @@ register = template.Library()
 
 
 @register.inclusion_tag(template.Template('''
-            <div class="card-group">
-              <div class="card mb-3" style="max-width: 7em;">
-                <div class="card-body">{{ type }}</div>
-              </div>
-              <div
-                class="card {{ text_colour }} {{ background_colour }} mb-3"
-                style="max-width: 18rem;"
-              >
-                <div class="card-body">{{ main_text }}</div>
-              </div>
-            </div>
+              <tr>
+                <td style="width: 33%{% if first %}; border-top: 0{% endif %}">
+                  {{ type }}
+                </td>
+                <td class="{{ text_colour }} {{ background_colour }}"{% if first %} style="border-top: 0"{% endif %}>
+                  {{ main_text }}
+                </td>
+              </tr>
 '''))
-def transit_allowed_row(type, allowed):
+def transit_allowed_row(type, allowed, first = False):
     switch_selected = {
         Transit.PERMITTED: {
             'main_text': 'Allowed',
@@ -26,7 +23,7 @@ def transit_allowed_row(type, allowed):
             'background_colour': 'bg-success',
         },
         Transit.RESTRICTIONS: {
-            'main_text': 'Restrictions Apply',
+            'main_text': 'With Restrictions',
             'text_colour': 'text-dark',
             'background_colour': 'bg-warning',
         },
@@ -36,20 +33,5 @@ def transit_allowed_row(type, allowed):
             'background_colour': 'bg-danger',
         },
     }[allowed]
-    return {'type': type, **switch_selected}
-
-
-@register.inclusion_tag(template.Template('''
-        {% load flag_tags %}
-        <div class="card">
-          <div class="card-header">
-            {{ destination }} Transit
-          </div>
-          <div class="card-body">
-            {% transit_allowed_row 'Boats' rowing %}{% transit_allowed_row 'Launches' launches %}
-          </div>
-        </div>
-'''))
-def transit_card(transit):
-    return transit  # Implicitly destructures transit for context
+    return {'type': type, 'first': first, **switch_selected}
 

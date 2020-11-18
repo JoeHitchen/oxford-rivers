@@ -8,10 +8,21 @@
 
 {% block page_body %}
     <div class="row">
-      {% for transit in transits %}<div class="col-md-4">{% transit_card transit %}
+      {% for transit in transits %}<div class="col-md-4">
+        <div class="card mb-4">
+          <div class="card-header px-3 py-2">
+            {{ transit.destination }} Transit
+          </div>
+          <div class="card-body p-0">
+            <table class="table table-sm text-center mb-0">
+              {% transit_allowed_row 'Boats' transit.rowing True %}{% transit_allowed_row 'Launches' transit.launches %}
+            </table>
+          </div>
+        </div>
       </div>
       {% endfor %}
     </div>
+    <br/>
 
     <div class="row">
       {% for reach in reaches %}
