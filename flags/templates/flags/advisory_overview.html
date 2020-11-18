@@ -8,6 +8,19 @@
 
 {% block page_body %}
     <div class="row">
+      <div class="col">
+        <h2>Transits</h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col small mb-3">
+        As of December 2020, rowing boats are only allowed to transit a lock if there are no stream advisories on either side of that lock.
+        The Isis flag must be green if transiting either Iffley Lock or Osney Lock, and the Godstow flag must also be green if transiting Osney.
+        Launches may transit locks on yellow boards (a "Caution" advisory) if a risk assessment has been approved by the RowSab, and are not restricted by the Isis (or Godstow) flag.
+        These indicators consider all the lock transits needed to get to or from common destinations and the latest information we have for the reaches involved.
+      </div>
+    </div>
+    <div class="row">
       {% for transit in transits %}<div class="col-md-4">
         <div class="card mb-4">
           <div class="card-header px-3 py-2">
@@ -22,8 +35,18 @@
       </div>
       {% endfor %}
     </div>
-    <br/>
 
+    <div class="row">
+      <div class="col">
+        <h2>Current Advisories</h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col small mb-3">
+        These are the latest advisories we have seen on the EA's <a href="http://riverconditions.environment-agency.gov.uk/">river conditions webpage</a>.
+        Excluding technical difficulties, they are checked roughly every five minutes.
+      </div>
+    </div>
     <div class="row">
       {% for reach in reaches %}
       <div class="col-lg-2">
