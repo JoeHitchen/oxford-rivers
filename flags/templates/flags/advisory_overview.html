@@ -45,6 +45,7 @@
       <div class="col small mb-3">
         These are the latest advisories we have seen on the EA's <a href="http://riverconditions.environment-agency.gov.uk/">river conditions webpage</a>.
         Excluding technical difficulties, they are checked roughly every five minutes.
+        If an advisory is shown in dark grey, the last successful check for that reach was over two hours ago and you may wish to check the EA website directly.
       </div>
     </div>
     <div class="row">
@@ -54,7 +55,7 @@
           <div class="card-header px-3 py-2">
             {{ reach }}
           </div>
-          <div class="card-body {{ reach.current_advisory.styling.text }} {{ reach.current_advisory.styling.background }} px-3 py-2">
+          <div class="card-body {% if reach.current_advisory.out_of_date %}text-light bg-secondary{% else %}{{ reach.current_advisory.styling.text }} {{ reach.current_advisory.styling.background }}{% endif %} px-3 py-2">
             <span class="card-title"><strong>{{ reach.current_advisory }}</strong></span>
             <br/>
             <span>{{ reach.current_advisory.first_updated|date:"d/m/Y" }}</span>
