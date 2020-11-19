@@ -40,8 +40,9 @@
     <!-- Interpretation guide -->
     <div class="row"><div class="col">
       <div class="card">
-        <div class="card-header" type="button" data-toggle="collapse" data-target="#interpretationBody">
-          How to interpret this information
+        <div class="card-header d-flex justify-content-between" type="button" data-toggle="collapse" data-target="#interpretationBody">
+          <span>How to interpret this information</span>
+          <span class="oi oi-chevron-bottom" id="interpretationArrow"></span>
         </div>
         <div class="collapse" id="interpretationBody"><div class="card-body small">
           The EA issues stream advisories for stretches of the Thames between two locks which are displayed to river traffic as physical boards on the lock at each end of the stretch<sup>*</sup>.
@@ -86,4 +87,13 @@
         </tr>{% endfor %}
       </table>
     </div></div>
+    
+    <script type="text/javascript">
+      $('#interpretationBody').on('show.bs.collapse', function () {
+        $('#interpretationArrow').removeClass('oi-chevron-bottom').addClass('oi-chevron-top');
+      });
+      $('#interpretationBody').on('hidden.bs.collapse', function () {
+        $('#interpretationArrow').removeClass('oi-chevron-top').addClass('oi-chevron-bottom');
+      })
+    </script>
 {% endblock %}
