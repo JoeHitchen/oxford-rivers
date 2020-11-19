@@ -99,7 +99,7 @@ class Advisory(models.Model):
     
     def styling(self):
         return {
-            self.Boards.NONE: {'text': 'text-dark', 'background': 'bg-light'},
+            self.Boards.NONE: {'text': 'text-dark', 'background': 'bg-none'},
             self.Boards.INC: {'text': 'text-dark', 'background': 'bg-warning'},
             self.Boards.DEC: {'text': 'text-dark', 'background': 'bg-warning'},
             self.Boards.RED: {'text': 'text-light', 'background': 'bg-danger'},
