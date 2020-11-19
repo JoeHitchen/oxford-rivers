@@ -45,8 +45,11 @@ class Reach(models.Model):
     
     @cached_property
     def current_advisory(self):
-        """The most recently shown EA stream advisory for the reach."""
-        return self.advisories.filter(first_updated__lte = timezone.now()).first()
+        """The most recently shown EA stream advisory for the reach.
+        
+        N.B. Filtering by current time leads to issue #1.
+        """
+        return self.advisories.all().first()
     
     
     def update_advisory(self, new_board, board_shown = timezone.now()):
