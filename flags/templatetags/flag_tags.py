@@ -10,7 +10,10 @@ register = template.Library()
                 <td style="width: 33%{% if first %}; border-top: 0{% endif %}">
                   {{ type }}
                 </td>
-                <td class="{{ text_colour }} {{ background_colour }}"{% if first %} style="border-top: 0"{% endif %}>
+                <td
+                  class="{{ text_colour }} {{ background_colour }}"{% if first %}
+                  style="border-top: 0"{% endif %}
+                >
                   {{ main_text }}
                 </td>
               </tr>
