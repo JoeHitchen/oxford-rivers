@@ -286,10 +286,9 @@ class Test_Views(TestCase):
         
         Expected queries:
         (2) SELECT reaches and all advisories
-        (6) SELECT every reach's current advisory
         """
         
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(2):
             response = self.client.get(reverse('flags:advisory_overview'))
         
         self.assertEqual(response.status_code, 200)
