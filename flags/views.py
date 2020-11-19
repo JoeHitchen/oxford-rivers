@@ -36,6 +36,7 @@ def advisory_overview(request):
 class AdvisoryHistory(DetailView):
     
     model = models.Reach
+    queryset = models.Reach.objects.prefetch_related('advisories')
     slug_field = 'tag'
     slug_url_kwarg = 'tag'
     template_name = 'flags/advisory_history.html'

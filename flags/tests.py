@@ -329,12 +329,11 @@ class Test_Views(TestCase):
         """Expected queries:
         
         (1) SELECT reach
-        (1) SELECT reach's current advisory
+        (1) SELECT all advisories for reach
         (1) SELECT all reaches
-        (1) SELECT all reach's advisories
         """
         
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(3):
             self.client.get(reverse(
                 'flags:advisory_history',
                 kwargs = {'tag': self.reach.tag},
