@@ -1,8 +1,5 @@
-from datetime import timedelta
-
 from django.shortcuts import render
 from django.views.generic.detail import DetailView
-from django.utils import timezone
 
 from . import models, utils
 
@@ -47,8 +44,5 @@ class AdvisoryHistory(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['all_reaches'] = models.Reach.objects.all()
-        
-        time_since_last_update = timezone.now() - self.object.current_advisory.last_seen
-        context['out_of_date'] = time_since_last_update > timedelta(hours = 2)
         return context
 

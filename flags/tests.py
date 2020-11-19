@@ -94,6 +94,32 @@ class Test_Models_Reach(TestCase):
         self.assertEqual(previous_advisory.last_updated, self.updated_time)
 
 
+class Test_Models_Advisory(TestCase):
+    fixtures = ['flags']
+    
+    def setUp(self):
+        self.reach = models.Reach.objects.get(tag = 'isis')
+    
+    def test__out_of_date__in_date(self):
+        """Advisories last seen within two hours are considered 'in date'."""
+        
+        advisory = self.reach.advisories.create(
+            board = models.Advisory.Boards.NONE,
+            last_seen = timezone.now() - timedelta(minutes = 119),
+        )
+        self.assertFalse(advisory.out_of_date)
+    
+    
+    def test__out_of_date__too_old(self):
+        """Advisories last seen within over two hours ago are considered 'out of date'."""
+        
+        advisory = self.reach.advisories.create(
+            board = models.Advisory.Boards.NONE,
+            last_seen = timezone.now() - timedelta(minutes = 121),
+        )
+        self.assertTrue(advisory.out_of_date)
+
+
 class Test_Utils(TestCase):
     
     DEST = 'Destination'
@@ -241,7 +267,7 @@ class Test_Views(TestCase):
         )
     
     
-    def test__advisory_history__in_date(self):
+    def test__advisory_history__response(self):
         """Intentifies the correct reach and generates a 200 response."""
         
         self.reach.current_advisory.last_seen = timezone.now() - timedelta(minutes = 115)
@@ -254,29 +280,6 @@ class Test_Views(TestCase):
         
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['reach'], self.reach)
-        self.assertFalse(response.context['out_of_date'])
-        
-        self.assertQuerysetEqual(
-            response.context['all_reaches'],
-            list(models.Reach.objects.all()),
-            transform = lambda item: item,
-        )
-    
-    
-    def test__advisory_history__out_of_date(self):
-        """Provides an additional flag if the current advisory has not been seen in two hours."""
-        
-        self.reach.current_advisory.last_seen = timezone.now() - timedelta(minutes = 125)
-        self.reach.current_advisory.save()
-        
-        response = self.client.get(reverse(
-            'flags:advisory_history',
-            kwargs = {'tag': self.reach.tag},
-        ))
-        
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context['reach'], self.reach)
-        self.assertTrue(response.context['out_of_date'])
         
         self.assertQuerysetEqual(
             response.context['all_reaches'],
