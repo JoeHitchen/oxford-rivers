@@ -92,6 +92,44 @@ class Test_Models_Reach(TestCase):
         self.assertEqual(previous_advisory.first_updated, self.original_time)
         self.assertTrue(previous_advisory.last_seen > self.right_now)
         self.assertEqual(previous_advisory.last_updated, self.updated_time)
+    
+    
+    def test__update_advisory__updated_in_future(self):
+        """Accepts and updates the current advisory for updates which occur in the future.
+        
+        The EA clocks cannot be trusted - See issue #1.
+        """
+        
+        # Prepare & run
+        previous_advisory = self.reach.advisories.create(
+            board = models.Advisory.Boards.INC,
+            first_seen = self.original_time,
+            first_updated = self.original_time,
+            last_seen = self.original_time,
+            last_updated = self.original_time,
+        )
+        self.assertEqual(self.reach.current_advisory, previous_advisory)
+        
+        future_time = timezone.now() + timedelta(minutes = 20)
+        self.reach.update_advisory(
+            models.Advisory.Boards.RED,
+            board_shown = future_time,
+        )
+        
+        # Check previous advisory
+        previous_advisory.refresh_from_db()
+        self.assertNotEqual(self.reach.current_advisory, previous_advisory)
+        self.assertEqual(previous_advisory.first_seen, self.original_time)
+        self.assertEqual(previous_advisory.first_updated, self.original_time)
+        self.assertEqual(previous_advisory.last_seen, self.original_time)
+        self.assertEqual(previous_advisory.last_updated, self.original_time)
+        
+        # Check new advisory
+        self.assertIsNotNone(self.reach.current_advisory)
+        self.assertTrue(self.reach.current_advisory.first_seen > self.right_now)
+        self.assertEqual(self.reach.current_advisory.first_updated, future_time)
+        self.assertTrue(self.reach.current_advisory.last_seen > self.right_now)
+        self.assertEqual(self.reach.current_advisory.last_updated, future_time)
 
 
 class Test_Models_Advisory(TestCase):
@@ -248,10 +286,9 @@ class Test_Views(TestCase):
         
         Expected queries:
         (2) SELECT reaches and all advisories
-        (6) SELECT every reach's current advisory
         """
         
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(2):
             response = self.client.get(reverse('flags:advisory_overview'))
         
         self.assertEqual(response.status_code, 200)
