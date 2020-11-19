@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.db import models
 from django.utils import timezone
 from django.utils.functional import cached_property
@@ -96,6 +98,10 @@ class Advisory(models.Model):
     
     def __str__(self):
         return self.get_board_display()
+    
+    @property
+    def out_of_date(self):
+        return (timezone.now() - self.last_seen) > timedelta(hours = 2)
     
     def styling(self):
         return {
