@@ -73,6 +73,26 @@ class Reach(models.Model):
         del self.current_advisory
 
 
+class Status(models.Model):
+    """Describes the raising of an OURCs flag."""
+    
+    class Flags(models.TextChoices):
+        GREY = ('X', 'Grey')
+        GREEN = ('G', 'Green')
+        BLUE = ('B', 'Blue')
+        AMBER = ('A', 'Amber')
+        RED = ('R', 'Red')
+    
+    reach = models.ForeignKey(Reach, models.CASCADE, related_name = 'statuses')
+    flag = models.CharField(max_length = 1, choices = Flags.choices)
+    
+    first_shown = models.DateTimeField()
+    changed_by = models.CharField(max_length = 50, blank = True)
+    
+    class Meta:
+        ordering = ['reach', '-first_shown']
+
+
 class Advisory(models.Model):
     """A private model describing EA stream advisories for use through the Reach model.
     
