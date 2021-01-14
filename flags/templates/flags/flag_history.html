@@ -1,0 +1,27 @@
+{% extends 'flags/base.html' %}
+{% load flag_tags %}
+
+{% block title %}Django Flags - {{ reach }}{% endblock %}
+
+{% block page_body %}
+    
+    <!-- Past advisories table -->
+    <div class="row"><div class="col">
+      <table class="table table-sm table-borderless table-responsive-md text-center">
+        <thead class="thead-light"><tr>
+          <th class="align-middle">Flag</th>
+          <th class="align-middle">First Shown</th>
+          <th class="align-middle">Last Seen</th>
+          <th class="align-middle">Shown For</th>
+          <th class="align-middle">Changed By</th>
+        </tr></thead>
+        {% for status in reach.statuses.all %}<tr class="{{ status.styling.text }} {{ status.styling.background }}">
+          <th class="align-middle">{{ status.get_flag_display }}</th>
+          <td class="align-middle">{{ status.set_at|date:"d/m/Y H:i" }}</td>
+          <td class="align-middle">{{ status.last_seen|date:"d/m/Y H:i" }}</td>
+          <td class="align-middle">{{ status.last_seen|subtract:status.set_at|duration_days_hours }}</td>
+          <td class="align-middle">{{ status.set_by|default:"-" }}</td>
+        </tr>{% endfor %}
+      </table>
+    </div></div>
+{% endblock %}

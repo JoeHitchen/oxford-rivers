@@ -125,6 +125,15 @@ class Status(models.Model):
     
     class Meta:
         ordering = ['reach', '-set_at']
+    
+    def styling(self):
+        return {
+            self.Flags.GREY: {'text': 'text-secondary', 'background': 'bg-light'},
+            self.Flags.GREEN: {'text': 'text-dark', 'background': 'bg-success'},
+            self.Flags.BLUE: {'text': 'text-dark', 'background': 'bg-info'},
+            self.Flags.AMBER: {'text': 'text-dark', 'background': 'bg-warning'},
+            self.Flags.RED: {'text': 'text-light', 'background': 'bg-danger'},
+        }.get(self.flag)
 
 
 class Advisory(models.Model):
