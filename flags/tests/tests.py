@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.core.management import call_command
 import pytz
 
-from . import models, utils
+from .. import models, utils
 
 logging.disable(logging.CRITICAL)
 
