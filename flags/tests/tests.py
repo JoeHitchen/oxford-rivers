@@ -20,6 +20,25 @@ class Test_Models_Reach(TestCase):
         self.original_time = self.right_now - timedelta(hours = 29)
     
     
+    def test__current_flag(self):
+        """Selects the most recent status by first-shown."""
+        
+        self.reach.statuses.create(  # Created before, shown before
+            flag = models.Status.Flags.GREEN,
+            first_shown = self.original_time - timedelta(4),
+        )
+        current = self.reach.statuses.create(  # Shown most recently
+            flag = models.Status.Flags.BLUE,
+            first_shown = self.original_time,
+        )
+        self.reach.statuses.create(  # Created after, shown before
+            flag = models.Status.Flags.AMBER,
+            first_shown = self.original_time - timedelta(2),
+        )
+        
+        self.assertEqual(self.reach.current_flag, current)
+    
+    
     def test__update_advisory__no_previous(self):
         """Creates a new advisory."""
         
