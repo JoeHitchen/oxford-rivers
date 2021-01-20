@@ -18,6 +18,7 @@ flag_text_map = {
 
 
 class Command(BaseCommand):
+    """ **UNTESTED** - This command is not expected to be called regularly."""
     help = 'Retrieves historical flag information from the OURCs website'
     
     def handle(self, *args, **kwargs):
