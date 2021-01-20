@@ -44,6 +44,12 @@ class Reach(models.Model):
     
     
     @cached_property
+    def current_flag(self):
+        """The most recently shown OURCs flag for the reach."""
+        return self.statuses.all().first()
+    
+    
+    @cached_property
     def current_advisory(self):
         """The most recently shown EA stream advisory for the reach.
         
