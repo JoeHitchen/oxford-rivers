@@ -1,13 +1,10 @@
 from datetime import timedelta
-import logging
 
 from django.test import TestCase
 from django.utils import timezone
 from django.urls import reverse
 
 from .. import models, utils
-
-logging.disable(logging.CRITICAL)
 
 
 class Test_Models_Reach(TestCase):

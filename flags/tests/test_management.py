@@ -1,5 +1,6 @@
 from unittest.mock import patch
 from datetime import datetime, timedelta
+import logging
 
 from django.test import TestCase
 from django.core.management import call_command
@@ -8,6 +9,8 @@ import pytz
 
 from .. import models
 from ..management.commands.fetch_current_flags import Command as FetchCurrentFlags
+
+logging.disable(logging.CRITICAL)
 
 
 class Test_CurrentFlag(TestCase):
