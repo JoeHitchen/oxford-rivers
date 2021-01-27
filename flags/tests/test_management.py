@@ -87,7 +87,7 @@ class Test_CurrentFlag(TestCase):
     
     @patch('flags.management.commands.fetch_current_flags.requests')
     def test__add_set_by(self, requests_mock):
-        """No action is taken if the flag and changed-by fields match."""
+        """If the flag matches, a missing set-by field will be populated."""
         
         previous_flag = self.reach.statuses.create(
             flag = models.Status.Flags.GREEN,
