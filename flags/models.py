@@ -44,6 +44,12 @@ class Reach(models.Model):
     
     
     @cached_property
+    def current_flag(self):
+        """The most recently shown OURCs flag for the reach."""
+        return self.statuses.all().first()
+    
+    
+    @cached_property
     def current_advisory(self):
         """The most recently shown EA stream advisory for the reach.
         
@@ -71,6 +77,27 @@ class Reach(models.Model):
         
         # Reset current advisory cache
         del self.current_advisory
+
+
+class Status(models.Model):
+    """Describes the raising of an OURCs flag."""
+    
+    class Flags(models.TextChoices):
+        GREY = ('X', 'Grey')
+        GREEN = ('G', 'Green')
+        BLUE = ('B', 'Blue')
+        AMBER = ('A', 'Amber')
+        RED = ('R', 'Red')
+        BLACK = ('D', 'Black')
+    
+    reach = models.ForeignKey(Reach, models.CASCADE, related_name = 'statuses')
+    flag = models.CharField(max_length = 1, choices = Flags.choices)
+    
+    set_at = models.DateTimeField()
+    set_by = models.CharField(max_length = 50, blank = True)
+    
+    class Meta:
+        ordering = ['reach', '-set_at']
 
 
 class Advisory(models.Model):
