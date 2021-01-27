@@ -92,11 +92,11 @@ class Status(models.Model):
     reach = models.ForeignKey(Reach, models.CASCADE, related_name = 'statuses')
     flag = models.CharField(max_length = 1, choices = Flags.choices)
     
-    first_shown = models.DateTimeField()
-    changed_by = models.CharField(max_length = 50, blank = True)
+    set_at = models.DateTimeField()
+    set_by = models.CharField(max_length = 50, blank = True)
     
     class Meta:
-        ordering = ['reach', '-first_shown']
+        ordering = ['reach', '-set_at']
 
 
 class Advisory(models.Model):

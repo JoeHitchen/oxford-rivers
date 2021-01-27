@@ -18,19 +18,19 @@ class Test_Models_Reach(TestCase):
     
     
     def test__current_flag(self):
-        """Selects the most recent status by first-shown."""
+        """Selects the most recent status by set-at."""
         
-        self.reach.statuses.create(  # Created before, shown before
+        self.reach.statuses.create(  # Created before, set before
             flag = models.Status.Flags.GREEN,
-            first_shown = self.original_time - timedelta(4),
+            set_at = self.original_time - timedelta(4),
         )
-        current = self.reach.statuses.create(  # Shown most recently
+        current = self.reach.statuses.create(  # Set most recently
             flag = models.Status.Flags.BLUE,
-            first_shown = self.original_time,
+            set_at = self.original_time,
         )
-        self.reach.statuses.create(  # Created after, shown before
+        self.reach.statuses.create(  # Created after, set before
             flag = models.Status.Flags.AMBER,
-            first_shown = self.original_time - timedelta(2),
+            set_at = self.original_time - timedelta(2),
         )
         
         self.assertEqual(self.reach.current_flag, current)

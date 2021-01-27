@@ -41,8 +41,8 @@ class Command(BaseCommand):
             # Create new status
             reach.statuses.create(
                 flag = response_json['status'],
-                first_shown = response_json['set_date'],
-                changed_by = response_json.get('set_by', ''),
+                set_at = response_json['set_date'],
+                set_by = response_json.get('set_by', ''),
             )
         
         # Flag unchanged
@@ -50,9 +50,9 @@ class Command(BaseCommand):
             logger.info('{} - Unchanged at {}'.format(reach.name, reach.current_flag.flag))
             
             # Add missing changed-by
-            changed_by = response_json.get('set_by', '')
-            if not reach.current_flag.changed_by and changed_by:
-                reach.current_flag.changed_by = changed_by
+            set_by = response_json.get('set_by', '')
+            if not reach.current_flag.set_by and set_by:
+                reach.current_flag.set_by = set_by
                 reach.current_flag.save()
         
         logger.info('{} - Completed'.format(reach.name))

@@ -55,7 +55,7 @@ class Command(BaseCommand):
             statuses.append(models.Status(
                 reach = reach,
                 flag = flag_text_map[status_level],
-                first_shown = status_start_aware,
+                set_at = status_start_aware,
             ))
         
         # Store all statuses

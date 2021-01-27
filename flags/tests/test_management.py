@@ -23,8 +23,8 @@ class Test_CurrentFlag(TestCase):
             tag = 'test',
             downstream_order = 1,
         )
-        cls.first_shown = timezone.now()
-        cls.changed_by = 'OURCs Committee Member'
+        cls.set_at = timezone.now()
+        cls.set_by = 'OURCs Committee Member'
     
     
     def setUp(self):
@@ -52,31 +52,31 @@ class Test_CurrentFlag(TestCase):
         
         requests_mock.get.return_value.json.return_value = {
             'status': models.Status.Flags.GREEN,
-            'set_date': self.first_shown.isoformat(),
-            'set_by': self.changed_by,
+            'set_date': self.set_at.isoformat(),
+            'set_by': self.set_by,
         }
         
         FetchCurrentFlags.fetch_for_reach(self.reach)
         
         del self.reach.current_flag  # Clear cache
         self.assertEqual(self.reach.current_flag.flag, models.Status.Flags.GREEN)
-        self.assertEqual(self.reach.current_flag.first_shown, self.first_shown)
-        self.assertEqual(self.reach.current_flag.changed_by, self.changed_by)
+        self.assertEqual(self.reach.current_flag.set_at, self.set_at)
+        self.assertEqual(self.reach.current_flag.set_by, self.set_by)
     
     
     @patch('flags.management.commands.fetch_current_flags.requests')
     def test__no_change(self, requests_mock):
-        """No action is taken if the flag and changed-by fields match."""
+        """No action is taken if the flag and set-by fields match."""
         
         previous_flag = self.reach.statuses.create(
             flag = models.Status.Flags.GREEN,
-            first_shown = self.first_shown,
+            set_at = self.set_at,
         )
         self.assertEqual(previous_flag, self.reach.current_flag)
         
         requests_mock.get.return_value.json.return_value = {
             'status': models.Status.Flags.GREEN,
-            'set_date': self.first_shown.isoformat(),
+            'set_date': self.set_at.isoformat(),
         }
         
         FetchCurrentFlags.fetch_for_reach(self.reach)
@@ -86,26 +86,26 @@ class Test_CurrentFlag(TestCase):
     
     
     @patch('flags.management.commands.fetch_current_flags.requests')
-    def test__add_changed_by(self, requests_mock):
+    def test__add_set_by(self, requests_mock):
         """No action is taken if the flag and changed-by fields match."""
         
         previous_flag = self.reach.statuses.create(
             flag = models.Status.Flags.GREEN,
-            first_shown = self.first_shown,
+            set_at = self.set_at,
         )
-        self.assertEqual(self.reach.current_flag.changed_by, '')
+        self.assertEqual(self.reach.current_flag.set_by, '')
         
         requests_mock.get.return_value.json.return_value = {
             'status': models.Status.Flags.GREEN,
-            'set_date': self.first_shown.isoformat(),
-            'set_by': self.changed_by,
+            'set_date': self.set_at.isoformat(),
+            'set_by': self.set_by,
         }
         
         FetchCurrentFlags.fetch_for_reach(self.reach)
         
         del self.reach.current_flag  # Clear cache
         self.assertEqual(previous_flag, self.reach.current_flag)
-        self.assertEqual(self.reach.current_flag.changed_by, self.changed_by)
+        self.assertEqual(self.reach.current_flag.set_by, self.set_by)
     
     
     @patch('flags.management.commands.fetch_current_flags.requests')
@@ -114,14 +114,14 @@ class Test_CurrentFlag(TestCase):
         
         previous_flag = self.reach.statuses.create(
             flag = models.Status.Flags.BLUE,
-            first_shown = self.first_shown - timedelta(1),
+            set_at = self.set_at - timedelta(1),
         )
         self.assertEqual(previous_flag, self.reach.current_flag)
         
         requests_mock.get.return_value.json.return_value = {
             'status': models.Status.Flags.GREEN,
-            'set_date': self.first_shown.isoformat(),
-            'set_by': self.changed_by,
+            'set_date': self.set_at.isoformat(),
+            'set_by': self.set_by,
         }
         
         FetchCurrentFlags.fetch_for_reach(self.reach)
@@ -129,8 +129,8 @@ class Test_CurrentFlag(TestCase):
         del self.reach.current_flag  # Clear cache
         self.assertNotEqual(previous_flag, self.reach.current_flag)
         self.assertEqual(self.reach.current_flag.flag, models.Status.Flags.GREEN)
-        self.assertEqual(self.reach.current_flag.first_shown, self.first_shown)
-        self.assertEqual(self.reach.current_flag.changed_by, self.changed_by)
+        self.assertEqual(self.reach.current_flag.set_at, self.set_at)
+        self.assertEqual(self.reach.current_flag.set_by, self.set_by)
 
 
 class Test_EABoards(TestCase):
