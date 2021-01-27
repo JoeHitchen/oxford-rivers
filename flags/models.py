@@ -88,6 +88,7 @@ class Status(models.Model):
         BLUE = ('B', 'Blue')
         AMBER = ('A', 'Amber')
         RED = ('R', 'Red')
+        BLACK = ('D', 'Black')
     
     reach = models.ForeignKey(Reach, models.CASCADE, related_name = 'statuses')
     flag = models.CharField(max_length = 1, choices = Flags.choices)

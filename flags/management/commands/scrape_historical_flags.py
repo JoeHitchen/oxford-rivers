@@ -14,6 +14,7 @@ flag_text_map = {
     'Blue': 'B',
     'Amber': 'A',
     'Red': 'R',
+    'Black': 'D',
 }
 
 
