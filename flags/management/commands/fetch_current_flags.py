@@ -10,7 +10,7 @@ logger.setLevel('INFO')
 
 
 class Command(BaseCommand):
-    help = 'Retrieves historical flag information from the OURCs website'
+    help = 'Retrieves current flag information from the OURCs website'
     
     def handle(self, *args, **kwargs):
         """Perform retrieval for both Isis and Godstow."""
@@ -21,10 +21,10 @@ class Command(BaseCommand):
     
     @staticmethod
     def fetch_for_reach(reach):
-        """Main loopup routine."""
+        """Main lookup routine."""
         logger.info('{} - Fetching...'.format(reach.name))
         
-        # Request and parse OURCs flag pages
+        # Request and parse OURCs flag APIs
         response = requests.get('https://ourcs.co.uk/api/flags/status/{}/'.format(reach.tag))
         if not response.ok:
             response.raise_for_status()
@@ -49,7 +49,7 @@ class Command(BaseCommand):
         else:
             logger.info('{} - Unchanged at {}'.format(reach.name, reach.current_flag.flag))
             
-            # Add missing changed-by
+            # Add missing set-by
             set_by = response_json.get('set_by', '')
             if not reach.current_flag.set_by and set_by:
                 reach.current_flag.set_by = set_by

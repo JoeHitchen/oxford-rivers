@@ -31,7 +31,7 @@ class Command(BaseCommand):
     
     @staticmethod
     def fetch_for_reach(reach):
-        """Main loopup routine."""
+        """Main lookup routine."""
         
         # Request and parse OURCs flag pages
         response = requests.get('https://ourcs.co.uk/information/flags/{}/'.format(reach.tag))
