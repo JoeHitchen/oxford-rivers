@@ -45,7 +45,8 @@ class Command(BaseCommand):
         
         # Iterate over historical statuses
         statuses = []
-        for status_row in soup.find_all('table')[2].contents[3].find_all('tr'):
+        previous_status_flag = None
+        for status_row in soup.find_all('table')[2].contents[3].find_all('tr')[::-1]:
             
             # Extract status information
             status_row_elements = status_row.find_all('td')
@@ -57,7 +58,11 @@ class Command(BaseCommand):
             
             # De-duplication checks
             if (status_flag, status_start_aware) in already_recorded:
+                previous_status_flag = status_flag
                 continue
+            if status_flag == previous_status_flag:
+                continue
+            previous_status_flag = status_flag
             
             # Create status record
             statuses.append(models.Status(
