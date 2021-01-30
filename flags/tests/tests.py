@@ -12,7 +12,7 @@ class Test_Models_Reach(TestCase):
     
     def setUp(self):
         self.reach = models.Reach.objects.first()
-        self.right_now = timezone.now()
+        self.right_now = timezone.now() - timedelta(seconds = 1)  # Altered to avoid race condition
         self.updated_time = self.right_now - timedelta(minutes = 17)
         self.original_time = self.right_now - timedelta(hours = 29)
     
