@@ -40,22 +40,34 @@ class Command(BaseCommand):
         
         soup = BeautifulSoup(response.text, 'html.parser')
         
+        # Retrieve existing status records
+        already_recorded = [(status.flag, status.set_at) for status in reach.statuses.all()]
+        
         # Iterate over historical statuses
         statuses = []
-        for status_row in soup.find_all('table')[2].contents[3].find_all('tr'):
+        previous_status_flag = None
+        for status_row in soup.find_all('table')[2].contents[3].find_all('tr')[::-1]:
             
             # Extract status information
             status_row_elements = status_row.find_all('td')
-            status_level = status_row_elements[0].contents[0]
+            status_flag = flag_text_map[status_row_elements[0].contents[0]]
             
             status_start_string = status_row_elements[1].contents[0]
             status_start_naive = datetime.strptime(status_start_string, '%d/%m/%y %H:%M')
             status_start_aware = status_start_naive.astimezone(pytz.timezone('Europe/London'))
             
+            # De-duplication checks
+            if (status_flag, status_start_aware) in already_recorded:
+                previous_status_flag = status_flag
+                continue
+            if status_flag == previous_status_flag:
+                continue
+            previous_status_flag = status_flag
+            
             # Create status record
             statuses.append(models.Status(
                 reach = reach,
-                flag = flag_text_map[status_level],
+                flag = status_flag,
                 set_at = status_start_aware,
             ))
         
