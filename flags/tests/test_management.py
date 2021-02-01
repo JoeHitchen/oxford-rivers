@@ -29,8 +29,8 @@ class Test_OURCsFlag(TestCase):
     
     def setUp(self):
         """ Clear cache - Weird things happen if removed"""
-        self.reach.current_flag
-        del self.reach.current_flag
+        self.reach.current_flag_status
+        del self.reach.current_flag_status
     
     
     @patch.object(FetchOURCsFlags, 'fetch_for_reach')
@@ -48,7 +48,7 @@ class Test_OURCsFlag(TestCase):
     def test__no_current_flag(self, requests_mock):
         """Creates a new flag status if none is present."""
         
-        self.assertIsNone(self.reach.current_flag)
+        self.assertIsNone(self.reach.current_flag_status)
         
         requests_mock.get.return_value.json.return_value = {
             'status': models.Status.Flags.GREEN,
@@ -58,10 +58,10 @@ class Test_OURCsFlag(TestCase):
         
         FetchOURCsFlags.fetch_for_reach(self.reach)
         
-        del self.reach.current_flag  # Clear cache
-        self.assertEqual(self.reach.current_flag.flag, models.Status.Flags.GREEN)
-        self.assertEqual(self.reach.current_flag.set_at, self.set_at)
-        self.assertEqual(self.reach.current_flag.set_by, self.set_by)
+        del self.reach.current_flag_status  # Clear cache
+        self.assertEqual(self.reach.current_flag_status.flag, models.Status.Flags.GREEN)
+        self.assertEqual(self.reach.current_flag_status.set_at, self.set_at)
+        self.assertEqual(self.reach.current_flag_status.set_by, self.set_by)
     
     
     @patch('flags.management.commands.fetch_ourcs_flags.requests')
@@ -72,7 +72,7 @@ class Test_OURCsFlag(TestCase):
             flag = models.Status.Flags.GREEN,
             set_at = self.set_at,
         )
-        self.assertEqual(previous_flag, self.reach.current_flag)
+        self.assertEqual(previous_flag, self.reach.current_flag_status)
         
         requests_mock.get.return_value.json.return_value = {
             'status': models.Status.Flags.GREEN,
@@ -81,8 +81,8 @@ class Test_OURCsFlag(TestCase):
         
         FetchOURCsFlags.fetch_for_reach(self.reach)
         
-        del self.reach.current_flag  # Clear cache
-        self.assertEqual(previous_flag, self.reach.current_flag)
+        del self.reach.current_flag_status  # Clear cache
+        self.assertEqual(previous_flag, self.reach.current_flag_status)
     
     
     @patch('flags.management.commands.fetch_ourcs_flags.requests')
@@ -93,7 +93,7 @@ class Test_OURCsFlag(TestCase):
             flag = models.Status.Flags.GREEN,
             set_at = self.set_at,
         )
-        self.assertEqual(self.reach.current_flag.set_by, '')
+        self.assertEqual(self.reach.current_flag_status.set_by, '')
         
         requests_mock.get.return_value.json.return_value = {
             'status': models.Status.Flags.GREEN,
@@ -103,9 +103,9 @@ class Test_OURCsFlag(TestCase):
         
         FetchOURCsFlags.fetch_for_reach(self.reach)
         
-        del self.reach.current_flag  # Clear cache
-        self.assertEqual(previous_flag, self.reach.current_flag)
-        self.assertEqual(self.reach.current_flag.set_by, self.set_by)
+        del self.reach.current_flag_status  # Clear cache
+        self.assertEqual(previous_flag, self.reach.current_flag_status)
+        self.assertEqual(self.reach.current_flag_status.set_by, self.set_by)
     
     
     @patch('flags.management.commands.fetch_ourcs_flags.requests')
@@ -116,7 +116,7 @@ class Test_OURCsFlag(TestCase):
             flag = models.Status.Flags.BLUE,
             set_at = self.set_at - timedelta(1),
         )
-        self.assertEqual(previous_flag, self.reach.current_flag)
+        self.assertEqual(previous_flag, self.reach.current_flag_status)
         
         requests_mock.get.return_value.json.return_value = {
             'status': models.Status.Flags.GREEN,
@@ -126,11 +126,11 @@ class Test_OURCsFlag(TestCase):
         
         FetchOURCsFlags.fetch_for_reach(self.reach)
         
-        del self.reach.current_flag  # Clear cache
-        self.assertNotEqual(previous_flag, self.reach.current_flag)
-        self.assertEqual(self.reach.current_flag.flag, models.Status.Flags.GREEN)
-        self.assertEqual(self.reach.current_flag.set_at, self.set_at)
-        self.assertEqual(self.reach.current_flag.set_by, self.set_by)
+        del self.reach.current_flag_status  # Clear cache
+        self.assertNotEqual(previous_flag, self.reach.current_flag_status)
+        self.assertEqual(self.reach.current_flag_status.flag, models.Status.Flags.GREEN)
+        self.assertEqual(self.reach.current_flag_status.set_at, self.set_at)
+        self.assertEqual(self.reach.current_flag_status.set_by, self.set_by)
 
 
 class Test_EABoards(TestCase):

@@ -31,10 +31,11 @@ class Command(BaseCommand):
         response_json = response.json()
         
         # Flag changed
-        if not reach.current_flag or response_json['status'] != reach.current_flag.flag:
+        current_status = reach.current_flag_status
+        if not current_status or response_json['status'] != current_status.flag:
             logger.info('{} - Changed from {} to {}'.format(
                 reach.name,
-                reach.current_flag and reach.current_flag.flag,
+                current_status and current_status.flag,
                 response_json['status'],
             ))
             
@@ -47,13 +48,13 @@ class Command(BaseCommand):
         
         # Flag unchanged
         else:
-            logger.info('{} - Unchanged at {}'.format(reach.name, reach.current_flag.flag))
+            logger.info('{} - Unchanged at {}'.format(reach.name, current_status.flag))
             
             # Add missing set-by
             set_by = response_json.get('set_by', '')
-            if not reach.current_flag.set_by and set_by:
-                reach.current_flag.set_by = set_by
-                reach.current_flag.save()
+            if not current_status.set_by and set_by:
+                current_status.set_by = set_by
+                current_status.save()
         
         logger.info('{} - Completed'.format(reach.name))
 

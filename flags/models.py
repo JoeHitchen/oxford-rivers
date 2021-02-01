@@ -44,7 +44,7 @@ class Reach(models.Model):
     
     
     @cached_property
-    def current_flag(self):
+    def current_flag_status(self):
         """The most recently shown OURCs flag for the reach."""
         return self.statuses.all().first()
     

@@ -33,7 +33,7 @@ class Test_Models_Reach(TestCase):
             set_at = self.original_time - timedelta(2),
         )
         
-        self.assertEqual(self.reach.current_flag, current)
+        self.assertEqual(self.reach.current_flag_status, current)
     
     
     def test__update_advisory__no_previous(self):
