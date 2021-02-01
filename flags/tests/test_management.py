@@ -8,12 +8,12 @@ from django.utils import timezone
 import pytz
 
 from .. import models
-from ..management.commands.fetch_current_flags import Command as FetchCurrentFlags
+from ..management.commands.fetch_ourcs_flags import Command as FetchOURCsFlags
 
 logging.disable(logging.CRITICAL)
 
 
-class Test_CurrentFlag(TestCase):
+class Test_OURCsFlag(TestCase):
     fixtures = ['flags']
     
     @classmethod
@@ -33,18 +33,18 @@ class Test_CurrentFlag(TestCase):
         del self.reach.current_flag
     
     
-    @patch.object(FetchCurrentFlags, 'fetch_for_reach')
+    @patch.object(FetchOURCsFlags, 'fetch_for_reach')
     def test__handle(self, fetch_for_reach_mock):
         """Calls the subroutine for both the Isis and Godstow."""
         
-        call_command('fetch_current_flags')
+        call_command('fetch_ourcs_flags')
         
         self.assertEqual(fetch_for_reach_mock.call_count, 2)
         fetch_for_reach_mock.assert_any_call(models.Reach.objects.get(tag = 'isis'))
         fetch_for_reach_mock.assert_any_call(models.Reach.objects.get(tag = 'godstow'))
     
     
-    @patch('flags.management.commands.fetch_current_flags.requests')
+    @patch('flags.management.commands.fetch_ourcs_flags.requests')
     def test__no_current_flag(self, requests_mock):
         """Creates a new flag status if none is present."""
         
@@ -56,7 +56,7 @@ class Test_CurrentFlag(TestCase):
             'set_by': self.set_by,
         }
         
-        FetchCurrentFlags.fetch_for_reach(self.reach)
+        FetchOURCsFlags.fetch_for_reach(self.reach)
         
         del self.reach.current_flag  # Clear cache
         self.assertEqual(self.reach.current_flag.flag, models.Status.Flags.GREEN)
@@ -64,7 +64,7 @@ class Test_CurrentFlag(TestCase):
         self.assertEqual(self.reach.current_flag.set_by, self.set_by)
     
     
-    @patch('flags.management.commands.fetch_current_flags.requests')
+    @patch('flags.management.commands.fetch_ourcs_flags.requests')
     def test__no_change(self, requests_mock):
         """No action is taken if the flag and set-by fields match."""
         
@@ -79,13 +79,13 @@ class Test_CurrentFlag(TestCase):
             'set_date': self.set_at.isoformat(),
         }
         
-        FetchCurrentFlags.fetch_for_reach(self.reach)
+        FetchOURCsFlags.fetch_for_reach(self.reach)
         
         del self.reach.current_flag  # Clear cache
         self.assertEqual(previous_flag, self.reach.current_flag)
     
     
-    @patch('flags.management.commands.fetch_current_flags.requests')
+    @patch('flags.management.commands.fetch_ourcs_flags.requests')
     def test__add_set_by(self, requests_mock):
         """If the flag matches, a missing set-by field will be populated."""
         
@@ -101,14 +101,14 @@ class Test_CurrentFlag(TestCase):
             'set_by': self.set_by,
         }
         
-        FetchCurrentFlags.fetch_for_reach(self.reach)
+        FetchOURCsFlags.fetch_for_reach(self.reach)
         
         del self.reach.current_flag  # Clear cache
         self.assertEqual(previous_flag, self.reach.current_flag)
         self.assertEqual(self.reach.current_flag.set_by, self.set_by)
     
     
-    @patch('flags.management.commands.fetch_current_flags.requests')
+    @patch('flags.management.commands.fetch_ourcs_flags.requests')
     def test__flag_changed(self, requests_mock):
         """A new status should be created when a different flag is seen."""
         
@@ -124,7 +124,7 @@ class Test_CurrentFlag(TestCase):
             'set_by': self.set_by,
         }
         
-        FetchCurrentFlags.fetch_for_reach(self.reach)
+        FetchOURCsFlags.fetch_for_reach(self.reach)
         
         del self.reach.current_flag  # Clear cache
         self.assertNotEqual(previous_flag, self.reach.current_flag)

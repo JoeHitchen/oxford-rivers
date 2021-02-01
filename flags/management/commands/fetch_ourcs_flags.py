@@ -10,7 +10,7 @@ logger.setLevel('INFO')
 
 
 class Command(BaseCommand):
-    help = 'Retrieves current flag information from the OURCs website'
+    help = 'Retrieves current flag information from the OURCs APIs'
     
     def handle(self, *args, **kwargs):
         """Perform retrieval for both Isis and Godstow."""
