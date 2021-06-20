@@ -433,10 +433,10 @@ class Test_Views(TestCase):
             )
     
     
-    def test__advisory_overview__response(self):
+    def test__index__response(self):
         """Lists all the reaches and generates a 200 response."""
         
-        response = self.client.get(reverse('flags:advisory_overview'))
+        response = self.client.get(reverse('flags:index'))
         
         self.assertEqual(response.status_code, 200)
         self.assertQuerysetEqual(response.context['reaches'], models.Reach.objects.all())
@@ -444,7 +444,7 @@ class Test_Views(TestCase):
     
     
     @tag('query-count')
-    def test__advisory_overview__query_count(self):
+    def test__index__query_count(self):
         """Expect:
             (1) SELECT reaches
             (1) PREFETCH advisories
@@ -452,7 +452,7 @@ class Test_Views(TestCase):
         """
         
         with self.assertNumQueries(3):
-            self.client.get(reverse('flags:advisory_overview'))
+            self.client.get(reverse('flags:index'))
     
     
     def test__advisory_history__response(self):
