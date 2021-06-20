@@ -305,16 +305,8 @@ class Test_Views(TestCase):
             response = self.client.get(reverse('flags:advisory_overview'))
         
         self.assertEqual(response.status_code, 200)
-        self.assertQuerysetEqual(
-            response.context['reaches'],
-            list(models.Reach.objects.all()),
-            transform = lambda item: item,
-        )
-        self.assertQuerysetEqual(
-            response.context['all_reaches'],
-            list(models.Reach.objects.all()),
-            transform = lambda item: item,
-        )
+        self.assertQuerysetEqual(response.context['reaches'], models.Reach.objects.all())
+        self.assertQuerysetEqual(response.context['all_reaches'], models.Reach.objects.all())
     
     
     def test__advisory_history__response(self):
@@ -331,11 +323,7 @@ class Test_Views(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['reach'], self.reach)
         
-        self.assertQuerysetEqual(
-            response.context['all_reaches'],
-            list(models.Reach.objects.all()),
-            transform = lambda item: item,
-        )
+        self.assertQuerysetEqual(response.context['all_reaches'], models.Reach.objects.all())
     
     
     def test__advisory_history__query_count(self):
