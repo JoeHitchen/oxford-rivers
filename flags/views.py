@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 from django.utils import timezone
 
@@ -30,15 +30,20 @@ class FlagHistory(FlagNavMixin, DetailView):
         return context
 
 
-def advisory_overview(request):
-    reaches = models.Reach.objects.prefetch_related('advisories').all()
-    reach_board_map = {reach.tag: reach.current_advisory.board for reach in reaches}
+class AdvisoryOverview(FlagNavMixin, TemplateView):
     
-    context = {
-        'reaches': reaches,
-        'all_reaches': reaches,
-        'flag_reaches': models.Reach.objects.filter(has_ourcs_flag = True).order_by('pk'),
-        'transits': [
+    template_name = 'flags/advisory_overview.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        context['all_reaches'] = context['all_reaches'].prefetch_related('advisories')
+        reach_board_map = {
+            reach.tag: reach.current_advisory.board
+            for reach in context['all_reaches']
+        }
+        
+        context['transits'] = [
             utils.calculate_transit_permitted(
                 reach_board_map,
                 'Godstow',
@@ -54,10 +59,9 @@ def advisory_overview(request):
                 'Abingdon',
                 ['isis', 'sandford', 'radley', 'abingdon'],
             ),
-        ],
-    }
-    
-    return render(request, 'flags/advisory_overview.html', context)
+        ]
+        
+        return context
 
 
 class AdvisoryHistory(FlagNavMixin, DetailView):

@@ -11,7 +11,7 @@ urlpatterns = [
     ])),
     path('', include([
         path('<slug:tag>/', views.AdvisoryHistory.as_view(), name = 'advisory_history'),
-        path('', views.advisory_overview, name = 'advisory_overview'),
+        path('', views.AdvisoryOverview.as_view(), name = 'advisory_overview'),
     ])),
     path('', RedirectView.as_view(  # Dummy view to provide flags 'index' name
         url = reverse_lazy('flags:advisory_overview'),
