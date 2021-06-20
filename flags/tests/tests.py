@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from django.test import TestCase
+from django.test import TestCase, tag
 from django.utils import timezone
 from django.urls import reverse
 
@@ -294,23 +294,29 @@ class Test_Views(TestCase):
             )
     
     
-    def test__advisory_overview(self):
-        """Lists all the reaches and generates a 200 response.
+    def test__advisory_overview__response(self):
+        """Lists all the reaches and generates a 200 response."""
         
-        Expected queries:
-        (2) SELECT reaches and all advisories
-        """
-        
-        with self.assertNumQueries(2):
-            response = self.client.get(reverse('flags:advisory_overview'))
+        response = self.client.get(reverse('flags:advisory_overview'))
         
         self.assertEqual(response.status_code, 200)
         self.assertQuerysetEqual(response.context['reaches'], models.Reach.objects.all())
         self.assertQuerysetEqual(response.context['all_reaches'], models.Reach.objects.all())
     
     
+    @tag('query-count')
+    def test__advisory_overview__query_count(self):
+        """Expect:
+            (1) SELECT reaches
+            (1) PREFETCH advisories
+        """
+        
+        with self.assertNumQueries(2):
+            self.client.get(reverse('flags:advisory_overview'))
+    
+    
     def test__advisory_history__response(self):
-        """Intentifies the correct reach and generates a 200 response."""
+        """Identifies the correct reach and generates a 200 response."""
         
         self.reach.current_advisory.last_seen = timezone.now() - timedelta(minutes = 115)
         self.reach.current_advisory.save()
@@ -326,12 +332,12 @@ class Test_Views(TestCase):
         self.assertQuerysetEqual(response.context['all_reaches'], models.Reach.objects.all())
     
     
+    @tag('query-count')
     def test__advisory_history__query_count(self):
-        """Expected queries:
-        
-        (1) SELECT reach
-        (1) SELECT all advisories for reach
-        (1) SELECT all reaches
+        """Expect:
+            (1) SELECT reach
+            (1) PREFETCH all advisories for reach
+            (1) SELECT all reaches
         """
         
         with self.assertNumQueries(3):
