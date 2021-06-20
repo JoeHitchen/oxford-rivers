@@ -420,9 +420,10 @@ class Test_Views(TestCase):
         """Expect:
             (1) SELECT reaches
             (1) PREFETCH advisories
+            (1) SELECT reaches with an OURCs flag
         """
         
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(3):
             self.client.get(reverse('flags:advisory_overview'))
     
     
@@ -448,10 +449,10 @@ class Test_Views(TestCase):
         """Expect:
             (1) SELECT reach
             (1) PREFETCH all advisories for reach
-            (1) SELECT all reaches
+            (2) SELECT all reaches and reaches with an OURCs flag
         """
         
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(4):
             self.client.get(reverse(
                 'flags:advisory_history',
                 kwargs = {'tag': self.reach.tag},

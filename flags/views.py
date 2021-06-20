@@ -5,7 +5,18 @@ from django.utils import timezone
 from . import models, utils
 
 
-class FlagHistory(DetailView):
+class FlagNavMixin:
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'all_reaches': models.Reach.objects.all(),
+            'flag_reaches': models.Reach.objects.filter(has_ourcs_flag = True).order_by('pk'),
+        })
+        return context
+
+
+class FlagHistory(FlagNavMixin, DetailView):
     
     model = models.Reach
     queryset = models.Reach.objects.filter(has_ourcs_flag = True).prefetch_related('statuses')
@@ -26,6 +37,7 @@ def advisory_overview(request):
     context = {
         'reaches': reaches,
         'all_reaches': reaches,
+        'flag_reaches': models.Reach.objects.filter(has_ourcs_flag = True).order_by('pk'),
         'transits': [
             utils.calculate_transit_permitted(
                 reach_board_map,
@@ -48,17 +60,11 @@ def advisory_overview(request):
     return render(request, 'flags/advisory_overview.html', context)
 
 
-class AdvisoryHistory(DetailView):
+class AdvisoryHistory(FlagNavMixin, DetailView):
     
     model = models.Reach
     queryset = models.Reach.objects.prefetch_related('advisories')
     slug_field = 'tag'
     slug_url_kwarg = 'tag'
     template_name = 'flags/advisory_history.html'
-    
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['all_reaches'] = models.Reach.objects.all()
-        return context
 
