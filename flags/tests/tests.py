@@ -36,6 +36,25 @@ class Test_Models_Reach(TestCase):
         self.assertEqual(self.reach.current_flag_status, current)
     
     
+    def test__current_advisory(self):
+        """Selects the most recent advisory by first-updated."""
+        
+        self.reach.advisories.create(  # Created before, set before
+            board = models.Advisory.Boards.NONE,
+            first_updated = self.original_time - timedelta(4),
+        )
+        current = self.reach.advisories.create(  # Set most recently
+            board = models.Advisory.Boards.INC,
+            first_updated = self.original_time,
+        )
+        self.reach.advisories.create(  # Created after, set before
+            board = models.Advisory.Boards.DEC,
+            first_updated = self.original_time - timedelta(2),
+        )
+        
+        self.assertEqual(self.reach.current_advisory, current)
+    
+    
     def test__update_flag_status__no_previous(self):
         """Creates a new flag status."""
         
