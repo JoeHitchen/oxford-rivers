@@ -256,6 +256,34 @@ class Test_Models_Reach(TestCase):
         self.assertEqual(self.reach.current_advisory.last_updated, future_time)
 
 
+class Test_Models_Status(TestCase):
+    fixtures = ['flags']
+    
+    def setUp(self):
+        self.reach = models.Reach.objects.get(tag = 'isis')
+    
+    def test__out_of_date__in_date(self):
+        """Statuses last seen within two hours are considered 'in date'."""
+        
+        status = self.reach.statuses.create(
+            flag = models.Status.Flags.GREEN,
+            set_at = timezone.now() - timedelta(days = 1),
+            last_seen = timezone.now() - timedelta(minutes = 119),
+        )
+        self.assertFalse(status.out_of_date)
+    
+    
+    def test__out_of_date__too_old(self):
+        """Statuses last seen over two hours ago are considered 'out of date'."""
+        
+        status = self.reach.statuses.create(
+            flag = models.Status.Flags.GREEN,
+            set_at = timezone.now() - timedelta(days = 1),
+            last_seen = timezone.now() - timedelta(minutes = 121),
+        )
+        self.assertTrue(status.out_of_date)
+
+
 class Test_Models_Advisory(TestCase):
     fixtures = ['flags']
     
@@ -420,9 +448,10 @@ class Test_Views(TestCase):
         """Expect:
             (1) SELECT reaches
             (1) PREFETCH advisories
+            (1) SELECT reaches with an OURCs flag
         """
         
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(3):
             self.client.get(reverse('flags:advisory_overview'))
     
     
@@ -448,10 +477,10 @@ class Test_Views(TestCase):
         """Expect:
             (1) SELECT reach
             (1) PREFETCH all advisories for reach
-            (1) SELECT all reaches
+            (2) SELECT all reaches and reaches with an OURCs flag
         """
         
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(4):
             self.client.get(reverse(
                 'flags:advisory_history',
                 kwargs = {'tag': self.reach.tag},

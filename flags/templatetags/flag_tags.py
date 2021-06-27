@@ -1,8 +1,30 @@
+from math import floor
+
 from django import template
 
 from .. utils import Transit
 
 register = template.Library()
+
+
+@register.filter
+def subtract(a, b):
+    return a - b
+
+
+@register.filter
+def duration_days_hours(duration):
+    
+    str = ''
+    if duration.days > 1:
+        str = '{} days, '.format(duration.days)
+    elif duration.days == 1:
+        str = '1 day, '
+    
+    hours = floor(duration.total_seconds() / 60**2 - 24 * duration.days)
+    str += '{} hour{}'.format(hours, 's' if hours > 1 else '')
+    
+    return str
 
 
 @register.inclusion_tag(template.Template('''

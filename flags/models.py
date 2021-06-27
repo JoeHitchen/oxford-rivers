@@ -125,6 +125,22 @@ class Status(models.Model):
     
     class Meta:
         ordering = ['reach', '-set_at']
+    
+    def __str__(self):
+        return self.get_flag_display()
+    
+    @property
+    def out_of_date(self):
+        return (timezone.now() - self.last_seen) > timedelta(hours = 2)
+    
+    def styling(self):
+        return {
+            self.Flags.GREY: {'text': 'text-secondary', 'background': 'bg-light'},
+            self.Flags.GREEN: {'text': 'text-dark', 'background': 'bg-success'},
+            self.Flags.BLUE: {'text': 'text-dark', 'background': 'bg-info'},
+            self.Flags.AMBER: {'text': 'text-dark', 'background': 'bg-warning'},
+            self.Flags.RED: {'text': 'text-light', 'background': 'bg-danger'},
+        }.get(self.flag)
 
 
 class Advisory(models.Model):
