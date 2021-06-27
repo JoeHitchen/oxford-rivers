@@ -11,6 +11,7 @@ class Reach(models.Model):
     name = models.CharField(max_length = 12)
     tag = models.SlugField(max_length = 12, unique = True)  # Implicit db index
     downstream_order = models.PositiveSmallIntegerField()
+    has_ourcs_flag = models.BooleanField(default = False)
     
     class Meta:
         ordering = ['downstream_order']

@@ -23,10 +23,10 @@ class Command(BaseCommand):
     help = 'Retrieves historical flag information from the OURCs website'
     
     def handle(self, *args, **kwargs):
-        """Perform lookup for both Isis and Godstow."""
+        """Perform lookup for all reaches that have OURCs flags."""
         
-        self.fetch_for_reach(models.Reach.objects.get(tag = 'isis'))
-        self.fetch_for_reach(models.Reach.objects.get(tag = 'godstow'))
+        for reach in models.Reach.objects.filter(has_ourcs_flag = True):
+            self.fetch_for_reach(reach)
     
     
     @staticmethod

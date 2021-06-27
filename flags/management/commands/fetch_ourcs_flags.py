@@ -13,19 +13,14 @@ class Command(BaseCommand):
     help = 'Retrieves current flag information from the OURCs APIs'
     
     def handle(self, *args, **kwargs):
-        """Perform retrieval for both Isis and Godstow."""
+        """Perform lookup for all reaches that have OURCs flags."""
         
-        try:
-            self.fetch_for_reach(models.Reach.objects.get(tag = 'isis'))
-        except Exception as err:
-            logger.error('Isis flag error')
-            logger.exception(err)
-        
-        try:
-            self.fetch_for_reach(models.Reach.objects.get(tag = 'godstow'))
-        except Exception as err:
-            logger.error('Godstow flag error')
-            logger.exception(err)
+        for reach in models.Reach.objects.filter(has_ourcs_flag = True):
+            try:
+                self.fetch_for_reach(reach)
+            except Exception as err:
+                logger.error('{} - Error'.format(reach.name))
+                logger.exception(err)
     
     
     @staticmethod

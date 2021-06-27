@@ -5,7 +5,8 @@
     "fields": {
       "name": "The Isis",
       "tag": "isis",
-      "downstream_order": 2
+      "downstream_order": 2,
+      "has_ourcs_flag": true
     }
   },
   {
@@ -14,7 +15,8 @@
     "fields": {
       "name": "Godstow",
       "tag": "godstow",
-      "downstream_order": 1
+      "downstream_order": 1,
+      "has_ourcs_flag": true
     }
   },
   {
