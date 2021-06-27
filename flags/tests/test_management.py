@@ -106,10 +106,11 @@ class Test_EABoards(TestCase):
     def test__fetch_error(self, requests_mock):
         """Throws an error when the page retrieval fails."""
         
-        requests_mock.get.return_value.text = self.page_contents
         requests_mock.get.return_value.ok = False
+        requests_mock.get.return_value.raise_for_status.side_effect = Exception
         
-        call_command('scrape_ea_boards')
+        with self.assertRaises(Exception):
+            call_command('scrape_ea_boards')
         
         self.assertEqual(requests_mock.get.return_value.raise_for_status.call_count, 1)
     
