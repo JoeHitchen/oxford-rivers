@@ -19,12 +19,8 @@
           <a class="nav-link dropdown-toggle" href="{% url 'flags:advisory_overview' %}" role="button" data-toggle="dropdown">
             EA Advisories
           </a>
-          <div class="dropdown-menu">
-            <a class="dropdown-item" href="{% url 'flags:advisory_overview' %}">Overview</a>
-            <div class="dropdown-divider"></div>
-            
-            {% for nav_reach in all_reaches %}<a class="dropdown-item" href="{% url 'flags:advisory_history' nav_reach.tag %}">{{ nav_reach }}</a>
-            {% endfor %}
+          <div class="dropdown-menu">{% for nav_reach in all_reaches %}
+            <a class="dropdown-item" href="{% url 'flags:advisory_history' nav_reach.tag %}">{{ nav_reach }}</a>{% endfor %}
           </div>
         </li>
       </ul>
