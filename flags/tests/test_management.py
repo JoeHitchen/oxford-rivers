@@ -1,5 +1,5 @@
 from unittest.mock import patch
-from datetime import datetime, timedelta
+from datetime import datetime
 import logging
 
 from django.test import TestCase
@@ -34,7 +34,7 @@ class Test_OURCsFlag(TestCase):
     
     
     @patch.object(FetchOURCsFlags, 'fetch_for_reach')
-    def test__handle(self, fetch_for_reach_mock):
+    def test__handle__success(self, fetch_for_reach_mock):
         """Calls the subroutine for both the Isis and Godstow."""
         
         call_command('fetch_ourcs_flags')
@@ -44,93 +44,53 @@ class Test_OURCsFlag(TestCase):
         fetch_for_reach_mock.assert_any_call(models.Reach.objects.get(tag = 'godstow'))
     
     
+    @patch.object(FetchOURCsFlags, 'fetch_for_reach')
+    def test__handle__error(self, fetch_for_reach_mock):
+        """Gracefully handles errors in any of the reach calls and still calls both reaches."""
+        
+        fetch_for_reach_mock.side_effect = ValueError
+        
+        call_command('fetch_ourcs_flags')
+        
+        self.assertEqual(fetch_for_reach_mock.call_count, 2)
+        fetch_for_reach_mock.assert_any_call(models.Reach.objects.get(tag = 'isis'))
+        fetch_for_reach_mock.assert_any_call(models.Reach.objects.get(tag = 'godstow'))
+    
+    
     @patch('flags.management.commands.fetch_ourcs_flags.requests')
-    def test__no_current_flag(self, requests_mock):
-        """Creates a new flag status if none is present."""
+    @patch.object(models.Reach, 'update_flag_status')
+    def test__fetch__success(self, update_mock, requests_mock):
+        """Retrieves flag information from the OURCs API and updates the stored record."""
         
-        self.assertIsNone(self.reach.current_flag_status)
-        
+        set_date = timezone.now().isoformat()
         requests_mock.get.return_value.json.return_value = {
-            'status': models.Status.Flags.GREEN,
-            'set_date': self.set_at.isoformat(),
-            'set_by': self.set_by,
+            'status': models.Status.Flags.BLUE,
+            'set_date': set_date,
+            'set_by': 'OURCs Committee Member',
         }
         
         FetchOURCsFlags.fetch_for_reach(self.reach)
         
-        del self.reach.current_flag_status  # Clear cache
-        self.assertEqual(self.reach.current_flag_status.flag, models.Status.Flags.GREEN)
-        self.assertEqual(self.reach.current_flag_status.set_at, self.set_at)
-        self.assertEqual(self.reach.current_flag_status.set_by, self.set_by)
-    
-    
-    @patch('flags.management.commands.fetch_ourcs_flags.requests')
-    def test__no_change(self, requests_mock):
-        """No action is taken if the flag and set-by fields match."""
-        
-        previous_flag = self.reach.statuses.create(
-            flag = models.Status.Flags.GREEN,
-            set_at = self.set_at,
+        self.assertEqual(update_mock.call_count, 1)
+        update_mock.assert_called_once_with(
+            models.Status.Flags.BLUE,
+            set_date,
+            'OURCs Committee Member',
         )
-        self.assertEqual(previous_flag, self.reach.current_flag_status)
-        
-        requests_mock.get.return_value.json.return_value = {
-            'status': models.Status.Flags.GREEN,
-            'set_date': self.set_at.isoformat(),
-        }
-        
-        FetchOURCsFlags.fetch_for_reach(self.reach)
-        
-        del self.reach.current_flag_status  # Clear cache
-        self.assertEqual(previous_flag, self.reach.current_flag_status)
     
     
     @patch('flags.management.commands.fetch_ourcs_flags.requests')
-    def test__add_set_by(self, requests_mock):
-        """If the flag matches, a missing set-by field will be populated."""
+    @patch.object(models.Reach, 'update_flag_status')
+    def test__fetch__request_error(self, update_mock, requests_mock):
+        """Raises an error if the request is not successful."""
         
-        previous_flag = self.reach.statuses.create(
-            flag = models.Status.Flags.GREEN,
-            set_at = self.set_at,
-        )
-        self.assertEqual(self.reach.current_flag_status.set_by, '')
+        requests_mock.get.return_value.ok = False
+        requests_mock.get.return_value.raise_for_status.side_effect = Exception
         
-        requests_mock.get.return_value.json.return_value = {
-            'status': models.Status.Flags.GREEN,
-            'set_date': self.set_at.isoformat(),
-            'set_by': self.set_by,
-        }
+        with self.assertRaises(Exception):
+            FetchOURCsFlags.fetch_for_reach(self.reach)
         
-        FetchOURCsFlags.fetch_for_reach(self.reach)
-        
-        del self.reach.current_flag_status  # Clear cache
-        self.assertEqual(previous_flag, self.reach.current_flag_status)
-        self.assertEqual(self.reach.current_flag_status.set_by, self.set_by)
-    
-    
-    @patch('flags.management.commands.fetch_ourcs_flags.requests')
-    def test__flag_changed(self, requests_mock):
-        """A new status should be created when a different flag is seen."""
-        
-        previous_flag = self.reach.statuses.create(
-            flag = models.Status.Flags.BLUE,
-            set_at = self.set_at - timedelta(1),
-        )
-        self.assertEqual(previous_flag, self.reach.current_flag_status)
-        
-        requests_mock.get.return_value.json.return_value = {
-            'status': models.Status.Flags.GREEN,
-            'set_date': self.set_at.isoformat(),
-            'set_by': self.set_by,
-        }
-        
-        FetchOURCsFlags.fetch_for_reach(self.reach)
-        
-        del self.reach.current_flag_status  # Clear cache
-        self.assertNotEqual(previous_flag, self.reach.current_flag_status)
-        self.assertEqual(self.reach.current_flag_status.flag, models.Status.Flags.GREEN)
-        self.assertEqual(self.reach.current_flag_status.set_at, self.set_at)
-        self.assertEqual(self.reach.current_flag_status.set_by, self.set_by)
+        self.assertEqual(requests_mock.get.return_value.raise_for_status.call_count, 1)
 
 
 class Test_EABoards(TestCase):
