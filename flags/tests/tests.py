@@ -273,7 +273,7 @@ class Test_Models_Advisory(TestCase):
     
     
     def test__out_of_date__too_old(self):
-        """Advisories last seen within over two hours ago are considered 'out of date'."""
+        """Advisories last seen over two hours ago are considered 'out of date'."""
         
         advisory = self.reach.advisories.create(
             board = models.Advisory.Boards.NONE,

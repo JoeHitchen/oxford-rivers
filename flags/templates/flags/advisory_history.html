@@ -3,10 +3,10 @@
 {% block title %}Django Flags - {{ reach }}{% endblock %}
 
 {% block page_body %}
-    {% if reach.current_advisory.out_of_date %}<div class="alert alert-danger" role="alert">
+    {% if reach.current_advisory.out_of_date %}<div class="row"><div class="col"><div class="alert alert-danger" role="alert">
       We have not been able to check the boards for this reach in over two hours.
-      For up-to-date information you can <a href="http://riverconditions.environment-agency.gov.uk" class="alert-link">check their website directly</a>.
-    </div>{% endif %}
+      For up-to-date information you can <a href="http://riverconditions.environment-agency.gov.uk" class="alert-link" target="_blank">check their website directly</a>.
+    </div></div></div>{% endif %}
     
     <!-- Overview -->
     <div class="row">
