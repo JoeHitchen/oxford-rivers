@@ -126,6 +126,9 @@ class Status(models.Model):
     class Meta:
         ordering = ['reach', '-set_at']
     
+    def __str__(self):
+        return self.get_flag_display()
+    
     @property
     def out_of_date(self):
         return (timezone.now() - self.last_seen) > timedelta(hours = 2)
