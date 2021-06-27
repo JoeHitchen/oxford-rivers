@@ -256,6 +256,34 @@ class Test_Models_Reach(TestCase):
         self.assertEqual(self.reach.current_advisory.last_updated, future_time)
 
 
+class Test_Models_Status(TestCase):
+    fixtures = ['flags']
+    
+    def setUp(self):
+        self.reach = models.Reach.objects.get(tag = 'isis')
+    
+    def test__out_of_date__in_date(self):
+        """Statuses last seen within two hours are considered 'in date'."""
+        
+        status = self.reach.statuses.create(
+            flag = models.Status.Flags.GREEN,
+            set_at = timezone.now() - timedelta(days = 1),
+            last_seen = timezone.now() - timedelta(minutes = 119),
+        )
+        self.assertFalse(status.out_of_date)
+    
+    
+    def test__out_of_date__too_old(self):
+        """Statuses last seen over two hours ago are considered 'out of date'."""
+        
+        status = self.reach.statuses.create(
+            flag = models.Status.Flags.GREEN,
+            set_at = timezone.now() - timedelta(days = 1),
+            last_seen = timezone.now() - timedelta(minutes = 121),
+        )
+        self.assertTrue(status.out_of_date)
+
+
 class Test_Models_Advisory(TestCase):
     fixtures = ['flags']
     

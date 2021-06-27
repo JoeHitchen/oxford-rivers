@@ -5,6 +5,12 @@
 
 {% block page_body %}
     
+    <!-- Out-of-date notice -->
+    {% if reach.current_flag_status.out_of_date %}<div class="row"><div class="col"><div class="alert alert-danger" role="alert">
+      We have not been able to check the flag for this reach in over two hours.
+      For up-to-date information you can <a href="https://ourcs.co.uk/information/flags/" class="alert-link" target="_blank">check the OURCs website directly</a>.
+    </div></div></div>{% endif %}
+    
     <!-- Past advisories table -->
     <div class="row"><div class="col">
       <table class="table table-sm table-borderless table-responsive-md text-center">
