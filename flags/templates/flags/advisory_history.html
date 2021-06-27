@@ -40,7 +40,14 @@
     <!-- Interpretation guide -->
     <div class="row"><div class="col">
       <div class="card">
-        <div class="card-header d-flex justify-content-between" type="button" data-toggle="collapse" data-target="#interpretationBody">
+        <div
+            id="interpretationHeader"
+            class="card-header d-flex justify-content-between"
+            type="button"
+            data-toggle="collapse"
+            data-target="#interpretationBody"
+            style="border-bottom: 0px"
+        >
           <span>How to interpret this information</span>
           <span class="oi oi-chevron-bottom" id="interpretationArrow"></span>
         </div>
@@ -91,9 +98,11 @@
     <script type="text/javascript">
       $('#interpretationBody').on('show.bs.collapse', function () {
         $('#interpretationArrow').removeClass('oi-chevron-bottom').addClass('oi-chevron-top');
+        $('#interpretationHeader').css('border-bottom', '');
       });
       $('#interpretationBody').on('hidden.bs.collapse', function () {
         $('#interpretationArrow').removeClass('oi-chevron-top').addClass('oi-chevron-bottom');
+        $('#interpretationHeader').css('border-bottom', '0px');
       })
     </script>
 {% endblock %}
