@@ -15,8 +15,17 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         """Perform retrieval for both Isis and Godstow."""
         
-        self.fetch_for_reach(models.Reach.objects.get(tag = 'isis'))
-        self.fetch_for_reach(models.Reach.objects.get(tag = 'godstow'))
+        try:
+            self.fetch_for_reach(models.Reach.objects.get(tag = 'isis'))
+        except Exception as err:
+            logger.error('Isis flag error')
+            logger.exception(err)
+        
+        try:
+            self.fetch_for_reach(models.Reach.objects.get(tag = 'godstow'))
+        except Exception as err:
+            logger.error('Godstow flag error')
+            logger.exception(err)
     
     
     @staticmethod
@@ -30,31 +39,8 @@ class Command(BaseCommand):
             response.raise_for_status()
         response_json = response.json()
         
-        # Flag changed
-        current_status = reach.current_flag_status
-        if not current_status or response_json['status'] != current_status.flag:
-            logger.info('{} - Changed from {} to {}'.format(
-                reach.name,
-                current_status and current_status.flag,
-                response_json['status'],
-            ))
-            
-            # Create new status
-            reach.statuses.create(
-                flag = response_json['status'],
-                set_at = response_json['set_date'],
-                set_by = response_json.get('set_by', ''),
-            )
-        
-        # Flag unchanged
-        else:
-            logger.info('{} - Unchanged at {}'.format(reach.name, current_status.flag))
-            
-            # Add missing set-by
-            set_by = response_json.get('set_by', '')
-            if not current_status.set_by and set_by:
-                current_status.set_by = set_by
-                current_status.save()
-        
-        logger.info('{} - Completed'.format(reach.name))
+        # Update and log flag status
+        flag = models.Status.Flags(response_json['status'])
+        reach.update_flag_status(flag, response_json['set_date'], response_json.get('set_by', ''))
+        logger.info('{} - {}'.format(reach.name, flag.label))
 

@@ -58,6 +58,30 @@ class Reach(models.Model):
         return self.advisories.all().first()
     
     
+    def update_flag_status(self, new_flag, set_at, set_by = ''):
+        """Updates the OURCs flag status to reflect the latest observation."""
+        
+        # Update existing matching flag
+        if self.current_flag_status and self.current_flag_status.flag == new_flag:
+            
+            if not self.current_flag_status.set_by:
+                self.current_flag_status.set_by = set_by
+            
+            self.current_flag_status.last_seen = timezone.now()
+            self.current_flag_status.save()
+        
+        # Create new status if mismatched or missing
+        else:
+            self.statuses.create(
+                flag = new_flag,
+                set_at = set_at,
+                set_by = set_by,
+            )
+        
+        # Reset current flag cache
+        del self.current_flag_status
+    
+    
     def update_advisory(self, new_board, board_shown = timezone.now()):
         """Updates EA advisory records to reflect `new_board` being displayed at `board_shown`."""
         
@@ -92,9 +116,11 @@ class Status(models.Model):
     
     reach = models.ForeignKey(Reach, models.CASCADE, related_name = 'statuses')
     flag = models.CharField(max_length = 1, choices = Flags.choices)
-    
     set_at = models.DateTimeField()
     set_by = models.CharField(max_length = 50, blank = True)
+    
+    first_seen = models.DateTimeField(default = timezone.now)
+    last_seen = models.DateTimeField(default = timezone.now)
     
     class Meta:
         ordering = ['reach', '-set_at']

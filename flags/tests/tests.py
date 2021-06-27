@@ -36,6 +36,98 @@ class Test_Models_Reach(TestCase):
         self.assertEqual(self.reach.current_flag_status, current)
     
     
+    def test__update_flag_status__no_previous(self):
+        """Creates a new flag status."""
+        
+        # Prepare & run
+        self.assertIsNone(self.reach.current_flag_status)
+        
+        self.reach.update_flag_status(models.Status.Flags.BLUE, set_at = self.updated_time)
+        
+        # Check new advisory
+        self.assertIsNotNone(self.reach.current_flag_status)
+        self.assertEqual(self.reach.current_flag_status.flag, models.Status.Flags.BLUE)
+        self.assertEqual(self.reach.current_flag_status.set_at, self.updated_time)
+        self.assertTrue(self.reach.current_flag_status.first_seen > self.right_now)
+        self.assertTrue(self.reach.current_flag_status.last_seen > self.right_now)
+    
+    
+    def test__update_flag_status__different_flag(self):
+        """Creates a new flag status, leaving the previous flag status unchanged."""
+        
+        # Prepare & run
+        previous_status = self.reach.statuses.create(
+            flag = models.Status.Flags.GREEN,
+            set_at = self.original_time,
+            first_seen = self.original_time,
+            last_seen = self.original_time,
+        )
+        self.assertEqual(self.reach.current_flag_status, previous_status)
+        
+        self.reach.update_flag_status(models.Status.Flags.BLUE, set_at = self.updated_time)
+        
+        # Check previous status
+        previous_status.refresh_from_db()
+        self.assertNotEqual(self.reach.current_advisory, previous_status)
+        self.assertEqual(previous_status.flag, models.Status.Flags.GREEN)
+        self.assertEqual(previous_status.set_at, self.original_time)
+        self.assertEqual(previous_status.first_seen, self.original_time)
+        self.assertEqual(previous_status.last_seen, self.original_time)
+        
+        # Check new status
+        self.assertIsNotNone(self.reach.current_flag_status)
+        self.assertEqual(self.reach.current_flag_status.flag, models.Status.Flags.BLUE)
+        self.assertEqual(self.reach.current_flag_status.set_at, self.updated_time)
+        self.assertTrue(self.reach.current_flag_status.first_seen > self.right_now)
+        self.assertTrue(self.reach.current_flag_status.last_seen > self.right_now)
+    
+    
+    def test__update_flag_status__same_flag(self):
+        """Updates the `last_seen` field when the flag is unchanged."""
+        
+        # Prepare & run
+        previous_status = self.reach.statuses.create(
+            flag = models.Status.Flags.GREEN,
+            set_at = self.original_time,
+            first_seen = self.original_time,
+            last_seen = self.original_time,
+        )
+        self.assertEqual(self.reach.current_flag_status, previous_status)
+        
+        self.reach.update_flag_status(models.Status.Flags.GREEN, set_at = self.updated_time)
+        
+        # Check previous & current status
+        previous_status.refresh_from_db()
+        self.assertEqual(self.reach.current_flag_status, previous_status)
+        self.assertEqual(previous_status.flag, models.Status.Flags.GREEN)
+        self.assertEqual(previous_status.set_at, self.original_time)
+        self.assertEqual(previous_status.first_seen, self.original_time)
+        self.assertTrue(previous_status.last_seen > self.right_now)
+    
+    
+    def test__update_flag_status__add_set_by(self):
+        """Adds missing `set_by` data if the flag is unchanged."""
+        
+        # Prepare & run
+        previous_status = self.reach.statuses.create(
+            flag = models.Status.Flags.GREEN,
+            set_at = self.original_time,
+        )
+        self.assertEqual(self.reach.current_flag_status, previous_status)
+        self.assertEqual(previous_status.set_by, '')
+        
+        self.reach.update_flag_status(
+            models.Status.Flags.GREEN,
+            set_at = self.updated_time,
+            set_by = 'OURCs Committee Member',
+        )
+        
+        # Check previous & current status
+        previous_status.refresh_from_db()
+        self.assertEqual(self.reach.current_flag_status, previous_status)
+        self.assertEqual(previous_status.set_by, 'OURCs Committee Member')
+    
+    
     def test__update_advisory__no_previous(self):
         """Creates a new advisory."""
         
