@@ -6,19 +6,20 @@
 {% block page_body %}
     
     <!-- Out-of-date notice -->
-    {% if reach.current_flag_status.out_of_date %}<div class="row"><div class="col"><div class="alert alert-danger" role="alert">
+    {% if reach.current_flag_status.out_of_date %}<div class="row"><div class="col mb-3"><div class="alert alert-danger mb-0" role="alert">
       We have not been able to check the flag for this reach in over two hours.
       For up-to-date information you can <a href="https://ourcs.co.uk/information/flags/" class="alert-link" target="_blank">check the OURCs website directly</a>.
     </div></div></div>{% endif %}
+    <!-- Out-of-date notice -->
 
     <!-- Overview -->
-    <div class="row mb-3">
-      <div class="col-md-7">
-        <h1>{{ reach }}</h1>
-        <div class="mb-4">{{ reach.upstream_lock }} Lock to {{ reach.downstream_lock }} Lock</div>
+    <div class="row">
+      <div class="col-md-7 mb-3">
+        <h1 class="mb-0">{{ reach }}</h1>
+        <div>{{ reach.upstream_lock }} Lock to {{ reach.downstream_lock }} Lock</div>
       </div>
       
-      <div class="col-md-5">
+      <div class="col-md-5 mb-3">
         <div class="card {{ reach.current_flag_status.styling.text }} {{ reach.current_flag_status.styling.background }}">
           <div class="card-body">
             <h4 class="card-title text-center"><strong>{{ reach.current_flag_status }} Flag</strong></h4>
@@ -36,15 +37,23 @@
         </div>
       </div>
     </div>
+    <!-- Overview -->
     
     <!-- Interpretation guide -->
-    <div class="row mb-3"><div class="col">
+    <div class="row"><div class="col mb-3">
       <div class="card">
-        <div class="card-header d-flex justify-content-between" type="button" data-toggle="collapse" data-target="#interpretationBody">
+        <div
+            id="interpretationHeader"
+            class="card-header d-flex justify-content-between"
+            type="button"
+            data-toggle="collapse"
+            data-target="#interpretationBody"
+            style="border-bottom: 0px"
+        >
           <span>How to interpret this information</span>
           <span class="oi oi-chevron-bottom" id="interpretationArrow"></span>
         </div>
-        <div class="collapse card-body" id="interpretationBody">
+        <div class="collapse" id="interpretationBody"><div class="card-body">
           <p>
             OURCs displays flags <a  href="https://ourcs.co.uk/information/flags/" target="_blank">on their website</a> to indicate the current stream conditions on both the Isis and Godstow reaches.
             In increasing levels of stream, the possible levels are: green, blue<sup>*</sup>, amber, and red, with each flag representing a different set of restrictions which apply.
@@ -60,13 +69,14 @@
           <p class="mb-0">
             <sup>*</sup> Godstow does not have a blue flag.
           </p>
-        </div>
+        </div></div>
       </div>
     </div></div>
+    <!-- Interpretation guide -->
     
-    <!-- Past advisories table -->
-    <div class="row"><div class="col">
-      <table class="table table-sm table-borderless table-responsive-md text-center">
+    <!-- Past flag status table -->
+    <div class="row"><div class="col mb-3">
+      <table class="table table-sm table-borderless table-responsive-md text-center mb-0">
         <thead class="thead-light"><tr>
           <th class="align-middle">Flag</th>
           <th class="align-middle">First Shown</th>
@@ -83,4 +93,16 @@
         </tr>{% endfor %}
       </table>
     </div></div>
+    <!-- Past flag status table -->
+    
+    <script type="text/javascript">
+      $('#interpretationBody').on('show.bs.collapse', function () {
+        $('#interpretationArrow').removeClass('oi-chevron-bottom').addClass('oi-chevron-top');
+        $('#interpretationHeader').css('border-bottom', '');
+      });
+      $('#interpretationBody').on('hidden.bs.collapse', function () {
+        $('#interpretationArrow').removeClass('oi-chevron-top').addClass('oi-chevron-bottom');
+        $('#interpretationHeader').css('border-bottom', '0px');
+      })
+    </script>
 {% endblock %}

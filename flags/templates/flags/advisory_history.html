@@ -3,20 +3,22 @@
 {% block title %}Django Flags - {{ reach }}{% endblock %}
 
 {% block page_body %}
-    {% if reach.current_advisory.out_of_date %}<div class="row"><div class="col"><div class="alert alert-danger" role="alert">
+    
+    <!-- Out-of-date notice -->
+    {% if reach.current_advisory.out_of_date %}<div class="row"><div class="col mb-3"><div class="alert alert-danger mb-0" role="alert">
       We have not been able to check the boards for this reach in over two hours.
-      For up-to-date information you can <a href="http://riverconditions.environment-agency.gov.uk" class="alert-link" target="_blank">check their website directly</a>.
+      For up-to-date information you can <a href="http://riverconditions.environment-agency.gov.uk" class="alert-link" target="_blank">check the EA website directly</a>.
     </div></div></div>{% endif %}
+    <!-- Out-of-date notice -->
     
     <!-- Overview -->
     <div class="row">
-      
-      <div class="col-md-7">
-        <h1>{{ reach }}</h1>
-        <div class="mb-4">{{ reach.upstream_lock }} Lock to {{ reach.downstream_lock }} Lock</div>
+      <div class="col-md-7 mb-3">
+        <h1 class="mb-0">{{ reach }}</h1>
+        <div>{{ reach.upstream_lock }} Lock to {{ reach.downstream_lock }} Lock</div>
       </div>
       
-      <div class="col-md-5">
+      <div class="col-md-5 mb-3">
         <div class="card {{ reach.current_advisory.styling.text }} {{ reach.current_advisory.styling.background }}">
           <div class="card-body">
             <h4 class="card-title text-center"><strong>{{ reach.current_advisory }}</strong></h4>
@@ -33,44 +35,55 @@
           </div>
         </div>
       </div>
-      
     </div>
-    <br/>
+    <!-- Overview -->
     
     <!-- Interpretation guide -->
-    <div class="row"><div class="col">
+    <div class="row"><div class="col mb-3">
       <div class="card">
-        <div class="card-header d-flex justify-content-between" type="button" data-toggle="collapse" data-target="#interpretationBody">
+        <div
+            id="interpretationHeader"
+            class="card-header d-flex justify-content-between"
+            type="button"
+            data-toggle="collapse"
+            data-target="#interpretationBody"
+            style="border-bottom: 0px"
+        >
           <span>How to interpret this information</span>
           <span class="oi oi-chevron-bottom" id="interpretationArrow"></span>
         </div>
-        <div class="collapse" id="interpretationBody"><div class="card-body small">
-          The EA issues stream advisories for stretches of the Thames between two locks which are displayed to river traffic as physical boards on the lock at each end of the stretch<sup>*</sup>.
-          These are also made available online on their <a href="http://riverconditions.environment-agency.gov.uk/">river conditions website</a> and we collect the information about the boards shown from this website.
-          However, the website does not update automatically, instead providing a "Page Last Updated" indicator so there may be a delay between physical boards changing on the lock and the boards changing on their website<sup>**</sup>.
-          <br/><br/>
-          We poll the river conditions website on a slightly randomised five-minute interval and note both the time the website was last changed (the <em>updated</em> time) and the actual time of the collection run (the <em>seen</em> time)<sup>***</sup>.
-          For each advisory observed, we record the updated and seen times for both the first and last observations of that advisory.
-          <br/><br/>
-          Between the first and last updated times for an advisory, it will have been displayed to traffic transiting onto that stretch, but between the last updated time of one advisory and the first updated time of the next advisory, the boards will have changed on the lock and it is not possible to say precisely when this would have happened.
-          Similarly, between the first and last seen times for an advisory, it will have been shown on the website for that stretch.
-          The website will have changed between the last seen time of one advisory and the first seen time of the next advisory, but since collection is performed roughly every five minutes, the scope for variation here is much lower<sup>****</sup>.
-          <br/><br/>
-          <sup>*</sup> A lock may display different boards to upstream and downstream traffic, since they apply to the next stretch of river, rather than the lock itself.
-          <br/>
-          <sup>**</sup> As far as we are aware, the information shown at the update time will always match what is shown at the lock at that moment.
-          <br/>
-          <sup>***</sup> Both are recorded to to help identify discrepancies between when the EA report the page was updated and when we observed the change, whether caused by technical issues or other systemic delays.
-          <br/>
-          <sup>****</sup> It is possible that a data collection outage might entirely miss a change and change-back of an advisory, but this is unlikely since the boards typically change on a scale of days, and the website only appears to update a couple of times a day.
+        <div class="collapse" id="interpretationBody"><div class="card-body">
+          <p>
+            The EA issues stream advisories for stretches of the Thames between two locks which are displayed to river traffic as physical boards on the lock at each end of the stretch<sup>*</sup>.
+            These are also made available online on their <a href="http://riverconditions.environment-agency.gov.uk/" target="_blank">river conditions website</a> and we collect the information about the boards shown from this website.
+            However, the website does not update automatically, instead providing a "Page Last Updated" indicator so there may be a delay between physical boards changing on the lock and the boards changing on their website<sup>**</sup>.
+          </p>
+          <p>
+            We poll the river conditions website on a slightly randomised five-minute interval and note both the time the website was last changed (the <em>updated</em> time) and the actual time of the collection run (the <em>seen</em> time)<sup>***</sup>.
+            For each advisory observed, we record the updated and seen times for both the first and last observations of that advisory.
+          </p>
+          <p>
+            Between the first and last updated times for an advisory, it will have been displayed to traffic transiting onto that stretch, but between the last updated time of one advisory and the first updated time of the next advisory, the boards will have changed on the lock and it is not possible to say precisely when this would have happened.
+            Similarly, between the first and last seen times for an advisory, it will have been shown on the website for that stretch.
+            The website will have changed between the last seen time of one advisory and the first seen time of the next advisory, but since collection is performed roughly every five minutes, the scope for variation here is much lower<sup>****</sup>.
+          </p>
+          <p class="mb-0">
+            <sup>*</sup> A lock may display different boards to upstream and downstream traffic, since they apply to the next stretch of river, rather than the lock itself.
+            <br/>
+            <sup>**</sup> As far as we are aware, the information shown at the update time will always match what is shown at the lock at that moment.
+            <br/>
+            <sup>***</sup> Both are recorded to to help identify discrepancies between when the EA report the page was updated and when we observed the change, whether caused by technical issues or other systemic delays.
+            <br/>
+            <sup>****</sup> It is possible that a data collection outage might entirely miss a change and change-back of an advisory, but this is unlikely since the boards typically change on a scale of days, and the website only appears to update a couple of times a day.
+          </p>
         </div></div>
       </div>
     </div></div>
-    <br/>
+    <!-- Interpretation guide -->
     
     <!-- Past advisories table -->
-    <div class="row"><div class="col">
-      <table class="table table-sm table-borderless table-responsive-md text-center">
+    <div class="row"><div class="col mb-3">
+      <table class="table table-sm table-borderless table-responsive-md text-center mb-0">
         <thead class="thead-light"><tr>
           <th class="align-middle">Board</th>
           <th class="align-middle">First Updated</th>
@@ -87,13 +100,16 @@
         </tr>{% endfor %}
       </table>
     </div></div>
+    <!-- Past advisories table -->
     
     <script type="text/javascript">
       $('#interpretationBody').on('show.bs.collapse', function () {
         $('#interpretationArrow').removeClass('oi-chevron-bottom').addClass('oi-chevron-top');
+        $('#interpretationHeader').css('border-bottom', '');
       });
       $('#interpretationBody').on('hidden.bs.collapse', function () {
         $('#interpretationArrow').removeClass('oi-chevron-top').addClass('oi-chevron-bottom');
+        $('#interpretationHeader').css('border-bottom', '0px');
       })
     </script>
 {% endblock %}
