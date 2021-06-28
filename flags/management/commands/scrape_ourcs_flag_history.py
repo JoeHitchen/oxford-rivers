@@ -1,6 +1,7 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.core.management.base import BaseCommand
+from django.utils import timezone
 import requests
 from bs4 import BeautifulSoup
 import pytz
@@ -69,8 +70,18 @@ class Command(BaseCommand):
                 reach = reach,
                 flag = status_flag,
                 set_at = status_start_aware,
+                first_seen = status_start_aware,
             ))
         
         # Store all statuses
         models.Status.objects.bulk_create(statuses)
+        
+        # Fudge last-seen data
+        prev_set = timezone.now()
+        statuses = list(reach.statuses.all())
+        for status in statuses:
+            if status.last_seen >= prev_set:
+                status.last_seen = max(prev_set - timedelta(minutes = 2), status.first_seen)
+            prev_set = status.first_seen
+        models.Status.objects.bulk_update(statuses, ['last_seen'])
 
