@@ -52,25 +52,30 @@
           <span>How to interpret this information</span>
           <span class="oi oi-chevron-bottom" id="interpretationArrow"></span>
         </div>
-        <div class="collapse" id="interpretationBody"><div class="card-body small">
-          The EA issues stream advisories for stretches of the Thames between two locks which are displayed to river traffic as physical boards on the lock at each end of the stretch<sup>*</sup>.
-          These are also made available online on their <a href="http://riverconditions.environment-agency.gov.uk/" target="_blank">river conditions website</a> and we collect the information about the boards shown from this website.
-          However, the website does not update automatically, instead providing a "Page Last Updated" indicator so there may be a delay between physical boards changing on the lock and the boards changing on their website<sup>**</sup>.
-          <br/><br/>
-          We poll the river conditions website on a slightly randomised five-minute interval and note both the time the website was last changed (the <em>updated</em> time) and the actual time of the collection run (the <em>seen</em> time)<sup>***</sup>.
-          For each advisory observed, we record the updated and seen times for both the first and last observations of that advisory.
-          <br/><br/>
-          Between the first and last updated times for an advisory, it will have been displayed to traffic transiting onto that stretch, but between the last updated time of one advisory and the first updated time of the next advisory, the boards will have changed on the lock and it is not possible to say precisely when this would have happened.
-          Similarly, between the first and last seen times for an advisory, it will have been shown on the website for that stretch.
-          The website will have changed between the last seen time of one advisory and the first seen time of the next advisory, but since collection is performed roughly every five minutes, the scope for variation here is much lower<sup>****</sup>.
-          <br/><br/>
-          <sup>*</sup> A lock may display different boards to upstream and downstream traffic, since they apply to the next stretch of river, rather than the lock itself.
-          <br/>
-          <sup>**</sup> As far as we are aware, the information shown at the update time will always match what is shown at the lock at that moment.
-          <br/>
-          <sup>***</sup> Both are recorded to to help identify discrepancies between when the EA report the page was updated and when we observed the change, whether caused by technical issues or other systemic delays.
-          <br/>
-          <sup>****</sup> It is possible that a data collection outage might entirely miss a change and change-back of an advisory, but this is unlikely since the boards typically change on a scale of days, and the website only appears to update a couple of times a day.
+        <div class="collapse" id="interpretationBody"><div class="card-body">
+          <p>
+            The EA issues stream advisories for stretches of the Thames between two locks which are displayed to river traffic as physical boards on the lock at each end of the stretch<sup>*</sup>.
+            These are also made available online on their <a href="http://riverconditions.environment-agency.gov.uk/" target="_blank">river conditions website</a> and we collect the information about the boards shown from this website.
+            However, the website does not update automatically, instead providing a "Page Last Updated" indicator so there may be a delay between physical boards changing on the lock and the boards changing on their website<sup>**</sup>.
+          </p>
+          <p>
+            We poll the river conditions website on a slightly randomised five-minute interval and note both the time the website was last changed (the <em>updated</em> time) and the actual time of the collection run (the <em>seen</em> time)<sup>***</sup>.
+            For each advisory observed, we record the updated and seen times for both the first and last observations of that advisory.
+          </p>
+          <p>
+            Between the first and last updated times for an advisory, it will have been displayed to traffic transiting onto that stretch, but between the last updated time of one advisory and the first updated time of the next advisory, the boards will have changed on the lock and it is not possible to say precisely when this would have happened.
+            Similarly, between the first and last seen times for an advisory, it will have been shown on the website for that stretch.
+            The website will have changed between the last seen time of one advisory and the first seen time of the next advisory, but since collection is performed roughly every five minutes, the scope for variation here is much lower<sup>****</sup>.
+          </p>
+          <p class="mb-0">
+            <sup>*</sup> A lock may display different boards to upstream and downstream traffic, since they apply to the next stretch of river, rather than the lock itself.
+            <br/>
+            <sup>**</sup> As far as we are aware, the information shown at the update time will always match what is shown at the lock at that moment.
+            <br/>
+            <sup>***</sup> Both are recorded to to help identify discrepancies between when the EA report the page was updated and when we observed the change, whether caused by technical issues or other systemic delays.
+            <br/>
+            <sup>****</sup> It is possible that a data collection outage might entirely miss a change and change-back of an advisory, but this is unlikely since the boards typically change on a scale of days, and the website only appears to update a couple of times a day.
+          </p>
         </div></div>
       </div>
     </div></div>
