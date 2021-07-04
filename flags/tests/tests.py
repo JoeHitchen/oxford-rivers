@@ -439,7 +439,6 @@ class Test_Views(TestCase):
         response = self.client.get(reverse('flags:index'))
         
         self.assertEqual(response.status_code, 200)
-        self.assertQuerysetEqual(response.context['reaches'], models.Reach.objects.all())
         self.assertQuerysetEqual(response.context['all_reaches'], models.Reach.objects.all())
     
     
