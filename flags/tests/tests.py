@@ -455,6 +455,60 @@ class Test_Views(TestCase):
             self.client.get(reverse('flags:advisory_overview'))
     
     
+    def test__flag_history__unknown(self):
+        """Returns a 404 for unknown reaches."""
+        
+        response = self.client.get(reverse(
+            'flags:flag_history',
+            kwargs = {'tag': 'missing'},
+        ))
+        
+        self.assertEqual(response.status_code, 404)
+    
+    
+    def test__flag_history__no_flag(self):
+        """Returns a 404 for reaches without an OURCs flag."""
+        
+        self.reach.has_ourcs_flag = False
+        self.reach.save()
+        
+        response = self.client.get(reverse(
+            'flags:flag_history',
+            kwargs = {'tag': self.reach.tag},
+        ))
+        
+        self.assertEqual(response.status_code, 404)
+    
+    
+    def test__flag_history__response(self):
+        """Identifies the correct reach and generates a 200 response."""
+        
+        response = self.client.get(reverse(
+            'flags:flag_history',
+            kwargs = {'tag': self.reach.tag},
+        ))
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['reach'], self.reach)
+        
+        self.assertQuerysetEqual(response.context['all_reaches'], models.Reach.objects.all())
+    
+    
+    @tag('query-count')
+    def test__flag_history__query_count(self):
+        """Expect:
+            (1) SELECT reach
+            (1) PREFETCH all flag statuses for reach
+            (2) SELECT all reaches and reaches with an OURCs flag
+        """
+        
+        with self.assertNumQueries(4):
+            self.client.get(reverse(
+                'flags:flag_history',
+                kwargs = {'tag': self.reach.tag},
+            ))
+    
+    
     def test__advisory_history__unknown(self):
         """Returns a 404 for unknown reaches."""
         
