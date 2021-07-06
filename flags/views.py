@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from django.views.generic.detail import DetailView
-from django.utils import timezone
 
 from . import models, utils
 
@@ -23,11 +22,6 @@ class FlagHistory(FlagNavMixin, DetailView):
     slug_field = 'tag'
     slug_url_kwarg = 'tag'
     template_name = 'flags/flag_history.html'
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['timezone_now'] = timezone.now()
-        return context
 
 
 def advisory_overview(request):
