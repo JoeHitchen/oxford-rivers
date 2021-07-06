@@ -455,6 +455,17 @@ class Test_Views(TestCase):
             self.client.get(reverse('flags:advisory_overview'))
     
     
+    def test__advisory_history__unknown(self):
+        """Returns a 404 for unknown reaches."""
+        
+        response = self.client.get(reverse(
+            'flags:advisory_history',
+            kwargs = {'tag': 'missing'},
+        ))
+        
+        self.assertEqual(response.status_code, 404)
+    
+    
     def test__advisory_history__response(self):
         """Identifies the correct reach and generates a 200 response."""
         
