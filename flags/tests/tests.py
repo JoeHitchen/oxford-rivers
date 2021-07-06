@@ -469,9 +469,6 @@ class Test_Views(TestCase):
     def test__advisory_history__response(self):
         """Identifies the correct reach and generates a 200 response."""
         
-        self.reach.current_advisory.last_seen = timezone.now() - timedelta(minutes = 115)
-        self.reach.current_advisory.save()
-        
         response = self.client.get(reverse(
             'flags:advisory_history',
             kwargs = {'tag': self.reach.tag},
