@@ -448,9 +448,10 @@ class Test_Views(TestCase):
             (1) SELECT reaches
             (1) PREFETCH advisories
             (1) SELECT reaches with an OURCs flag
+            (1) PREFETCH flag statuses for reaches with an OURCs flag
         """
         
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(4):
             self.client.get(reverse('flags:index'))
     
     

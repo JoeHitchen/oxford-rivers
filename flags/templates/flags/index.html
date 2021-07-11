@@ -7,6 +7,36 @@
 {% endblock %}
 
 {% block page_body %}
+    <!-- OURCs Flags -->
+    <div class="row">
+      <div class="col mb-3">
+        <h2>OURCs Flags</h2>
+        <p class="mb-0">
+          Restriction levels for college crews that are set by OURCs and made available <a href="https://ourcs.co.uk/information/flags/" target="_blank">on their website</a>.
+          They are primarily based on stream levels, but can also be set for other reasons in exceptional circumstances.
+        </p>
+      </div>
+    </div>
+    <div class="row">
+      {% for reach in flag_reaches %}<div class="col mb-3">
+        <div class="card">
+          <div class="card-header px-3 py-2">
+            {{ reach }}
+          </div>
+          <div class="card-body px-3 py-2 {% if reach.current_flag_status.out_of_date %}text-light bg-secondary{% else %}{{ reach.current_flag_status.styling.text }} {{ reach.current_flag_status.styling.background }}{% endif %}">
+            <span class="card-title"><strong>{{ reach.current_flag_status }}{% if reach.current_flag_status.out_of_date %} (Out of date){% endif %}</strong></span>
+            <br/>
+            <span>{{ reach.current_flag_status.set_at|date:"d/m/Y" }} {{ reach.current_flag_status.set_at|date:"H:i" }}</span>
+          </div>
+          <a href="{% url 'flags:flag_history' reach.tag %}" class="card-footer text-dark d-flex justify-content-between px-3 py-2">
+            <div>View History</div>
+            <div><span class="oi oi-chevron-right"></span></div>
+          </a>
+        </div>
+      </div>{% endfor %}
+    </div>
+    <!-- OURCs Flags -->
+    
     <div class="row">
       <div class="col">
         <h2>Transits</h2>

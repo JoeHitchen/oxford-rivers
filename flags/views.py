@@ -24,6 +24,7 @@ class Index(FlagNavMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         
         context['all_reaches'] = context['all_reaches'].prefetch_related('advisories')
+        context['flag_reaches'] = context['flag_reaches'].prefetch_related('statuses')
         reach_board_map = {
             reach.tag: reach.current_advisory.board
             for reach in context['all_reaches']
