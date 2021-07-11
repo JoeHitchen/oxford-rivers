@@ -64,13 +64,13 @@
       {% endfor %}
     </div>
 
+    <!-- EA Advisories -->
     <div class="row">
       <div class="col mb-3">
-        <h2>Current Advisories</h2>
-        <p class="small mb-0">
-          These are the latest advisories we have seen on the EA's <a href="http://riverconditions.environment-agency.gov.uk/">river conditions webpage</a>.
-          Excluding technical difficulties, they are checked roughly every five minutes.
-          If an advisory is shown in dark grey, the last successful check for that reach was over two hours ago and you may wish to check the EA website directly.
+        <h2>EA Advisories</h2>
+        <p class="mb-0">
+          These are the latest advisories we have seen on the EA's <a href="http://riverconditions.environment-agency.gov.uk/" target="_blank">river conditions webpage</a>.
+          They are checked roughly every five minutes.
         </p>
       </div>
     </div>
@@ -82,17 +82,18 @@
             {{ reach }}
           </div>
           <div class="card-body {% if reach.current_advisory.out_of_date %}text-light bg-secondary{% else %}{{ reach.current_advisory.styling.text }} {{ reach.current_advisory.styling.background }}{% endif %} px-3 py-2">
-            <span class="card-title"><strong>{{ reach.current_advisory }}</strong></span>
+            <span class="card-title"><strong>{{ reach.current_advisory }}{% if reach.current_advisory.out_of_date %} (Out of date){% endif %}</strong></span>
             <br/>
             <span>{{ reach.current_advisory.first_updated|date:"d/m/Y" }}</span>
             <span>{{ reach.current_advisory.first_updated|date:"H:i" }}</span>
           </div>
           <a href="{% url 'flags:advisory_history' reach.tag %}" class="card-footer text-dark d-flex justify-content-between px-3 py-2">
-            <small>View History</small>
-            <small><span class="oi oi-chevron-right"></span></small>
+            <div>View History</div>
+            <div><span class="oi oi-chevron-right"></span></div>
           </a>
         </div>
       </div>
       {% endfor %}
     </div>
+    <!-- EA Advisories -->
 {% endblock %}
