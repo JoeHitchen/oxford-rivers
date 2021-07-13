@@ -548,6 +548,10 @@ class Test_Views(TestCase):
         
         self.assertEqual(response.status_code, 200)
         self.assertQuerysetEqual(response.context['all_reaches'], models.Reach.objects.all())
+        self.assertQuerysetEqual(
+            response.context['flag_reaches'],
+            models.Reach.objects.filter(has_ourcs_flag = True).order_by('id'),
+        )
     
     
     @tag('query-count')
@@ -600,6 +604,10 @@ class Test_Views(TestCase):
         self.assertEqual(response.context['reach'], self.reach)
         
         self.assertQuerysetEqual(response.context['all_reaches'], models.Reach.objects.all())
+        self.assertQuerysetEqual(
+            response.context['flag_reaches'],
+            models.Reach.objects.filter(has_ourcs_flag = True).order_by('id'),
+        )
     
     
     @tag('query-count')
@@ -640,6 +648,10 @@ class Test_Views(TestCase):
         self.assertEqual(response.context['reach'], self.reach)
         
         self.assertQuerysetEqual(response.context['all_reaches'], models.Reach.objects.all())
+        self.assertQuerysetEqual(
+            response.context['flag_reaches'],
+            models.Reach.objects.filter(has_ourcs_flag = True).order_by('id'),
+        )
     
     
     @tag('query-count')
