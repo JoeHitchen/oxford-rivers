@@ -25,6 +25,10 @@ class Index(FlagNavMixin, TemplateView):
         
         context['all_reaches'] = context['all_reaches'].prefetch_related('advisories')
         context['flag_reaches'] = context['flag_reaches'].prefetch_related('statuses')
+        reach_flag_map = {
+            reach.tag: reach.current_flag_status and reach.current_flag_status.flag
+            for reach in context['flag_reaches']
+        }
         reach_board_map = {
             reach.tag: reach.current_advisory.board
             for reach in context['all_reaches']
@@ -32,16 +36,19 @@ class Index(FlagNavMixin, TemplateView):
         
         context['transits'] = [
             utils.calculate_transit_permitted(
+                reach_flag_map,
                 reach_board_map,
                 'Godstow',
                 ['isis', 'godstow'],
             ),
             utils.calculate_transit_permitted(
+                reach_flag_map,
                 reach_board_map,
                 'Radley',
                 ['isis', 'sandford', 'radley'],
             ),
             utils.calculate_transit_permitted(
+                reach_flag_map,
                 reach_board_map,
                 'Abingdon',
                 ['isis', 'sandford', 'radley', 'abingdon'],
