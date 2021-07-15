@@ -7,6 +7,39 @@ class Transit:
     PROHIBITED = 'PROHIBITED'
 
 
+def generate_transit_information(flag_reaches, board_reaches):
+    
+    reach_flag_map = {
+        reach.tag: reach.current_flag_status and reach.current_flag_status.flag
+        for reach in flag_reaches
+    }
+    reach_board_map = {
+        reach.tag: reach.current_advisory.board
+        for reach in board_reaches
+    }
+    
+    return [
+        calculate_transit_permitted(
+            reach_flag_map,
+            reach_board_map,
+            'Godstow',
+            ['isis', 'godstow'],
+        ),
+        calculate_transit_permitted(
+            reach_flag_map,
+            reach_board_map,
+            'Radley',
+            ['isis', 'sandford', 'radley'],
+        ),
+        calculate_transit_permitted(
+            reach_flag_map,
+            reach_board_map,
+            'Abingdon',
+            ['isis', 'sandford', 'radley', 'abingdon'],
+        ),
+    ]
+
+
 def calculate_transit_permitted(reach_flag_map, reach_board_map, destination, reach_tags):
     """Indicates if rowing boats and/or launches are allowed to perform the transit described."""
     

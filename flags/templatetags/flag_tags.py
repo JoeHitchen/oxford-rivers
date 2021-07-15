@@ -2,7 +2,7 @@ from math import floor
 
 from django import template
 
-from .. utils import Transit
+from .. transits import Transit
 
 register = template.Library()
 
