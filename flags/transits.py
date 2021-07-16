@@ -23,19 +23,24 @@ def generate_transit_information(flag_reaches, board_reaches):
             reach_flag_map,
             reach_board_map,
             'Godstow',
-            ['isis', 'godstow'],
+            [models.Reach.Common.ISIS, models.Reach.Common.GODS],
         ),
         calculate_transit_permitted(
             reach_flag_map,
             reach_board_map,
             'Radley',
-            ['isis', 'sandford', 'radley'],
+            [models.Reach.Common.ISIS, models.Reach.Common.SAND, models.Reach.Common.RAD],
         ),
         calculate_transit_permitted(
             reach_flag_map,
             reach_board_map,
             'Abingdon',
-            ['isis', 'sandford', 'radley', 'abingdon'],
+            [
+                models.Reach.Common.ISIS,
+                models.Reach.Common.SAND,
+                models.Reach.Common.RAD,
+                models.Reach.Common.AB,
+            ],
         ),
     ]
 

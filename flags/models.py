@@ -8,6 +8,14 @@ from django.utils.functional import cached_property
 class Reach(models.Model):
     """Describes a stretch of river."""
     
+    class Common(models.TextChoices):
+        ISIS = 'isis'
+        GODS = 'godstow'
+        RAD = 'radley'
+        AB = 'abingdon'
+        WALLI = 'wallingford'
+        SAND = 'sandford'
+    
     name = models.CharField(max_length = 12)
     tag = models.SlugField(max_length = 12, unique = True)  # Implicit db index
     downstream_order = models.PositiveSmallIntegerField()
@@ -23,24 +31,24 @@ class Reach(models.Model):
     @property
     def upstream_lock(self):
         return {
-            'isis': 'Osney',
-            'godstow': 'Godstow',
-            'radley': 'Sandford',
-            'abingdon': 'Abingdon',
-            'wallingford': 'Benson',
-            'sandford': 'Iffley',
+            self.Common.ISIS: 'Osney',
+            self.Common.GODS: 'Godstow',
+            self.Common.RAD: 'Sandford',
+            self.Common.AB: 'Abingdon',
+            self.Common.WALLI: 'Benson',
+            self.Common.SAND: 'Iffley',
         }[self.tag]
     
     
     @property
     def downstream_lock(self):
         return {
-            'isis': 'Iffley',
-            'godstow': 'Osney',
-            'radley': 'Abingdon',
-            'abingdon': 'Culham',
-            'wallingford': 'Cleeve',
-            'sandford': 'Sandford',
+            self.Common.ISIS: 'Iffley',
+            self.Common.GODS: 'Osney',
+            self.Common.RAD: 'Abingdon',
+            self.Common.AB: 'Culham',
+            self.Common.WALLI: 'Cleeve',
+            self.Common.SAND: 'Sandford',
         }[self.tag]
     
     
