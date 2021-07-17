@@ -7,8 +7,26 @@ class Permissions:
     PROHIBITED = 'PROHIBITED'
 
 
+destination_reaches_map = {
+    models.Reach.Common.GODS: [models.Reach.Common.ISIS, models.Reach.Common.GODS],
+    models.Reach.Common.RAD: [
+        models.Reach.Common.ISIS,
+        models.Reach.Common.SAND,
+        models.Reach.Common.RAD,
+    ],
+    models.Reach.Common.AB: [
+        models.Reach.Common.ISIS,
+        models.Reach.Common.SAND,
+        models.Reach.Common.RAD,
+        models.Reach.Common.AB,
+    ],
+}
+
+
 def generate_transit_information(flag_reaches, board_reaches):
+    """Calculates if the three hard-coded transits are permitted under the current river state."""
     
+    permitted_flags = [models.Status.Flags.GREEN, models.Status.Flags.GREY]
     reach_flag_map = {
         reach.tag: reach.current_flag_status and reach.current_flag_status.flag
         for reach in flag_reaches
@@ -18,43 +36,24 @@ def generate_transit_information(flag_reaches, board_reaches):
         for reach in board_reaches
     }
     
-    return [
-        calculate_transit_permitted(
-            reach_flag_map,
-            reach_board_map,
-            'Godstow',
-            [models.Reach.Common.ISIS, models.Reach.Common.GODS],
-        ),
-        calculate_transit_permitted(
-            reach_flag_map,
-            reach_board_map,
-            'Radley',
-            [models.Reach.Common.ISIS, models.Reach.Common.SAND, models.Reach.Common.RAD],
-        ),
-        calculate_transit_permitted(
-            reach_flag_map,
-            reach_board_map,
-            'Abingdon',
-            [
-                models.Reach.Common.ISIS,
-                models.Reach.Common.SAND,
-                models.Reach.Common.RAD,
-                models.Reach.Common.AB,
-            ],
-        ),
-    ]
+    transits = []
+    for destination, reaches in destination_reaches_map.items():
+        
+        flags = [reach_flag_map[reach] for reach in reaches if reach_flag_map.get(reach)]
+        boards = [reach_board_map[reach] for reach in reaches]
+        
+        transits.append(describe_transit(
+            destination = destination,
+            all_boards_clear = all(board == models.Advisory.Boards.NONE for board in boards),
+            any_red_boards = any(board == models.Advisory.Boards.RED for board in boards),
+            any_not_green_flag = any(flag not in permitted_flags for flag in flags),
+        ))
+    
+    return transits
 
 
-def calculate_transit_permitted(reach_flag_map, reach_board_map, destination, reach_tags):
-    """Indicates if rowing boats and/or launches are allowed to perform the transit described."""
-    
-    flags = [reach_flag_map[tag] for tag in reach_tags if tag in reach_flag_map]
-    boards = [reach_board_map[tag] for tag in reach_tags]
-    permitted_flags = [models.Status.Flags.GREEN, models.Status.Flags.GREY]
-    
-    any_not_green_flag = any(flag not in permitted_flags for flag in flags)
-    any_red_boards = any(board == models.Advisory.Boards.RED for board in boards)
-    all_boards_clear = all(board == models.Advisory.Boards.NONE for board in boards)
+def describe_transit(destination, all_boards_clear, any_red_boards, any_not_green_flag):
+    """Converts a set of high-level river state flags into a Transit object."""
     
     # No stream advisories
     if all_boards_clear:
