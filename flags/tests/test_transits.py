@@ -27,7 +27,7 @@ class Test_TransitPermitted(TestCase):
     
     
     def test__yellow_inc(self):
-        """Only launches (with restrictions) can transit under yellow boards."""
+        """Only launches (with specific approval) can transit under yellow boards."""
         
         transit_object = transits.calculate_transit_permitted(
             {},
@@ -38,13 +38,13 @@ class Test_TransitPermitted(TestCase):
         expected_object = {
             'destination': self.DEST,
             'rowing': transits.Permissions.PROHIBITED,
-            'launches': transits.Permissions.RESTRICTIONS,
+            'launches': transits.Permissions.APPROVAL,
         }
         self.assertEqual(transit_object, expected_object)
     
     
     def test__yellow_dec(self):
-        """Only launches (with restrictions) can transit under yellow boards."""
+        """Only launches (with specific approval) can transit under yellow boards."""
         
         transit_object = transits.calculate_transit_permitted(
             {},
@@ -55,7 +55,7 @@ class Test_TransitPermitted(TestCase):
         expected_object = {
             'destination': self.DEST,
             'rowing': transits.Permissions.PROHIBITED,
-            'launches': transits.Permissions.RESTRICTIONS,
+            'launches': transits.Permissions.APPROVAL,
         }
         self.assertEqual(transit_object, expected_object)
     

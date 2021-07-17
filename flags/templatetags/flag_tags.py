@@ -47,8 +47,8 @@ def transit_allowed_row(type, allowed, first = False):
             'text_colour': 'text-light',
             'background_colour': 'bg-success',
         },
-        Permissions.RESTRICTIONS: {
-            'main_text': 'With Restrictions',
+        Permissions.APPROVAL: {
+            'main_text': 'Approval required',
             'text_colour': 'text-dark',
             'background_colour': 'bg-warning',
         },

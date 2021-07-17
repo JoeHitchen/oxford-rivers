@@ -3,7 +3,7 @@ from . import models
 
 class Permissions:
     PERMITTED = 'PERMITTED'
-    RESTRICTIONS = 'RESTRICTIONS'
+    APPROVAL = 'APPROVAL'  # Indicates specific approval required
     PROHIBITED = 'PROHIBITED'
 
 
@@ -68,6 +68,6 @@ def calculate_transit_permitted(reach_flag_map, reach_board_map, destination, re
     return {
         'destination': destination,
         'rowing': Permissions.PROHIBITED,
-        'launches': Permissions.PROHIBITED if any_red_boards else Permissions.RESTRICTIONS,
+        'launches': Permissions.PROHIBITED if any_red_boards else Permissions.APPROVAL,
     }
 
