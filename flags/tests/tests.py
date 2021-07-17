@@ -334,8 +334,8 @@ class Test_Views(TestCase):
         
         mock_transit_object = {
             'destination': 'Test',
-            'rowing': transits.Transit.PERMITTED,
-            'launches': transits.Transit.PERMITTED,
+            'rowing': transits.Permissions.PERMITTED,
+            'launches': transits.Permissions.PERMITTED,
         }
         transit_mock.return_value = [mock_transit_object]
         

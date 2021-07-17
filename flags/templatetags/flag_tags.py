@@ -2,7 +2,7 @@ from math import floor
 
 from django import template
 
-from .. transits import Transit
+from .. transits import Permissions
 
 register = template.Library()
 
@@ -42,17 +42,17 @@ def duration_days_hours(duration):
 '''))
 def transit_allowed_row(type, allowed, first = False):
     switch_selected = {
-        Transit.PERMITTED: {
+        Permissions.PERMITTED: {
             'main_text': 'Allowed',
             'text_colour': 'text-light',
             'background_colour': 'bg-success',
         },
-        Transit.RESTRICTIONS: {
+        Permissions.RESTRICTIONS: {
             'main_text': 'With Restrictions',
             'text_colour': 'text-dark',
             'background_colour': 'bg-warning',
         },
-        Transit.PROHIBITED: {
+        Permissions.PROHIBITED: {
             'main_text': 'Not allowed',
             'text_colour': 'text-light',
             'background_colour': 'bg-danger',

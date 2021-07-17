@@ -20,8 +20,8 @@ class Test_TransitPermitted(TestCase):
         )
         expected_object = {
             'destination': self.DEST,
-            'rowing': transits.Transit.PERMITTED,
-            'launches': transits.Transit.PERMITTED,
+            'rowing': transits.Permissions.PERMITTED,
+            'launches': transits.Permissions.PERMITTED,
         }
         self.assertEqual(transit_object, expected_object)
     
@@ -37,8 +37,8 @@ class Test_TransitPermitted(TestCase):
         )
         expected_object = {
             'destination': self.DEST,
-            'rowing': transits.Transit.PROHIBITED,
-            'launches': transits.Transit.RESTRICTIONS,
+            'rowing': transits.Permissions.PROHIBITED,
+            'launches': transits.Permissions.RESTRICTIONS,
         }
         self.assertEqual(transit_object, expected_object)
     
@@ -54,8 +54,8 @@ class Test_TransitPermitted(TestCase):
         )
         expected_object = {
             'destination': self.DEST,
-            'rowing': transits.Transit.PROHIBITED,
-            'launches': transits.Transit.RESTRICTIONS,
+            'rowing': transits.Permissions.PROHIBITED,
+            'launches': transits.Permissions.RESTRICTIONS,
         }
         self.assertEqual(transit_object, expected_object)
     
@@ -71,8 +71,8 @@ class Test_TransitPermitted(TestCase):
         )
         expected_object = {
             'destination': self.DEST,
-            'rowing': transits.Transit.PROHIBITED,
-            'launches': transits.Transit.PROHIBITED,
+            'rowing': transits.Permissions.PROHIBITED,
+            'launches': transits.Permissions.PROHIBITED,
         }
         self.assertEqual(transit_object, expected_object)
     
@@ -88,8 +88,8 @@ class Test_TransitPermitted(TestCase):
         )
         expected_object = {
             'destination': self.DEST,
-            'rowing': transits.Transit.PERMITTED,
-            'launches': transits.Transit.PERMITTED,
+            'rowing': transits.Permissions.PERMITTED,
+            'launches': transits.Permissions.PERMITTED,
         }
         self.assertEqual(transit_object, expected_object)
     
@@ -109,8 +109,8 @@ class Test_TransitPermitted(TestCase):
         )
         expected_object = {
             'destination': self.DEST,
-            'rowing': transits.Transit.PROHIBITED,
-            'launches': transits.Transit.PROHIBITED,
+            'rowing': transits.Permissions.PROHIBITED,
+            'launches': transits.Permissions.PROHIBITED,
         }
         self.assertEqual(transit_object, expected_object)
     
@@ -126,8 +126,8 @@ class Test_TransitPermitted(TestCase):
         )
         expected_object = {
             'destination': self.DEST,
-            'rowing': transits.Transit.PERMITTED,
-            'launches': transits.Transit.PERMITTED,
+            'rowing': transits.Permissions.PERMITTED,
+            'launches': transits.Permissions.PERMITTED,
         }
         self.assertEqual(transit_object, expected_object)
     
@@ -143,8 +143,8 @@ class Test_TransitPermitted(TestCase):
         )
         expected_object = {
             'destination': self.DEST,
-            'rowing': transits.Transit.PROHIBITED,
-            'launches': transits.Transit.PERMITTED,
+            'rowing': transits.Permissions.PROHIBITED,
+            'launches': transits.Permissions.PERMITTED,
         }
         self.assertEqual(transit_object, expected_object)
     
@@ -160,8 +160,8 @@ class Test_TransitPermitted(TestCase):
         )
         expected_object = {
             'destination': self.DEST,
-            'rowing': transits.Transit.PROHIBITED,
-            'launches': transits.Transit.PERMITTED,
+            'rowing': transits.Permissions.PROHIBITED,
+            'launches': transits.Permissions.PERMITTED,
         }
         self.assertEqual(transit_object, expected_object)
     
@@ -177,8 +177,8 @@ class Test_TransitPermitted(TestCase):
         )
         expected_object = {
             'destination': self.DEST,
-            'rowing': transits.Transit.PROHIBITED,
-            'launches': transits.Transit.PERMITTED,
+            'rowing': transits.Permissions.PROHIBITED,
+            'launches': transits.Permissions.PERMITTED,
         }
         self.assertEqual(transit_object, expected_object)
     
@@ -194,8 +194,8 @@ class Test_TransitPermitted(TestCase):
         )
         expected_object = {
             'destination': self.DEST,
-            'rowing': transits.Transit.PROHIBITED,
-            'launches': transits.Transit.PERMITTED,
+            'rowing': transits.Permissions.PROHIBITED,
+            'launches': transits.Permissions.PERMITTED,
         }
         self.assertEqual(transit_object, expected_object)
     
@@ -211,8 +211,8 @@ class Test_TransitPermitted(TestCase):
         )
         expected_object = {
             'destination': self.DEST,
-            'rowing': transits.Transit.PERMITTED,
-            'launches': transits.Transit.PERMITTED,
+            'rowing': transits.Permissions.PERMITTED,
+            'launches': transits.Permissions.PERMITTED,
         }
         self.assertEqual(transit_object, expected_object)
 

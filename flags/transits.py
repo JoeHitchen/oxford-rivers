@@ -1,7 +1,7 @@
 from . import models
 
 
-class Transit:
+class Permissions:
     PERMITTED = 'PERMITTED'
     RESTRICTIONS = 'RESTRICTIONS'
     PROHIBITED = 'PROHIBITED'
@@ -60,14 +60,14 @@ def calculate_transit_permitted(reach_flag_map, reach_board_map, destination, re
     if all_boards_clear:
         return {
             'destination': destination,
-            'rowing': Transit.PROHIBITED if any_not_green_flag else Transit.PERMITTED,
-            'launches': Transit.PERMITTED,
+            'rowing': Permissions.PROHIBITED if any_not_green_flag else Permissions.PERMITTED,
+            'launches': Permissions.PERMITTED,
         }
     
     # Some stream advisories
     return {
         'destination': destination,
-        'rowing': Transit.PROHIBITED,
-        'launches': Transit.PROHIBITED if any_red_boards else Transit.RESTRICTIONS,
+        'rowing': Permissions.PROHIBITED,
+        'launches': Permissions.PROHIBITED if any_red_boards else Permissions.RESTRICTIONS,
     }
 
