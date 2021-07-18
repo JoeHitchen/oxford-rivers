@@ -1,10 +1,11 @@
+from unittest.mock import patch
 from datetime import timedelta
 
 from django.test import TestCase, tag
 from django.utils import timezone
 from django.urls import reverse
 
-from .. import models, utils
+from .. import models, transits
 
 
 class Test_Models_Reach(TestCase):
@@ -310,220 +311,6 @@ class Test_Models_Advisory(TestCase):
         self.assertTrue(advisory.out_of_date)
 
 
-class Test_Utils(TestCase):
-    
-    DEST = 'Destination'
-    REACH_A = 'reach_a'
-    REACH_B = 'reach_b'
-    
-    def test__transit_permitted__no_board(self):
-        """Launches can transit, and rowing boats can with restrictions, if no boards shown."""
-        
-        transit_object = utils.calculate_transit_permitted(
-            {},
-            {self.REACH_A: models.Advisory.Boards.NONE},
-            self.DEST,
-            [self.REACH_A],
-        )
-        expected_object = {
-            'destination': self.DEST,
-            'rowing': utils.Transit.PERMITTED,
-            'launches': utils.Transit.PERMITTED,
-        }
-        self.assertEqual(transit_object, expected_object)
-    
-    
-    def test__transit_permitted__yellow_inc(self):
-        """Only launches (with restrictions) can transit under yellow boards."""
-        
-        transit_object = utils.calculate_transit_permitted(
-            {},
-            {self.REACH_A: models.Advisory.Boards.INC},
-            self.DEST,
-            [self.REACH_A],
-        )
-        expected_object = {
-            'destination': self.DEST,
-            'rowing': utils.Transit.PROHIBITED,
-            'launches': utils.Transit.RESTRICTIONS,
-        }
-        self.assertEqual(transit_object, expected_object)
-    
-    
-    def test__transit_permitted__yellow_dec(self):
-        """Only launches (with restrictions) can transit under yellow boards."""
-        
-        transit_object = utils.calculate_transit_permitted(
-            {},
-            {self.REACH_A: models.Advisory.Boards.DEC},
-            self.DEST,
-            [self.REACH_A],
-        )
-        expected_object = {
-            'destination': self.DEST,
-            'rowing': utils.Transit.PROHIBITED,
-            'launches': utils.Transit.RESTRICTIONS,
-        }
-        self.assertEqual(transit_object, expected_object)
-    
-    
-    def test__transit_permitted__red_board(self):
-        """Transits are not permitted under red boards."""
-        
-        transit_object = utils.calculate_transit_permitted(
-            {},
-            {self.REACH_A: models.Advisory.Boards.RED},
-            self.DEST,
-            [self.REACH_A],
-        )
-        expected_object = {
-            'destination': self.DEST,
-            'rowing': utils.Transit.PROHIBITED,
-            'launches': utils.Transit.PROHIBITED,
-        }
-        self.assertEqual(transit_object, expected_object)
-    
-    
-    def test__transit_permitted__extra_mapped_reach(self):
-        """Reaches in the map but not in the transit are not considered."""
-        
-        transit_object = utils.calculate_transit_permitted(
-            {},
-            {self.REACH_A: models.Advisory.Boards.NONE, self.REACH_B: models.Advisory.Boards.RED},
-            self.DEST,
-            [self.REACH_A],
-        )
-        expected_object = {
-            'destination': self.DEST,
-            'rowing': utils.Transit.PERMITTED,
-            'launches': utils.Transit.PERMITTED,
-        }
-        self.assertEqual(transit_object, expected_object)
-    
-    
-    def test__transit_permitted__two_reaches(self):
-        """Multiple reaches can be listed and considered."""
-        
-        reach_board_map = {
-            self.REACH_A: models.Advisory.Boards.NONE,
-            self.REACH_B: models.Advisory.Boards.RED,
-        }
-        transit_object = utils.calculate_transit_permitted(
-            {},
-            reach_board_map,
-            self.DEST,
-            [self.REACH_A, self.REACH_B],
-        )
-        expected_object = {
-            'destination': self.DEST,
-            'rowing': utils.Transit.PROHIBITED,
-            'launches': utils.Transit.PROHIBITED,
-        }
-        self.assertEqual(transit_object, expected_object)
-    
-    
-    def test__transit_permitted__green_flag(self):
-        """Green flag does not prevent transits."""
-        
-        transit_object = utils.calculate_transit_permitted(
-            {self.REACH_A: models.Status.Flags.GREEN},
-            {self.REACH_A: models.Advisory.Boards.NONE},
-            self.DEST,
-            [self.REACH_A],
-        )
-        expected_object = {
-            'destination': self.DEST,
-            'rowing': utils.Transit.PERMITTED,
-            'launches': utils.Transit.PERMITTED,
-        }
-        self.assertEqual(transit_object, expected_object)
-    
-    
-    def test__transit_permitted__blue_flag(self):
-        """Blue flag prevents transits."""
-        
-        transit_object = utils.calculate_transit_permitted(
-            {self.REACH_A: models.Status.Flags.BLUE},
-            {self.REACH_A: models.Advisory.Boards.NONE},
-            self.DEST,
-            [self.REACH_A],
-        )
-        expected_object = {
-            'destination': self.DEST,
-            'rowing': utils.Transit.PROHIBITED,
-            'launches': utils.Transit.PERMITTED,
-        }
-        self.assertEqual(transit_object, expected_object)
-    
-    
-    def test__transit_permitted__amber_flag(self):
-        """Amber flag prevents transits."""
-        
-        transit_object = utils.calculate_transit_permitted(
-            {self.REACH_A: models.Status.Flags.AMBER},
-            {self.REACH_A: models.Advisory.Boards.NONE},
-            self.DEST,
-            [self.REACH_A],
-        )
-        expected_object = {
-            'destination': self.DEST,
-            'rowing': utils.Transit.PROHIBITED,
-            'launches': utils.Transit.PERMITTED,
-        }
-        self.assertEqual(transit_object, expected_object)
-    
-    
-    def test__transit_permitted__red_flag(self):
-        """Red flag prevents transits."""
-        
-        transit_object = utils.calculate_transit_permitted(
-            {self.REACH_A: models.Status.Flags.RED},
-            {self.REACH_A: models.Advisory.Boards.NONE},
-            self.DEST,
-            [self.REACH_A],
-        )
-        expected_object = {
-            'destination': self.DEST,
-            'rowing': utils.Transit.PROHIBITED,
-            'launches': utils.Transit.PERMITTED,
-        }
-        self.assertEqual(transit_object, expected_object)
-    
-    
-    def test__transit_permitted__black_flag(self):
-        """Black flag prevents transits."""
-        
-        transit_object = utils.calculate_transit_permitted(
-            {self.REACH_A: models.Status.Flags.BLACK},
-            {self.REACH_A: models.Advisory.Boards.NONE},
-            self.DEST,
-            [self.REACH_A],
-        )
-        expected_object = {
-            'destination': self.DEST,
-            'rowing': utils.Transit.PROHIBITED,
-            'launches': utils.Transit.PERMITTED,
-        }
-        self.assertEqual(transit_object, expected_object)
-    
-    
-    def test__transit_permitted__grey_flag(self):
-        """Grey flag does not prevent transits."""
-        
-        transit_object = utils.calculate_transit_permitted(
-            {self.REACH_A: models.Status.Flags.GREY},
-            {self.REACH_A: models.Advisory.Boards.NONE},
-            self.DEST,
-            [self.REACH_A],
-        )
-        expected_object = {
-            'destination': self.DEST,
-            'rowing': utils.Transit.PERMITTED,
-            'launches': utils.Transit.PERMITTED,
-        }
-        self.assertEqual(transit_object, expected_object)
-
-
 class Test_Views(TestCase):
     fixtures = ['flags']
     
@@ -541,8 +328,16 @@ class Test_Views(TestCase):
             )
     
     
-    def test__index__response(self):
-        """Lists all the reaches and generates a 200 response."""
+    @patch('flags.transits.generate_transit_information')
+    def test__index__response(self, transit_mock):
+        """Lists all the reaches, gets transit information, and generates a 200 response."""
+        
+        mock_transit_object = {
+            'destination': 'Test',
+            'rowing': transits.Permissions.PERMITTED,
+            'launches': transits.Permissions.PERMITTED,
+        }
+        transit_mock.return_value = [mock_transit_object]
         
         response = self.client.get(reverse('flags:index'))
         
@@ -552,6 +347,7 @@ class Test_Views(TestCase):
             response.context['flag_reaches'],
             models.Reach.objects.filter(has_ourcs_flag = True).order_by('id'),
         )
+        self.assertEqual(response.context['transits'], [mock_transit_object])
     
     
     @tag('query-count')

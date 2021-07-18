@@ -51,7 +51,7 @@
       {% for transit in transits %}<div class="col-md-4 mb-3">
         <div class="card">
           <div class="card-header px-3 py-2">
-            {{ transit.destination }} Transit
+            {{ transit.destination|capfirst }} Transit
           </div>
           <div class="card-body p-0">
             <table class="table table-sm text-center mb-0">
