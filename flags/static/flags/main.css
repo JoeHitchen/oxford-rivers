@@ -3,3 +3,6 @@ p:last-of-type, .table, .alert {
   margin-bottom: 0em;
 }
 
+div.col, div[class^="col-"], div[class*=" col-"] {
+  margin-bottom: 1em;
+}

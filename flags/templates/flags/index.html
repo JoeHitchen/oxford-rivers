@@ -9,7 +9,7 @@
 {% block page_body %}
     <!-- OURCs Flags -->
     <div class="row">
-      <div class="col mb-3">
+      <div class="col">
         <h2>OURCs Flags</h2>
         <p>
           Restriction levels for college crews that are set by OURCs and made available <a href="https://ourcs.co.uk/information/flags/" target="_blank">on their website</a>.
@@ -18,7 +18,7 @@
       </div>
     </div>
     <div class="row">
-      {% for reach in flag_reaches %}<div class="col mb-3">
+      {% for reach in flag_reaches %}<div class="col">
         <div class="card">
           <div class="card-header px-3 py-2">
             {{ reach }}
@@ -39,7 +39,7 @@
     
     <!-- Transits --->
     <div class="row">
-      <div class="col mb-3">
+      <div class="col">
         <h2>Transits</h2>
         <p>
           As of December 2020, rowing boats are only allowed to transit a lock if there are no stream advisories on either side of that lock, and all relevant OURCs flags are green (or equivalent grey).
@@ -48,7 +48,7 @@
       </div>
     </div>
     <div class="row">
-      {% for transit in transits %}<div class="col-md-4 mb-3">
+      {% for transit in transits %}<div class="col-md-4">
         <div class="card">
           <div class="card-header px-3 py-2">
             {{ transit.destination|capfirst }} Transit
@@ -66,7 +66,7 @@
 
     <!-- EA Advisories -->
     <div class="row">
-      <div class="col mb-3">
+      <div class="col">
         <h2>EA Advisories</h2>
         <p>
           These are the latest advisories we have seen on the EA's <a href="http://riverconditions.environment-agency.gov.uk/" target="_blank">river conditions webpage</a>.
@@ -76,7 +76,7 @@
     </div>
     <div class="row">
       {% for reach in all_reaches %}
-      <div class="col-lg-2 mb-3">
+      <div class="col-lg-2">
         <div class="card">
           <div class="card-header px-3 py-2">
             {{ reach }}
