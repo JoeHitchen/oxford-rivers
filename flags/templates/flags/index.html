@@ -11,7 +11,7 @@
     <div class="row">
       <div class="col mb-3">
         <h2>OURCs Flags</h2>
-        <p class="mb-0">
+        <p>
           Restriction levels for college crews that are set by OURCs and made available <a href="https://ourcs.co.uk/information/flags/" target="_blank">on their website</a>.
           They are primarily based on stream levels, but can also be set for other reasons in exceptional circumstances.
         </p>
@@ -41,7 +41,7 @@
     <div class="row">
       <div class="col mb-3">
         <h2>Transits</h2>
-        <p class="mb-0">
+        <p>
           As of December 2020, rowing boats are only allowed to transit a lock if there are no stream advisories on either side of that lock, and all relevant OURCs flags are green (or equivalent grey).
           Launches may transit locks on yellow boards (a "Caution" advisory) if a risk assessment has been approved by the RowSab, and are not restricted by the Isis (or Godstow) flag.
         </p>
@@ -54,7 +54,7 @@
             {{ transit.destination|capfirst }} Transit
           </div>
           <div class="card-body p-0">
-            <table class="table table-sm text-center mb-0">
+            <table class="table table-sm text-center">
               {% transit_allowed_row 'Boats' transit.rowing True %}{% transit_allowed_row 'Launches' transit.launches %}
             </table>
           </div>
@@ -68,7 +68,7 @@
     <div class="row">
       <div class="col mb-3">
         <h2>EA Advisories</h2>
-        <p class="mb-0">
+        <p>
           These are the latest advisories we have seen on the EA's <a href="http://riverconditions.environment-agency.gov.uk/" target="_blank">river conditions webpage</a>.
           They are checked roughly every five minutes.
         </p>

@@ -1,2 +1,5 @@
-// Empty file for testing purposes
+
+p:last-of-type, .table, .alert {
+  margin-bottom: 0em;
+}
 
