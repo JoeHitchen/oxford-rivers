@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load static %}
 <html>
 <head>
   <title>{% block title %}Django Flags{% endblock %}</title>
@@ -12,8 +13,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Bootstrap resources -->
   
-  <!-- Page resources -->{% block page_head %}
-  {% endblock %}<!-- Page resources -->
+  <!-- Site resources -->
+  <link rel="stylesheet" type="text/css" href="{% static 'flags/main.css' %}">{% block page_head %}
+  {% endblock %}<!-- Site resources -->
 </head>
 <body>
 {% include 'flags/nav.html' %}
