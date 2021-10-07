@@ -15,15 +15,15 @@
     <div class="row">
       {% for reach in flag_reaches %}<div class="col">
         <div class="card">
-          <div class="card-header px-3 py-2">
+          <div class="card-header">
             {{ reach }}
           </div>
-          <div class="card-body px-3 py-2 {% if reach.current_flag_status.out_of_date %}text-light bg-secondary{% else %}{{ reach.current_flag_status.styling.text }} {{ reach.current_flag_status.styling.background }}{% endif %}">
+          <div class="card-body {% if reach.current_flag_status.out_of_date %}text-light bg-secondary{% else %}{{ reach.current_flag_status.styling.text }} {{ reach.current_flag_status.styling.background }}{% endif %}">
             <span class="card-title"><strong>{{ reach.current_flag_status }}{% if reach.current_flag_status.out_of_date %} (Out of date){% endif %}</strong></span>
             <br/>
             <span>{{ reach.current_flag_status.set_at|date:"d/m/Y" }} {{ reach.current_flag_status.set_at|date:"H:i" }}</span>
           </div>
-          <a href="{% url 'flags:flag_history' reach.tag %}" class="card-footer text-dark d-flex justify-content-between px-3 py-2">
+          <a href="{% url 'flags:flag_history' reach.tag %}" class="card-footer text-dark d-flex justify-content-between">
             <div>View History</div>
             <div><span class="oi oi-chevron-right"></span></div>
           </a>
@@ -45,7 +45,7 @@
     <div class="row">
       {% for transit in transits %}<div class="col-md-4">
         <div class="card">
-          <div class="card-header px-3 py-2">
+          <div class="card-header">
             {{ transit.destination|capfirst }} Transit
           </div>
           <div class="card-body p-0">
@@ -73,16 +73,16 @@
       {% for reach in all_reaches %}
       <div class="col-lg-2">
         <div class="card">
-          <div class="card-header px-3 py-2">
+          <div class="card-header">
             {{ reach }}
           </div>
-          <div class="card-body {% if reach.current_advisory.out_of_date %}text-light bg-secondary{% else %}{{ reach.current_advisory.styling.text }} {{ reach.current_advisory.styling.background }}{% endif %} px-3 py-2">
+          <div class="card-body {% if reach.current_advisory.out_of_date %}text-light bg-secondary{% else %}{{ reach.current_advisory.styling.text }} {{ reach.current_advisory.styling.background }}{% endif %}">
             <span class="card-title"><strong>{{ reach.current_advisory }}{% if reach.current_advisory.out_of_date %} (Out of date){% endif %}</strong></span>
             <br/>
             <span>{{ reach.current_advisory.first_updated|date:"d/m/Y" }}</span>
             <span>{{ reach.current_advisory.first_updated|date:"H:i" }}</span>
           </div>
-          <a href="{% url 'flags:advisory_history' reach.tag %}" class="card-footer text-dark d-flex justify-content-between px-3 py-2">
+          <a href="{% url 'flags:advisory_history' reach.tag %}" class="card-footer text-dark d-flex justify-content-between">
             <div>View History</div>
             <div><span class="oi oi-chevron-right"></span></div>
           </a>
