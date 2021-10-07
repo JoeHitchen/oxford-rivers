@@ -19,7 +19,7 @@
       </div>
       
       <div class="col-md-5">
-        <div class="card card-standalone {{ reach.current_advisory.styling.text }} {{ reach.current_advisory.styling.background }}">
+        <div class="card card-standalone {{ reach.current_advisory.styling }}">
           <div class="card-body">
             <h4 class="card-title text-center"><strong>{{ reach.current_advisory }}</strong></h4>
             <table class="table table-sm table-borderless">
@@ -91,7 +91,7 @@
           <th class="align-middle">Last Updated</th>
           <th class="align-middle">Last Seen</th>
         </tr></thead>
-        {% for advisory in reach.advisories.all %}<tr class="{{ advisory.styling.text }} {{ advisory.styling.background }}">
+        {% for advisory in reach.advisories.all %}<tr class="{{ advisory.styling }}">
           <th class="align-middle">{{ advisory.get_board_display }}</th>
           <td class="align-middle">{{ advisory.first_updated|date:"d/m/Y H:i" }}</td>
           <td class="align-middle">{{ advisory.first_seen|date:"d/m/Y H:i" }}</td>

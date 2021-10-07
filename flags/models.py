@@ -143,11 +143,11 @@ class Status(models.Model):
     
     def styling(self):
         return {
-            self.Flags.GREY: {'text': 'text-secondary', 'background': 'bg-light'},
-            self.Flags.GREEN: {'text': 'text-dark', 'background': 'bg-success'},
-            self.Flags.BLUE: {'text': 'text-dark', 'background': 'bg-info'},
-            self.Flags.AMBER: {'text': 'text-dark', 'background': 'bg-warning'},
-            self.Flags.RED: {'text': 'text-light', 'background': 'bg-danger'},
+            self.Flags.GREY: 'bg-secondary',
+            self.Flags.GREEN: 'bg-success',
+            self.Flags.BLUE: 'bg-primary',
+            self.Flags.AMBER: 'bg-warning',
+            self.Flags.RED: 'bg-danger',
         }.get(self.flag)
 
 
@@ -186,9 +186,9 @@ class Advisory(models.Model):
     
     def styling(self):
         return {
-            self.Boards.NONE: {'text': 'text-dark', 'background': 'bg-none'},
-            self.Boards.INC: {'text': 'text-dark', 'background': 'bg-warning'},
-            self.Boards.DEC: {'text': 'text-dark', 'background': 'bg-warning'},
-            self.Boards.RED: {'text': 'text-light', 'background': 'bg-danger'},
+            self.Boards.NONE: 'bg-none',
+            self.Boards.INC: 'bg-warning',
+            self.Boards.DEC: 'bg-warning',
+            self.Boards.RED: 'bg-danger',
         }[self.board]
 

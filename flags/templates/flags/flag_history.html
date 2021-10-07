@@ -20,7 +20,7 @@
       </div>
       
       <div class="col-md-5">
-        <div class="card card-standalone {{ reach.current_flag_status.styling.text }} {{ reach.current_flag_status.styling.background }}">
+        <div class="card card-standalone {{ reach.current_flag_status.styling }}">
           <div class="card-body">
             <h4 class="card-title text-center"><strong>{{ reach.current_flag_status }} Flag</strong></h4>
             <table class="table table-sm table-borderless">
@@ -84,7 +84,7 @@
           <th class="align-middle">Shown For</th>
           <th class="align-middle">Changed By</th>
         </tr></thead>
-        {% for status in reach.statuses.all %}<tr class="{{ status.styling.text }} {{ status.styling.background }}">
+        {% for status in reach.statuses.all %}<tr class="{{ status.styling }}">
           <th class="align-middle">{{ status.get_flag_display }}</th>
           <td class="align-middle">{{ status.set_at|date:"d/m/Y H:i" }}</td>
           <td class="align-middle">{{ status.last_seen|date:"d/m/Y H:i" }}</td>
