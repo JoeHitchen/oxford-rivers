@@ -6,7 +6,7 @@
 {% block page_body %}
     
     <!-- Out-of-date notice -->
-    {% if reach.current_flag_status.out_of_date %}<div class="row"><div class="col mb-3"><div class="alert alert-danger mb-0" role="alert">
+    {% if reach.current_flag_status.out_of_date %}<div class="row"><div class="col"><div class="alert alert-danger" role="alert">
       We have not been able to check the flag for this reach in over two hours.
       For up-to-date information you can <a href="https://ourcs.co.uk/information/flags/" class="alert-link" target="_blank">check the OURCs website directly</a>.
     </div></div></div>{% endif %}
@@ -14,16 +14,16 @@
 
     <!-- Overview -->
     <div class="row">
-      <div class="col-md-7 mb-3">
+      <div class="col-md-7">
         <h1 class="mb-0">{{ reach }}</h1>
         <div>{{ reach.upstream_lock }} Lock to {{ reach.downstream_lock }} Lock</div>
       </div>
       
-      <div class="col-md-5 mb-3">
-        <div class="card {{ reach.current_flag_status.styling.text }} {{ reach.current_flag_status.styling.background }}">
+      <div class="col-md-5">
+        <div class="card card-standalone {{ reach.current_flag_status.styling.text }} {{ reach.current_flag_status.styling.background }}">
           <div class="card-body">
             <h4 class="card-title text-center"><strong>{{ reach.current_flag_status }} Flag</strong></h4>
-            <table class="table table-sm table-borderless mb-0">
+            <table class="table table-sm table-borderless">
               <tr>
                 <td class="text-left {{ reach.current_flag_status.styling.text }} p-0">First shown:</td>
                 <td class="text-right {{ reach.current_flag_status.styling.text }} p-0">{{ reach.current_flag_status.set_at|date:"d/m/Y H:i" }}</td>
@@ -40,8 +40,8 @@
     <!-- Overview -->
     
     <!-- Interpretation guide -->
-    <div class="row"><div class="col mb-3">
-      <div class="card">
+    <div class="row"><div class="col">
+      <div class="card card-dropdown">
         <div
             id="interpretationHeader"
             class="card-header d-flex justify-content-between"
@@ -66,7 +66,7 @@
             For curiosity's sake, we also display the length of time each flag was shown for.
             On the Isis, we note that amber flag is typically only shown for a day or two, while blue flag is typically shown for closer to a week.
           </p>
-          <p class="mb-0">
+          <p>
             <sup>*</sup> Godstow does not have a blue flag.
           </p>
         </div></div>
@@ -75,8 +75,8 @@
     <!-- Interpretation guide -->
     
     <!-- Past flag status table -->
-    <div class="row"><div class="col mb-3">
-      <table class="table table-sm table-borderless table-responsive-md text-center mb-0">
+    <div class="row"><div class="col">
+      <table class="table table-sm table-borderless table-responsive-md text-center">
         <thead class="thead-light"><tr>
           <th class="align-middle">Flag</th>
           <th class="align-middle">First Shown</th>
