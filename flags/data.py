@@ -134,6 +134,7 @@ def scrape_ea_boards():
     logger.info('EA Boards - Last updated {}'.format(last_updated))
     
     # Extract boards
+    boards = {}
     main_column = soup.find(class_ = 'primary-column')
     for reach in models.Reach.objects.all():
         board = extract_board(main_column, reach.downstream_lock)
@@ -144,7 +145,10 @@ def scrape_ea_boards():
         
         models.Reach.update_advisory(reach, board, board_shown = last_updated)
         # ^ Class method used for testing purposes
+        
+        boards[reach] = models.Advisory.Boards(board)
     
     logger.info('EA Boards - Completed')
+    return boards
 
 
