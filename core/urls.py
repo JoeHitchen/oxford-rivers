@@ -9,7 +9,6 @@ from . import settings
 
 urlpatterns = [
     path('', include('flags.urls')),
-    path('tasks/', include('tasks.urls')),
     path('', RedirectView.as_view(  # Dummy view to provide site 'index' name
         url = reverse_lazy('flags:index'),
         permanent = True,
