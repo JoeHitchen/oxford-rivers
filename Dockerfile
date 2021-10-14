@@ -21,6 +21,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY --chown=python . .
 
 USER python
-CMD ["gunicorn", "core.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD ["gunicorn", "core.wsgi:application", "--bind", "0.0.0.0:8000", "--logger-class", "overrides.GunicornLogger"]
 EXPOSE 8000
 
