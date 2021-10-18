@@ -8,7 +8,7 @@ from django.utils import timezone
 import pytz
 
 from .. import models
-from ..management.commands.fetch_ourcs_flags import Command as FetchOURCsFlags
+from .. import data
 
 logging.disable(logging.CRITICAL)
 
@@ -33,33 +33,9 @@ class Test_OURCsFlag(TestCase):
         del self.reach.current_flag_status
     
     
-    @patch.object(FetchOURCsFlags, 'fetch_for_reach')
-    def test__handle__success(self, fetch_for_reach_mock):
-        """Calls the subroutine for both the Isis and Godstow."""
-        
-        call_command('fetch_ourcs_flags')
-        
-        self.assertEqual(fetch_for_reach_mock.call_count, 2)
-        fetch_for_reach_mock.assert_any_call(models.Reach.objects.get(tag = 'isis'))
-        fetch_for_reach_mock.assert_any_call(models.Reach.objects.get(tag = 'godstow'))
-    
-    
-    @patch.object(FetchOURCsFlags, 'fetch_for_reach')
-    def test__handle__error(self, fetch_for_reach_mock):
-        """Gracefully handles errors in any of the reach calls and still calls both reaches."""
-        
-        fetch_for_reach_mock.side_effect = ValueError
-        
-        call_command('fetch_ourcs_flags')
-        
-        self.assertEqual(fetch_for_reach_mock.call_count, 2)
-        fetch_for_reach_mock.assert_any_call(models.Reach.objects.get(tag = 'isis'))
-        fetch_for_reach_mock.assert_any_call(models.Reach.objects.get(tag = 'godstow'))
-    
-    
-    @patch('flags.management.commands.fetch_ourcs_flags.requests')
+    @patch('flags.data.requests')
     @patch.object(models.Reach, 'update_flag_status')
-    def test__fetch__success(self, update_mock, requests_mock):
+    def test__success(self, update_mock, requests_mock):
         """Retrieves flag information from the OURCs API and updates the stored record."""
         
         set_date = timezone.now().isoformat()
@@ -69,7 +45,7 @@ class Test_OURCsFlag(TestCase):
             'set_by': 'OURCs Committee Member',
         }
         
-        FetchOURCsFlags.fetch_for_reach(self.reach)
+        data.fetch_ourcs_flag(self.reach)
         
         self.assertEqual(update_mock.call_count, 1)
         update_mock.assert_called_once_with(
@@ -79,18 +55,42 @@ class Test_OURCsFlag(TestCase):
         )
     
     
-    @patch('flags.management.commands.fetch_ourcs_flags.requests')
+    @patch('flags.data.requests')
     @patch.object(models.Reach, 'update_flag_status')
-    def test__fetch__request_error(self, update_mock, requests_mock):
-        """Raises an error if the request is not successful."""
+    def test__request_error(self, update_mock, requests_mock):
+        """Raises an error if the API request is not successful."""
         
         requests_mock.get.return_value.ok = False
         requests_mock.get.return_value.raise_for_status.side_effect = Exception
         
         with self.assertRaises(Exception):
-            FetchOURCsFlags.fetch_for_reach(self.reach)
+            data.fetch_ourcs_flag(self.reach)
         
         self.assertEqual(requests_mock.get.return_value.raise_for_status.call_count, 1)
+    
+    
+    @patch('flags.data.fetch_ourcs_flag')
+    def test__management__success(self, fetch_ourcs_flag_mock):
+        """Management command calls the data routine for both the Isis and Godstow."""
+        
+        call_command('fetch_ourcs_flags')
+        
+        self.assertEqual(fetch_ourcs_flag_mock.call_count, 2)
+        fetch_ourcs_flag_mock.assert_any_call(models.Reach.objects.get(tag = 'isis'))
+        fetch_ourcs_flag_mock.assert_any_call(models.Reach.objects.get(tag = 'godstow'))
+    
+    
+    @patch('flags.data.fetch_ourcs_flag')
+    def test__management__error(self, fetch_ourcs_flag_mock):
+        """Management command gracefully handles errors and always calls both reaches."""
+        
+        fetch_ourcs_flag_mock.side_effect = ValueError
+        
+        call_command('fetch_ourcs_flags')
+        
+        self.assertEqual(fetch_ourcs_flag_mock.call_count, 2)
+        fetch_ourcs_flag_mock.assert_any_call(models.Reach.objects.get(tag = 'isis'))
+        fetch_ourcs_flag_mock.assert_any_call(models.Reach.objects.get(tag = 'godstow'))
 
 
 class Test_EABoards(TestCase):
@@ -102,31 +102,29 @@ class Test_EABoards(TestCase):
             cls.page_contents = file.read()
     
     
-    @patch('flags.management.commands.scrape_ea_boards.requests')
-    def test__fetch_error(self, requests_mock):
+    @patch('flags.data.requests')
+    def test__request_error(self, requests_mock):
         """Throws an error when the page retrieval fails."""
         
         requests_mock.get.return_value.ok = False
         requests_mock.get.return_value.raise_for_status.side_effect = Exception
         
         with self.assertRaises(Exception):
-            call_command('scrape_ea_boards')
+            data.scrape_ea_boards()
         
         self.assertEqual(requests_mock.get.return_value.raise_for_status.call_count, 1)
     
     
-    @patch('flags.management.commands.scrape_ea_boards.requests')
+    @patch('flags.data.requests')
     @patch.object(models.Reach, 'update_advisory')
-    @patch('flags.management.commands.scrape_ea_boards.randrange', return_value = 35)
-    @patch('flags.management.commands.scrape_ea_boards.sleep')
-    def test__standard(self, sleep_mock, range_mock, update_mock, requests_mock):
+    def test__success(self, update_mock, requests_mock):
         """Parses the EA page and updates each reach appropriately."""
         
         boards_shown = datetime(2020, 10, 30, 11, 15).astimezone(pytz.timezone('Europe/London'))
         reach_map = {reach.tag: reach for reach in models.Reach.objects.all()}
         requests_mock.get.return_value.text = self.page_contents
         
-        call_command('scrape_ea_boards')
+        data.scrape_ea_boards()
         
         self.assertEqual(update_mock.call_count, 6)
         update_mock.assert_any_call(reach_map['isis'], 'INC', board_shown = boards_shown)
@@ -137,20 +135,4 @@ class Test_EABoards(TestCase):
         update_mock.assert_any_call(reach_map['sandford'], 'DEC', board_shown = boards_shown)
         
         requests_mock.get.return_value.raise_for_status.assert_not_called()
-        range_mock.assert_not_called()
-        sleep_mock.assert_not_called()
-    
-    
-    @patch('flags.management.commands.scrape_ea_boards.requests')
-    @patch('flags.management.commands.scrape_ea_boards.randrange', return_value = 35)
-    @patch('flags.management.commands.scrape_ea_boards.sleep')
-    def test__with_delay(self, sleep_mock, range_mock, requests_mock):
-        """Generates a random delay between 60 and 180 seconds."""
-        
-        requests_mock.get.return_value.text = self.page_contents
-        
-        call_command('scrape_ea_boards', '--delay')
-        
-        range_mock.assert_called_once_with(60, 180)
-        sleep_mock.assert_called_once_with(35)
 
