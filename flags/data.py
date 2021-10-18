@@ -37,12 +37,12 @@ def scrape_ourcs_flag_history(reach):
     **UNTESTED** - This command is not expected to be called regularly."""
     
     flag_text_map = {
-        'Grey': models.Flag.Status.GREY,
-        'Green': models.Flag.Status.GREEN,
-        'Blue': models.Flag.Status.BLUE,
-        'Amber': models.Flag.Status.AMBER,
-        'Red': models.Flag.Status.RED,
-        'Black': models.Flag.Status.BLACK,
+        'Grey': models.Status.Flags.GREY,
+        'Green': models.Status.Flags.GREEN,
+        'Blue': models.Status.Flags.BLUE,
+        'Amber': models.Status.Flags.AMBER,
+        'Red': models.Status.Flags.RED,
+        'Black': models.Status.Flags.BLACK,
     }
     
     
