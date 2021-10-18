@@ -54,7 +54,10 @@ def scrape_ourcs_flag_history(reach):
     soup = BeautifulSoup(response.text, 'html.parser')
     
     # Retrieve existing status records
-    already_recorded = [(status.flag, status.set_at) for status in reach.statuses.all()]
+    already_recorded = [
+        (status.flag, status.set_at.replace(second = 0, microsecond = 0))
+        for status in reach.statuses.all()
+    ]
     
     # Iterate over historical statuses
     statuses = []
