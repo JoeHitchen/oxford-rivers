@@ -1,0 +1,1137 @@
+
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OURCs: Flags</title>
+
+<!-- javascript (START) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="/static/main/main.js"></script>
+
+<!-- javascript (END) -->
+
+<!-- CSS links (START) -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+<link rel="stylesheet" href="/static/main/override.css">
+<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Lato" />
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="/static/css/font-awesome.min.css">
+<link rel="shortcut icon" href="/static/favicon.png" />
+
+<!-- CSS links (END) -->
+
+<!-- Cookies (START) -->
+<!-- Provided by: cookieconsent.insites.com -->
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.css" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.js"></script>
+<script>
+window.addEventListener("load", function(){
+window.cookieconsent.initialise({
+  "palette": {
+    "popup": {
+      "background": "#002147"
+    },
+    "button": {
+      "background": "#f1d600"
+    }
+  },
+  "theme": "classic",
+  "content": {
+    "message": "We need to give you a cookie if you want to sign in to this website or hide this message. Sadly, this is not a cookie you can eat - For those, you'll need to contact OUWLRC about their next bake sale.",
+    "link": " ",
+    "href": "www.ourcs.org.uk",
+    "dismiss": "Gimme cookie!"
+  }
+})});
+</script>
+<!-- Cookies (END) -->
+
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <style type="text/css">
+/*            .nav {
+                padding-left: 0;
+            }
+            .nav li {
+                display: inline;
+                list-style-type: none;
+                padding-right: 20px;
+            }
+            .container {
+                !*width: 940px;*!
+                margin: 0 auto
+            }
+            .content {
+                float: left;
+                width: 80%;
+            }
+            .sidebar {
+                float: left;
+                width: 20%;
+            }*/
+          /*Pinched from stack overflow to make the tooldbar behave with cms*/
+            .cms-toolbar-expanded body, .cms-toolbar-expanded .navbar-fixed-top{
+                top:40px;
+            }
+        </style>
+        
+
+</head>
+
+<body>
+
+<div id="top"></div>
+
+
+<!-- Navbar implementation with CMS (START) -->
+
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+<div class="container-fluid">
+        <!-- Branding (START) -->
+<!-- Brand and toggle get grouped for better mobile display -->
+<div class="navbar-header">
+  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+  </button>
+  <a class="navbar-brand" href="/">OURCs</a>
+</div>
+<!-- Branding (END) -->
+
+
+<!-- Bootstrap-compatible CMS nav (START) -->
+<!-- Code source: https://github.com/jrief/djangocms-bootstrap3 -->
+
+<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+<ul class="nav navbar-nav">
+
+  
+  <li class=" dropdown">
+  	
+  	<a href="/organisation/" class="dropdown-toggle" data-toggle="dropdown">Organisation <b class="caret"></b></a>
+  	<ul class="dropdown-menu">
+  		
+  		<li class="">
+  			<a href="/organisation/"><strong>Organisation</strong></a>
+  		</li>
+          <li role="separator" class="divider"></li>
+  		
+  		
+  		
+  			<li>
+  				<a href="/organisation/structure/">Structure</a>
+  			</li>
+  		
+  			<li>
+  				<a href="/organisation/constitution/">Constitution</a>
+  			</li>
+  		
+  			<li>
+  				<a href="/organisation/conduct/">Code of Conduct</a>
+  			</li>
+  		
+  			<li>
+  				<a href="/organisation/racing/">Rules of Racing</a>
+  			</li>
+  		
+  			<li>
+  				<a href="/organisation/fines/">Fines</a>
+  			</li>
+  		
+  			<li>
+  				<a href="/organisation/committee/">Committee</a>
+  			</li>
+  		
+  			<li>
+  				<a href="/organisation/calendar/">Calendar</a>
+  			</li>
+  		
+  			<li>
+  				<a href="/organisation/meetings/">Meeting Minutes</a>
+  			</li>
+  		
+  			<li>
+  				<a href="/organisation/contact-us/">Contact Us</a>
+  			</li>
+  		
+  	</ul>
+  	
+  </li>
+  
+  <li class="active dropdown">
+  	
+  	<a href="/information/" class="dropdown-toggle" data-toggle="dropdown">Information <b class="caret"></b></a>
+  	<ul class="dropdown-menu">
+  		
+  		<li class="">
+  			<a href="/information/"><strong>Information</strong></a>
+  		</li>
+          <li role="separator" class="divider"></li>
+  		
+  		
+  		
+  			<li>
+  				<a href="/information/river-restrictions/">Restrictions</a>
+  			</li>
+  		
+  			<li class="active">
+  				<a href="/information/flags/">Flags</a>
+  			</li>
+  		
+  			<li>
+  				<a href="/information/suntimes/">Suntimes</a>
+  			</li>
+  		
+  			<li>
+  				<a href="/information/extra-slots/">Extra Slots</a>
+  			</li>
+  		
+  			<li>
+  				<a href="/information/blade-colours/">Blade Colours</a>
+  			</li>
+  		
+  			<li>
+  				<a href="/information/mailing-lists/">Mailing Lists</a>
+  			</li>
+  		
+  			<li>
+  				<a href="/information/calendar/">Calendar</a>
+  			</li>
+  		
+  			<li>
+  				<a href="/information/e-learning/">E-Learning</a>
+  			</li>
+  		
+  	</ul>
+  	
+  </li>
+  
+  <li class=" dropdown">
+  	
+  	<a href="/safety/" class="dropdown-toggle" data-toggle="dropdown">Safety <b class="caret"></b></a>
+  	<ul class="dropdown-menu">
+  		
+  		<li class="">
+  			<a href="/safety/"><strong>Safety</strong></a>
+  		</li>
+          <li role="separator" class="divider"></li>
+  		
+  		
+  		
+  			<li>
+  				<a href="/safety/swim-tests/">Swim Tests</a>
+  			</li>
+  		
+  			<li>
+  				<a href="/safety/capsize-drills/">Capsize Drills</a>
+  			</li>
+  		
+  			<li>
+  				<a href="/safety/safety-links-and-documents/">Safety Links and Documents</a>
+  			</li>
+  		
+  	</ul>
+  	
+  </li>
+  
+  <li class=" dropdown">
+  	
+  	<a href="/racing/" class="dropdown-toggle" data-toggle="dropdown">Racing <b class="caret"></b></a>
+  	<ul class="dropdown-menu">
+  		
+  		<li class="">
+  			<a href="/racing/"><strong>Racing</strong></a>
+  		</li>
+          <li role="separator" class="divider"></li>
+  		
+  		
+  		
+  			<li>
+  				<a href="/racing/entries/">Entries</a>
+  			</li>
+  		
+  			<li>
+  				<a href="/racing/isis-winter-league-scoring-guide/">Isis Winter League Scoring Guide</a>
+  			</li>
+  		
+  			<li>
+  				<a href="/racing/autumn4s/">Autumn Fours</a>
+  			</li>
+  		
+  			<li>
+  				<a href="/racing/8w-torpids-2020/">Torpids 2020</a>
+  			</li>
+  		
+  			<li>
+  				<a href="/racing/iwl-2020-21/">IWL 2020-21</a>
+  			</li>
+  		
+  			<li>
+  				<a href="/racing/historical-results/">Historical results</a>
+  			</li>
+  		
+  			<li>
+  				<a href="/racing/headship-trophy-presentation-photos/">Headship Trophy Presentation Photos</a>
+  			</li>
+  		
+  			<li>
+  				<a href="/racing/isl-2021/">ISL 2021</a>
+  			</li>
+  		
+  			<li>
+  				<a href="/racing/summer-torpids-2021/">7th Week Summer Torpids 2021</a>
+  			</li>
+  		
+  	</ul>
+  	
+  </li>
+  
+  <li class=" dropdown">
+  	
+  	<a href="/rowing/" class="dropdown-toggle" data-toggle="dropdown">Rowing <b class="caret"></b></a>
+  	<ul class="dropdown-menu">
+  		
+  		<li class="">
+  			<a href="/rowing/"><strong>Rowing</strong></a>
+  		</li>
+          <li role="separator" class="divider"></li>
+  		
+  		
+  		
+  			<li>
+  				<a href="/rowing/tank-booking/">Tank Booking</a>
+  			</li>
+  		
+  	</ul>
+  	
+  </li>
+  
+  <li class=" dropdown">
+  	
+  	<a href="/coxing/" class="dropdown-toggle" data-toggle="dropdown">Coxing <b class="caret"></b></a>
+  	<ul class="dropdown-menu">
+  		
+  		<li class="">
+  			<a href="/coxing/"><strong>Coxing</strong></a>
+  		</li>
+          <li role="separator" class="divider"></li>
+  		
+  		
+  		
+  			<li>
+  				<a href="/coxing/coxing-faq/">Coxing FAQ</a>
+  			</li>
+  		
+  			<li>
+  				<a href="/coxing/coxing-competencies/">Coxing Competencies</a>
+  			</li>
+  		
+  			<li>
+  				<a href="/coxing/coxing-documents/">Coxing Documents</a>
+  			</li>
+  		
+  	</ul>
+  	
+  </li>
+  
+  <li class="">
+  	
+  	<a href="/local/">Local</a>
+  	
+  </li>
+  
+  <li class="">
+  	
+  	<a href="/search/">Search</a>
+  	
+  </li>
+  
+  </ul>
+
+<!-- Bootstrap-compatible CMS nav (END) -->
+
+  <ul class="nav navbar-nav navbar-right">
+    <li class="dropdown" style="min-width: 160px;">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+        <div style="min-width: 112px; display: inline-block; margin-right: 5px;">
+        Not signed in
+        
+        </div>
+        <div style="width: 10px; display: inline-block;">
+        <span class="caret"></span></div>
+      </a>
+        <ul class="dropdown-menu">
+            
+            <li><a href="/accounts/signup">Sign up</a></li>
+            <li><a href="/accounts/signin">Sign in</a></li>
+            
+        </ul>
+    </li>
+  </ul>
+
+</div><!-- /.navbar-collapse -->
+
+</div>
+</nav>
+
+
+
+
+<!-- Page header (END) -->
+
+
+<!-- Main page content (START) -->
+<div class="container">
+
+<div>
+  
+</div>
+
+
+
+<style>
+    #isis {
+        width: 40px;
+        height: 40px;
+        -webkit-border-radius: 20px;
+        -moz-border-radius: 20px;
+        border-radius: 20px;
+        background: grey;
+    }
+    #godstow {
+        width: 40px;
+        height: 40px;
+        -webkit-border-radius: 20px;
+        -moz-border-radius: 20px;
+        border-radius: 20px;
+        background: grey;
+    }
+</style>
+
+<div class="col-lg-12 text-left" style="padding: 10px; background-image: url('/static/fabric_of_squares_gray.png');">
+    
+    <div class="row">
+        <div class="col-lg-10">
+          <h3>What Do The Different Colours Mean?</h3>
+
+<p>The colour of the flags represents how fast (and therefore how dangerous) the stream is on the respective stretch, and consequently shows which OURCs rules are in force, though it is important that all crews make their own individual risk assessment before starting an outing.</p>
+
+<p>For an explanation of the Flags at Godstow and on the Isis, please see More Information</p>
+          
+
+<div>
+    <div class='btn-toolbar pull-right'>
+      <a href="/information/flags/" class="btn btn-default">Back to flags index</a>
+    </div>
+  <h1 class="text-left"> Isis Flag Page</h1>
+</div>
+
+
+
+
+<div class="table-responsive">
+<table class="table">
+  <tr>
+    <th class="text-right">River</th>
+	<td class="text-left">Isis</td>
+  </tr>
+  <tr>
+    <th class="text-right">Active Status</th>
+	<td class="text-left">Green
+        
+    </td>
+  </tr>
+  <tr>
+    <th class="text-right">Active Notices</th>
+	<td class="text-left"><ul>
+		<li>No restrictions on coxing status.</li>
+	  
+		<li>Novices coxes must be accompanied by a bankrider.</li>
+	  </ul></td>
+  </tr>
+  <tr>
+    <th class="text-right">Last Updated</th>
+	<td class="text-left">27/05/21 12:59</td>
+  </tr>
+  <tr>
+    <th class="text-right">Authorised By</th>
+	<td class="text-left">Jack Woodward</td>
+  </tr>
+  <tr>
+    <th class="text-right">Status API</th>
+	<td class="text-left"><a href="/api/flags/status/isis/">Link</a></td>
+  </tr>
+</table>
+</div>
+
+<h2 class="text-left">Flags</h2>
+<table class="table">
+  <thead><tr>
+    <th class="text-center">Status</th>
+	<th class="text-left">Notices</th>
+  </tr></thead>
+  <tbody>
+    
+	<tr>
+	  <td class="text-center">Grey</td>
+	  <td class="text-left"><ul>
+		<li>Flag not currently being maintained.</li>
+	  
+		<li>All crews must make their own decision on whether it is safe to row.</li>
+	  </ul></td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Green</td>
+	  <td class="text-left"><ul>
+		<li>No restrictions on coxing status.</li>
+	  
+		<li>Novices coxes must be accompanied by a bankrider.</li>
+	  </ul></td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Blue</td>
+	  <td class="text-left"><ul>
+		<li>No novice or unregistered coxes.</li>
+	  
+		<li>No spinning at Longbridges, except to immediately land.</li>
+	  
+		<li>At Haystacks, spin upstream of the red-and-white post and downstream of the early turning post near Donnington Bridge.</li>
+	  
+		<li>Crews may not go above Folly Bridge or through Iffley Lock.</li>
+	  </ul></td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Amber</td>
+	  <td class="text-left"><ul>
+		<li>Only senior coxes with senior crews - At least 4 rowers with 3 terms&#39; experience, no rowers with less than one term.</li>
+	  
+		<li>All crews must have a bankrider equipped with a throw-line and a mobile phone pre-programmed with the number of the Iffley Lock-keeper (01865 777 277)</li>
+	  
+		<li>No spinning at Longbridges, except to immediately land.</li>
+	  
+		<li>At Haystacks, spin upstream of the red-and-white post and downstream of the early turning post near Donnington Bridge.</li>
+	  
+		<li>Crews may not go above Folly Bridge or through Iffley Lock.</li>
+	  </ul></td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Red</td>
+	  <td class="text-left"><ul>
+		<li>No crews are allowed out.</li>
+	  </ul></td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Black</td>
+	  <td class="text-left"><ul>
+		<li>No crews are allowed out.</li>
+	  
+		<li>Bank may be flooded in places - Exercise caution on foot or bike and avoid unnecessary trips to the river.</li>
+	  
+		<li>Boathouses may be inaccessible - Contact your boatman if concerned about equipment.</li>
+	  
+		<li>Do not expect to be rowing any time soon.</li>
+	  </ul></td>
+	</tr>
+	
+  </tbody>
+</table>
+
+<h2 class="text-left">History</h2>
+<table class="table">
+  <thead><tr>
+    <th class="text-center">Status</th>
+	<th class="text-center">Start Date</th>
+	<th class="text-center">End Date</th>
+  </tr></thead>
+  <tbody>
+    
+	<tr>
+	  <td class="text-center">Green</td>
+	  <td class="text-center">27/05/21 12:59</td>
+	  <td class="text-center"></td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Blue</td>
+	  <td class="text-center">22/05/21 18:36</td>
+	  <td class="text-center">27/05/21 12:59</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Green</td>
+	  <td class="text-center">20/05/21 13:25</td>
+	  <td class="text-center">22/05/21 18:36</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Blue</td>
+	  <td class="text-center">18/05/21 19:43</td>
+	  <td class="text-center">20/05/21 13:25</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Green</td>
+	  <td class="text-center">16/05/21 19:33</td>
+	  <td class="text-center">18/05/21 19:43</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Blue</td>
+	  <td class="text-center">14/05/21 23:26</td>
+	  <td class="text-center">16/05/21 19:33</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Green</td>
+	  <td class="text-center">11/05/21 14:00</td>
+	  <td class="text-center">14/05/21 23:26</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Blue</td>
+	  <td class="text-center">10/05/21 17:07</td>
+	  <td class="text-center">11/05/21 14:00</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Blue</td>
+	  <td class="text-center">10/05/21 16:59</td>
+	  <td class="text-center">10/05/21 17:07</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Green</td>
+	  <td class="text-center">26/03/21 15:45</td>
+	  <td class="text-center">10/05/21 16:59</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Grey</td>
+	  <td class="text-center">14/12/20 11:18</td>
+	  <td class="text-center">26/03/21 15:45</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Blue</td>
+	  <td class="text-center">13/12/20 19:14</td>
+	  <td class="text-center">14/12/20 11:18</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Green</td>
+	  <td class="text-center">01/12/20 17:06</td>
+	  <td class="text-center">13/12/20 19:14</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Grey</td>
+	  <td class="text-center">12/11/20 00:10</td>
+	  <td class="text-center">01/12/20 17:06</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Blue</td>
+	  <td class="text-center">06/11/20 22:21</td>
+	  <td class="text-center">12/11/20 00:10</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Amber</td>
+	  <td class="text-center">01/11/20 13:31</td>
+	  <td class="text-center">06/11/20 22:21</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Blue</td>
+	  <td class="text-center">25/10/20 18:05</td>
+	  <td class="text-center">01/11/20 13:31</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Green</td>
+	  <td class="text-center">12/10/20 15:17</td>
+	  <td class="text-center">25/10/20 18:05</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Blue</td>
+	  <td class="text-center">10/10/20 11:21</td>
+	  <td class="text-center">12/10/20 15:17</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Amber</td>
+	  <td class="text-center">09/10/20 13:09</td>
+	  <td class="text-center">10/10/20 11:21</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Blue</td>
+	  <td class="text-center">09/10/20 11:09</td>
+	  <td class="text-center">09/10/20 13:09</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Amber</td>
+	  <td class="text-center">08/10/20 17:55</td>
+	  <td class="text-center">09/10/20 11:09</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Red</td>
+	  <td class="text-center">04/10/20 10:48</td>
+	  <td class="text-center">08/10/20 17:55</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Green</td>
+	  <td class="text-center">30/09/20 19:19</td>
+	  <td class="text-center">04/10/20 10:48</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Grey</td>
+	  <td class="text-center">22/03/20 15:25</td>
+	  <td class="text-center">30/09/20 19:19</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Blue</td>
+	  <td class="text-center">18/03/20 14:07</td>
+	  <td class="text-center">22/03/20 15:25</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Amber</td>
+	  <td class="text-center">17/03/20 11:49</td>
+	  <td class="text-center">18/03/20 14:07</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Red</td>
+	  <td class="text-center">11/02/20 22:02</td>
+	  <td class="text-center">17/03/20 11:49</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Amber</td>
+	  <td class="text-center">10/02/20 21:38</td>
+	  <td class="text-center">11/02/20 22:02</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Blue</td>
+	  <td class="text-center">10/02/20 12:21</td>
+	  <td class="text-center">10/02/20 21:38</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Green</td>
+	  <td class="text-center">09/02/20 17:50</td>
+	  <td class="text-center">10/02/20 12:21</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Red</td>
+	  <td class="text-center">08/02/20 18:15</td>
+	  <td class="text-center">09/02/20 17:50</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Green</td>
+	  <td class="text-center">06/02/20 13:32</td>
+	  <td class="text-center">08/02/20 18:15</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Blue</td>
+	  <td class="text-center">31/01/20 12:57</td>
+	  <td class="text-center">06/02/20 13:32</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Amber</td>
+	  <td class="text-center">30/01/20 12:57</td>
+	  <td class="text-center">31/01/20 12:57</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Red</td>
+	  <td class="text-center">27/01/20 18:24</td>
+	  <td class="text-center">30/01/20 12:57</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Amber</td>
+	  <td class="text-center">25/01/20 12:27</td>
+	  <td class="text-center">27/01/20 18:24</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Red</td>
+	  <td class="text-center">11/01/20 12:50</td>
+	  <td class="text-center">25/01/20 12:27</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Amber</td>
+	  <td class="text-center">10/01/20 12:53</td>
+	  <td class="text-center">11/01/20 12:50</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Blue</td>
+	  <td class="text-center">04/01/20 13:33</td>
+	  <td class="text-center">10/01/20 12:53</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Amber</td>
+	  <td class="text-center">01/01/20 16:15</td>
+	  <td class="text-center">04/01/20 13:33</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Red</td>
+	  <td class="text-center">13/12/19 11:05</td>
+	  <td class="text-center">01/01/20 16:15</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Blue</td>
+	  <td class="text-center">05/12/19 13:01</td>
+	  <td class="text-center">13/12/19 11:05</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Amber</td>
+	  <td class="text-center">03/12/19 15:45</td>
+	  <td class="text-center">05/12/19 13:01</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Red</td>
+	  <td class="text-center">07/11/19 14:49</td>
+	  <td class="text-center">03/12/19 15:45</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Amber</td>
+	  <td class="text-center">06/11/19 17:00</td>
+	  <td class="text-center">07/11/19 14:49</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Red</td>
+	  <td class="text-center">04/11/19 12:04</td>
+	  <td class="text-center">06/11/19 17:00</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Amber</td>
+	  <td class="text-center">03/11/19 11:00</td>
+	  <td class="text-center">04/11/19 12:04</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Blue</td>
+	  <td class="text-center">31/10/19 22:52</td>
+	  <td class="text-center">03/11/19 11:00</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Amber</td>
+	  <td class="text-center">30/10/19 14:45</td>
+	  <td class="text-center">31/10/19 22:52</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Red</td>
+	  <td class="text-center">27/10/19 11:58</td>
+	  <td class="text-center">30/10/19 14:45</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Amber</td>
+	  <td class="text-center">27/10/19 11:43</td>
+	  <td class="text-center">27/10/19 11:58</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Blue</td>
+	  <td class="text-center">26/10/19 16:24</td>
+	  <td class="text-center">27/10/19 11:43</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Green</td>
+	  <td class="text-center">23/10/19 15:00</td>
+	  <td class="text-center">26/10/19 16:24</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Blue</td>
+	  <td class="text-center">20/10/19 17:30</td>
+	  <td class="text-center">23/10/19 15:00</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Amber</td>
+	  <td class="text-center">20/10/19 10:35</td>
+	  <td class="text-center">20/10/19 17:30</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Red</td>
+	  <td class="text-center">15/10/19 13:46</td>
+	  <td class="text-center">20/10/19 10:35</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Amber</td>
+	  <td class="text-center">14/10/19 18:29</td>
+	  <td class="text-center">15/10/19 13:46</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Amber</td>
+	  <td class="text-center">14/10/19 18:25</td>
+	  <td class="text-center">14/10/19 18:29</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Blue</td>
+	  <td class="text-center">14/10/19 11:17</td>
+	  <td class="text-center">14/10/19 18:25</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Green</td>
+	  <td class="text-center">13/02/19 15:33</td>
+	  <td class="text-center">14/10/19 11:17</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Blue</td>
+	  <td class="text-center">05/02/19 18:51</td>
+	  <td class="text-center">13/02/19 15:33</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Green</td>
+	  <td class="text-center">08/01/19 23:28</td>
+	  <td class="text-center">05/02/19 18:51</td>
+	</tr>
+	
+	<tr>
+	  <td class="text-center">Grey</td>
+	  <td class="text-center">24/12/18 13:04</td>
+	  <td class="text-center">08/01/19 23:28</td>
+	</tr>
+	
+  </tbody>
+</table>
+
+
+        </div>
+        <div class="col-lg-2">
+            <!--
+            <div id="neptune-lg" class="visible-lg-block">
+                <img src="https://ourcs.co.uk/media/neptune-logo.jpg" class="img-responsive center-block" style="mix-blend-mode: multiply; max-width: 100%;"/>
+                <hr />
+            </div>
+            -->
+            <div id="flag">
+    <h3>Flag Status:</h3>
+    <!-- <center>
+         <img src="http://www.ourcs.org.uk/isisflag.php" style="mix-blend-mode: multiply;" />
+         <img src="http://www.ourcs.org.uk/godstowflag.php" style="mix-blend-mode: multiply;" />
+     </center>-->
+    <table style="margin:auto">
+        <tr>
+            <td>Isis: </td>
+            <td style="text-align: right; padding: 5px;  padding-left: 20px;"><div id="isis">&nbsp;</div></td>
+        </tr>
+        <tr>
+            <td>Godstow: </td>
+            <td style="text-align: right; padding: 5px; padding-left: 20px;"><div id="godstow">&nbsp;</div></td>
+        </tr>
+    </table>
+    <br />
+    <small><a href="/information/flags">More Details</a></small>
+</div>
+<script>
+    $.getJSON("/api/flags/status/isis", function(data){
+        $('#isis').css('background', flagColour(data));
+    });
+
+    $.getJSON("/api/flags/status/godstow", function(data){
+        $('#godstow').css('background', flagColour(data));
+    });
+
+    function flagColour(data) {
+        flagStatus = data['status']
+        switch(flagStatus) {
+            case "G":
+                return "green";
+                break;
+            case "B":
+                return "blue";
+                break;
+            case "A":
+                return "orange";
+                break;
+            case "R":
+                return "red";
+                break;
+            case "D":
+                return "black";
+                break;
+            default:
+                return "grey";
+        }
+    }
+</script>
+
+            <hr />
+            <div id="suntimes" class="center-block">
+    <h3>Suntimes:</h3>
+    <table style="margin:auto">
+        <tr>
+            <td>Sunrise: </td>
+            <td id="sunrise">API Failed</td>
+        </tr>
+        <tr>
+            <td>Sunset: </td>
+            <td id="sunset">API Failed</td>
+        </tr>
+        <tr>
+            <td colspan="2"><small>Times given for Boathouse Island.<br/>More
+                times at <a
+                  href="/information/suntimes/">suntimes</a>.</small></td>
+        </tr>
+    </table>
+    <!--                <div class="text-center">
+                        Sunrise: <span id="sunrise"></span><br />
+                        Sunset: <span id="sunset"></span>
+                    </div>-->
+    <!--                &lt;!&ndash;<img src="http://www.ourcs.org.uk/suntimes.php" class="img-responsive center-block" style="mix-blend-mode: multiply;" />&ndash;&gt;
+                    <br />
+                    <small>Times given for boathouse island. More times at <a href="http://www.ourcs.org.uk/safety/suntimes">suntimes</a>.</small>-->
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.23/moment-timezone-with-data.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/suncalc/1.8.0/suncalc.min.js"></script>
+
+<script>
+    let lat = 51.7435313
+    let lng = -1.2512201
+
+    let todaySuntimes = SunCalc.getTimes(new Date(), lat, lng)
+    $('#sunset').text(moment(todaySuntimes.sunset).tz('Europe/London').format('HH:mm'))
+    $('#sunrise').text(moment(todaySuntimes.sunrise).tz('Europe/London').format('HH:mm'))
+    // LEGACY
+    /*$.get("https://api.sunrise-sunset.org/json", {lat:51.7435346,lng:-1.2512201,formatted:0}).done(function(data){
+        let sunset = new moment(data.results.sunset);
+        let sunrise = new moment(data.results.sunrise);
+        $('#sunset').text(sunset.format("HH:mm")); // .tz (http://momentjs.com/timezone/docs/#/using-timezones/) might be overkill, but I've put it in here just in case.
+        $('#sunrise').text(sunrise.format("HH:mm"));
+    });*/
+</script>
+
+            <hr />
+            <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.simpleWeather/3.1.0/jquery.simpleWeather.min.js"></script>
+<div id="weather">
+    <a class="weatherwidget-io" href="https://forecast7.com/en/51d75n1d26/oxford/" data-label_1="OXFORD" data-label_2="WEATHER" data-icons="Climacons Animated" data-mode="Current" data-days="3" >OXFORD WEATHER</a>
+    <script>
+        !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src='https://weatherwidget.io/js/widget.min.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','weatherwidget-io-js');
+    </script>
+    <div style="display: none; text-align: center; color: black">
+    Wind: <span id="wind"></span>&nbsp;<i class="fa fa-location-arrow" id="windDir"></i>
+    </div>
+    <!--<table style="margin:auto">-->
+        <!--<tr>-->
+            <!--<td>Wind: </td>-->
+            <!--<td id="wind"></td>-->
+        <!--</tr>-->
+    <!--</table>-->
+    <a class="weatherwidget-io" href="https://forecast7.com/en/51d75n1d26/oxford/" data-icons="Climacons Animated" data-mode="Forecast" data-days="3" >OXFORD WEATHER</a>
+    <script>
+        !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src='https://weatherwidget.io/js/widget.min.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','weatherwidget-io-js');
+    </script>
+</div>
+
+<script>
+/*    $.simpleWeather({
+        woeid: '31278',
+        unit: 'c',
+        success: function(weather) {
+            $("#wind").text(weather.wind.speed + " " + weather.units.speed);
+            let angle = wind2Degrees(weather.wind.direction)
+            $('#windDir').css('-webkit-transform', 'rotate('+angle+'deg)','transform', 'rotate('+angle+'deg)')
+
+        },
+        error: function(error) {
+            $("#wind").text(error);
+        }
+    });
+    function wind2Degrees(direction) {
+        let directions = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
+        let i = directions.indexOf(direction)
+        return (180-45+i*22.5)%360
+    }*/
+</script>
+            <!--
+            <div id="neptune-mobile" class="hidden-lg">
+                <hr />
+                <img src="https://ourcs.co.uk/media/neptune-logo.jpg" class="img-responsive center-block" style="mix-blend-mode: multiply; max-width: 33%;"/>
+                <hr />
+            </div>
+            -->
+        </div>
+    </div>
+</div>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>-->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.21/moment-timezone.min.js"></script>-->
+
+
+
+</div>
+<!-- Main page content (END) -->
+
+<!-- Modal popup window (START) -->
+<div class="container">
+  <div id="ModalPopUp" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div id="modal-header" class="modal-header">
+          
+        </div>
+        <div id="modal-body" class="modal-body">
+          
+        </div>
+        <div id="modal-footer" class="modal-footer">
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal popup window (END) -->
+
+<!-- Page scripts (START) -->
+
+<!-- Page scripts (END) -->
+<br />
+    </body>
+</html>

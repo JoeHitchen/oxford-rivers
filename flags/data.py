@@ -32,9 +32,7 @@ def fetch_ourcs_flag(reach):
 
 
 def scrape_ourcs_flag_history(reach):
-    """Retrieves historical flag information from the OURCs website
-    
-    **UNTESTED** - This command is not expected to be called regularly."""
+    """Retrieves historical flag information from the OURCs website"""
     
     flag_text_map = {
         'Grey': models.Status.Flags.GREY,
