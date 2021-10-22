@@ -138,7 +138,11 @@ class Test_OURCsFlagHistory(TestCase):
         
         self.reach.statuses.create(  # This record matches the most recent record in the fixture
             flag = models.Status.Flags.GREEN,
-            set_at = '2021-05-27T12:59:45.769200+01:00',
+            set_at = (
+                datetime
+                .fromisoformat('2021-05-27T12:59:45.769200')
+                .astimezone(pytz.timezone('Europe/London'))
+            ),
         )
         
         requests_mock.get.return_value.text = self.page_contents
