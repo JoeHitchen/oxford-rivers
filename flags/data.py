@@ -24,6 +24,8 @@ def fetch_ourcs_flag(reach):
     response_json = response.json()
     
     # Update and log flag status
+    if response_json['status'] == 'H':
+        response_json['status'] = models.Status.Flags.BLUE.value
     flag = models.Status.Flags(response_json['status'])
     reach.update_flag_status(flag, response_json['set_date'], response_json.get('set_by', ''))
     logger.info('OURCs Flag - {} - {}'.format(reach.name, flag.label))
@@ -37,7 +39,9 @@ def scrape_ourcs_flag_history(reach):
     flag_text_map = {
         'Grey': models.Status.Flags.GREY,
         'Green': models.Status.Flags.GREEN,
+        'Light Blue': models.Status.Flags.LIGHT,
         'Blue': models.Status.Flags.BLUE,
+        'Dark Blue': models.Status.Flags.BLUE,
         'Amber': models.Status.Flags.AMBER,
         'Red': models.Status.Flags.RED,
         'Black': models.Status.Flags.BLACK,

@@ -118,6 +118,7 @@ class Status(models.Model):
     class Flags(models.TextChoices):
         GREY = ('X', 'Grey')
         GREEN = ('G', 'Green')
+        LIGHT = ('L', 'Light Blue')
         BLUE = ('B', 'Blue')
         AMBER = ('A', 'Amber')
         RED = ('R', 'Red')
@@ -145,6 +146,7 @@ class Status(models.Model):
         return {
             self.Flags.GREY: 'bg-secondary',
             self.Flags.GREEN: 'bg-success',
+            self.Flags.LIGHT: 'bg-lightblue',
             self.Flags.BLUE: 'bg-primary',
             self.Flags.AMBER: 'bg-warning',
             self.Flags.RED: 'bg-danger',

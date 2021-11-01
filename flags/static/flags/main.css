@@ -24,3 +24,7 @@ div.col, div[class^="col-"], div[class*=" col-"] {
   margin-bottom: 0.25em;
 }
 
+.bg-lightblue {
+  background-color: cyan;
+}
+
