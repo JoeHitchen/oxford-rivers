@@ -18,7 +18,7 @@
           <div class="card-header">
             {{ reach }}
           </div>
-          <div class="card-body {% if reach.current_flag_status.out_of_date %}text-light bg-secondary{% else %}{{ reach.current_flag_status.styling.text }} {{ reach.current_flag_status.styling.background }}{% endif %}">
+          <div class="card-body {% if reach.current_flag_status.out_of_date %}text-light bg-secondary{% else %}{{ reach.current_flag_status.styling }}{% endif %}">
             <span class="card-title"><strong>{{ reach.current_flag_status }}{% if reach.current_flag_status.out_of_date %} (Out of date){% endif %}</strong></span>
             <br/>
             <span>{{ reach.current_flag_status.set_at|date:"d/m/Y" }} {{ reach.current_flag_status.set_at|date:"H:i" }}</span>
