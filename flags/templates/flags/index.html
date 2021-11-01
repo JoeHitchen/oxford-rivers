@@ -76,7 +76,7 @@
           <div class="card-header">
             {{ reach }}
           </div>
-          <div class="card-body {% if reach.current_advisory.out_of_date %}text-light bg-secondary{% else %}{{ reach.current_advisory.styling.text }} {{ reach.current_advisory.styling.background }}{% endif %}">
+          <div class="card-body {% if reach.current_advisory.out_of_date %}text-light bg-secondary{% else %}{{ reach.current_advisory.styling }}{% endif %}">
             <span class="card-title"><strong>{{ reach.current_advisory }}{% if reach.current_advisory.out_of_date %} (Out of date){% endif %}</strong></span>
             <br/>
             <span>{{ reach.current_advisory.first_updated|date:"d/m/Y" }}</span>
