@@ -1,4 +1,4 @@
-flake8
+flake8<6
 flake8-pyi
 flake8-print
 flake8-commas
