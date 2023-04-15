@@ -1,11 +1,11 @@
 from unittest.mock import patch
 from datetime import datetime
+import zoneinfo
 import logging
 
 from django.test import TestCase
 from django.core.management import call_command
 from django.utils import timezone
-import pytz
 
 from .. import models
 from .. import data
@@ -141,7 +141,7 @@ class Test_OURCsFlagHistory(TestCase):
             set_at = (
                 datetime
                 .fromisoformat('2021-05-27T12:59:45.769200')
-                .astimezone(pytz.timezone('Europe/London'))
+                .astimezone(zoneinfo.ZoneInfo('Europe/London'))
             ),
         )
         
@@ -216,7 +216,8 @@ class Test_EABoards(TestCase):
     def test__success(self, update_mock, requests_mock):
         """Parses the EA page and updates each reach appropriately."""
         
-        boards_shown = datetime(2020, 10, 30, 11, 15).astimezone(pytz.timezone('Europe/London'))
+        london_time = zoneinfo.ZoneInfo('Europe/London')
+        boards_shown = datetime(2020, 10, 30, 11, 15).astimezone(london_time)
         reach_map = {reach.tag: reach for reach in models.Reach.objects.all()}
         requests_mock.get.return_value.text = self.page_contents
         

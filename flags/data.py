@@ -1,10 +1,10 @@
 from datetime import datetime, timedelta
 import logging
+import zoneinfo
 
 from django.utils import timezone
 from bs4 import BeautifulSoup
 import requests
-import pytz
 
 from . import models
 
@@ -72,7 +72,7 @@ def scrape_ourcs_flag_history(reach):
         
         status_start_string = status_row_elements[1].contents[0]
         status_start_naive = datetime.strptime(status_start_string, '%d/%m/%y %H:%M')
-        status_start_aware = status_start_naive.astimezone(pytz.timezone('Europe/London'))
+        status_start_aware = status_start_naive.astimezone(zoneinfo.ZoneInfo('Europe/London'))
         
         # De-duplication checks
         if (status_flag, status_start_aware) in already_recorded:
@@ -135,7 +135,7 @@ def scrape_ea_boards():
     last_updated_element = soup.find(class_ = 'last-update')
     last_updated_string = last_updated_element.contents[0].split(': ')[1]
     last_updated = datetime.strptime(last_updated_string, '%d %B %Y %H:%M')
-    last_updated = last_updated.astimezone(pytz.timezone('Europe/London'))
+    last_updated = last_updated.astimezone(zoneinfo.ZoneInfo('Europe/London'))
     logger.info('EA Boards - Last updated {}'.format(last_updated))
     
     # Extract boards
