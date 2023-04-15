@@ -116,7 +116,7 @@ def scrape_ea_boards():
     def extract_board(main_column, downstream_lock):
         """Extracts the board for a reach above a specific lock."""
         
-        reach_row = main_column.find(text = downstream_lock + ' Lock').parent.parent.parent
+        reach_row = main_column.find(string = downstream_lock + ' Lock').parent.parent.parent
         board_outer = reach_row.contents[1].contents[0]
         board_inner = board_outer.contents[0].contents[0].contents[0].contents[0]
         
