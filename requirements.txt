@@ -1,4 +1,4 @@
-django < 4
+django < 5
 celery
 requests
 beautifulsoup4
