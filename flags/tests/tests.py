@@ -342,8 +342,8 @@ class Test_Views(TestCase):
         response = self.client.get(reverse('flags:index'))
         
         self.assertEqual(response.status_code, 200)
-        self.assertQuerysetEqual(response.context['all_reaches'], models.Reach.objects.all())
-        self.assertQuerysetEqual(
+        self.assertQuerySetEqual(response.context['all_reaches'], models.Reach.objects.all())
+        self.assertQuerySetEqual(
             response.context['flag_reaches'],
             models.Reach.objects.filter(has_ourcs_flag = True).order_by('id'),
         )
@@ -399,8 +399,8 @@ class Test_Views(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['reach'], self.reach)
         
-        self.assertQuerysetEqual(response.context['all_reaches'], models.Reach.objects.all())
-        self.assertQuerysetEqual(
+        self.assertQuerySetEqual(response.context['all_reaches'], models.Reach.objects.all())
+        self.assertQuerySetEqual(
             response.context['flag_reaches'],
             models.Reach.objects.filter(has_ourcs_flag = True).order_by('id'),
         )
@@ -443,8 +443,8 @@ class Test_Views(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['reach'], self.reach)
         
-        self.assertQuerysetEqual(response.context['all_reaches'], models.Reach.objects.all())
-        self.assertQuerysetEqual(
+        self.assertQuerySetEqual(response.context['all_reaches'], models.Reach.objects.all())
+        self.assertQuerySetEqual(
             response.context['flag_reaches'],
             models.Reach.objects.filter(has_ourcs_flag = True).order_by('id'),
         )
