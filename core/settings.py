@@ -1,4 +1,5 @@
 import os
+import json
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -112,8 +113,9 @@ MEDIA_ROOT = os.environ.get('MEDIA_ROOT', os.path.join(BASE_DIR, 'media'))
 
 # Async tasks
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER', 'redis://localhost:6379/0')
-CELERY_RESULT_BACKEND = CELERY_BROKER_URL
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULTS')
 
+CELERY_BROKER_TRANSPORT_OPTIONS = json.loads(os.environ.get('CELERY_BROKER_OPTIONS', '{}'))
 CELERY_WORKER_LOG_FORMAT = '%(processName)-17s %(levelname)-8s %(message)s'
 
 

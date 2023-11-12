@@ -12,6 +12,20 @@ services:
     environment:
       - DJANGO_DEBUG=true
 
+  worker:
+    build: .
+    image: django-flags
+    command: celery -A core worker --loglevel=info
+    restart: always
+    env_file: .env
+
+  scheduler:
+    build: .
+    image: django-flags
+    command: celery -A core beat --loglevel=info
+    restart: always
+    env_file: .env
+
 networks:
   default:
     ipam:
