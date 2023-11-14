@@ -103,12 +103,25 @@ TIME_ZONE = 'Europe/London'
 
 # Static files (CSS, JavaScript, Images)
 
+STATIC_BACKEND = os.environ.get(
+    'STATIC_BACKEND',
+    'django.contrib.staticfiles.storage.StaticFilesStorage',
+)
 STATIC_URL = os.environ.get('STATIC_URL', '/static/')
 STATIC_ROOT = os.environ.get('STATIC_ROOT', os.path.join(BASE_DIR, 'static'))
+STATIC_OPTIONS = json.loads(os.environ.get('STATIC_OPTIONS', '{}'))
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'core', 'static')]
 
 MEDIA_URL = os.environ.get('MEDIA_URL', '/media/')
 MEDIA_ROOT = os.environ.get('MEDIA_ROOT', os.path.join(BASE_DIR, 'media'))
+
+STORAGES = {
+    'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+    'staticfiles': {'BACKEND': STATIC_BACKEND, 'OPTIONS': STATIC_OPTIONS},
+}
+
+if STATIC_BACKEND.split('.')[0] == 'storages':
+    INSTALLED_APPS.append('storages')
 
 
 # Async tasks
