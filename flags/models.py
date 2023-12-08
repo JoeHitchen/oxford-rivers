@@ -167,6 +167,7 @@ class Advisory(models.Model):
         INC = ('INC', 'Caution (Increasing)')
         DEC = ('DEC', 'Caution (Decreasing)')
         RED = ('RED', 'Danger')
+        OUT = ('OUT', 'Outage')
     
     reach = models.ForeignKey(Reach, models.CASCADE, related_name = 'advisories')
     board = models.CharField(max_length = 4, choices = Boards.choices)
@@ -192,5 +193,6 @@ class Advisory(models.Model):
             self.Boards.INC: 'bg-warning',
             self.Boards.DEC: 'bg-warning',
             self.Boards.RED: 'bg-danger',
+            self.Boards.OUT: 'bg-secondary text-white',
         }[self.board]
 
