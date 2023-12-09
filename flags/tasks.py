@@ -22,6 +22,11 @@ def scrape_ea_boards():
 @tasks_app.on_after_finalize.connect
 def setup_periodic_tasks(sender, **kwargs):
     
+    sender.add_periodic_task(
+        crontab(minute = '*/5'),
+        scrape_ea_boards.s(),
+    )
+    
     ourcs_reaches = models.Reach.objects.filter(has_ourcs_flag = True).order_by('pk')
     for reach in ourcs_reaches:
         sender.add_periodic_task(
