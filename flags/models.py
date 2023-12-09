@@ -94,6 +94,14 @@ class Reach(models.Model):
     def update_advisory(self, new_board, board_shown = timezone.now()):
         """Updates EA advisory records to reflect `new_board` being displayed at `board_shown`."""
         
+        # Short outages are ignored at first
+        if (
+            new_board == Advisory.Boards.OUT
+            and not self.current_advisory.board == Advisory.Boards.OUT
+            and self.current_advisory.last_seen >= timezone.now() - timedelta(hours = 24)
+        ):
+            return
+        
         # Update existing matching advisory
         if self.current_advisory and self.current_advisory.board == new_board:
             self.current_advisory.last_updated = board_shown

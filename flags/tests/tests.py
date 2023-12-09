@@ -15,7 +15,7 @@ class Test_Models_Reach(TestCase):
         self.reach = models.Reach.objects.first()
         self.right_now = timezone.now() - timedelta(seconds = 1)  # Altered to avoid race condition
         self.updated_time = self.right_now - timedelta(minutes = 17)
-        self.original_time = self.right_now - timedelta(hours = 29)
+        self.original_time = self.right_now - timedelta(hours = 16)
     
     
     def test__current_flag(self):
@@ -209,6 +209,87 @@ class Test_Models_Reach(TestCase):
         self.assertEqual(self.reach.current_advisory, previous_advisory)
         
         self.reach.update_advisory(models.Advisory.Boards.RED, board_shown = self.updated_time)
+        
+        # Check previous advisory
+        previous_advisory.refresh_from_db()
+        self.assertEqual(self.reach.current_advisory, previous_advisory)
+        self.assertEqual(previous_advisory.first_seen, self.original_time)
+        self.assertEqual(previous_advisory.first_updated, self.original_time)
+        self.assertTrue(previous_advisory.last_seen > self.right_now)
+        self.assertEqual(previous_advisory.last_updated, self.updated_time)
+    
+    
+    def test__update_advisory__outage_less_than_one_day(self):
+        """Outages lasting less than 24 hours are not automatically recorded."""
+        
+        # Prepare & run
+        previous_advisory = self.reach.advisories.create(
+            board = models.Advisory.Boards.RED,
+            first_seen = self.original_time,
+            first_updated = self.original_time,
+            last_seen = self.original_time,
+            last_updated = self.original_time,
+        )
+        self.assertEqual(self.reach.current_advisory, previous_advisory)
+        
+        self.reach.update_advisory(models.Advisory.Boards.OUT, board_shown = self.updated_time)
+        
+        # Check previous advisory
+        previous_advisory.refresh_from_db()
+        self.assertEqual(self.reach.current_advisory, previous_advisory)
+        self.assertEqual(previous_advisory.first_seen, self.original_time)
+        self.assertEqual(previous_advisory.first_updated, self.original_time)
+        self.assertEqual(previous_advisory.last_seen, self.original_time)
+        self.assertEqual(previous_advisory.last_updated, self.original_time)
+    
+    
+    def test__update_advisory__outage_more_than_one_day(self):
+        """Outages lasting longer than 24 hours have a new status made."""
+        
+        # Prepare & run
+        older_original_time = self.original_time - timedelta(hours = 12)
+        
+        previous_advisory = self.reach.advisories.create(
+            board = models.Advisory.Boards.RED,
+            first_seen = older_original_time,
+            first_updated = older_original_time,
+            last_seen = older_original_time,
+            last_updated = older_original_time,
+        )
+        self.assertEqual(self.reach.current_advisory, previous_advisory)
+        
+        self.reach.update_advisory(models.Advisory.Boards.OUT, board_shown = self.updated_time)
+        
+        # Check previous advisory
+        previous_advisory.refresh_from_db()
+        self.assertNotEqual(self.reach.current_advisory, previous_advisory)
+        self.assertEqual(previous_advisory.first_seen, older_original_time)
+        self.assertEqual(previous_advisory.first_updated, older_original_time)
+        self.assertEqual(previous_advisory.last_seen, older_original_time)
+        self.assertEqual(previous_advisory.last_updated, older_original_time)
+        
+        # Check new advisory
+        self.assertIsNotNone(self.reach.current_advisory)
+        self.assertTrue(self.reach.current_advisory.first_seen > self.right_now)
+        self.assertEqual(self.reach.current_advisory.first_updated, self.updated_time)
+        self.assertTrue(self.reach.current_advisory.last_seen > self.right_now)
+        self.assertEqual(self.reach.current_advisory.last_updated, self.updated_time)
+    
+    
+    def test__update_advisory__outage_prolonged(self):
+        """Outage reports are updated normally once in place."""
+        
+        # Prepare & run
+        previous_advisory = self.reach.advisories.create(
+            board = models.Advisory.Boards.OUT,
+            first_seen = self.original_time,
+            first_updated = self.original_time,
+            last_seen = self.original_time,
+            last_updated = self.original_time,
+        )
+        self.assertEqual(self.reach.current_advisory, previous_advisory)
+        
+        self.reach.update_advisory(models.Advisory.Boards.OUT, board_shown = self.updated_time)
         
         # Check previous advisory
         previous_advisory.refresh_from_db()
