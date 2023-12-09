@@ -68,6 +68,12 @@
             The website will have changed between the last seen time of one advisory and the first seen time of the next advisory, but since collection is performed roughly every five minutes, the scope for variation here is much lower<sup>****</sup>.
           </p>
           <p>
+            Monitoring outages can occur for a variety of reasons.
+            An outage is recorded for posterity when monitoring has been down for over four hours and observes a different advisory when it resumes.
+            If the same advisory as before the outage is observed when monitoring resumes, then it is only recorded for posterity if it lasted longer than 24 hours.
+            This is because the EA indicate that they only update the boards once per day, so a change to a different status and back to the original within those 24 hours is unlikely.
+          </p>
+          <p>
             <sup>*</sup> A lock may display different boards to upstream and downstream traffic, since they apply to the next stretch of river, rather than the lock itself.
             <br/>
             <sup>**</sup> As far as we are aware, the information shown at the update time will always match what is shown at the lock at that moment.

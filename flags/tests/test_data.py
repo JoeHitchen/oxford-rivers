@@ -217,7 +217,7 @@ class Test_EABoards(TestCase):
         """Parses the EA page and updates each reach appropriately."""
         
         london_time = zoneinfo.ZoneInfo('Europe/London')
-        boards_shown = datetime(2020, 10, 30, 11, 15).astimezone(london_time)
+        boards_shown = datetime.fromisoformat('2023-12-09T10:37:26Z').astimezone(london_time)
         reach_map = {reach.tag: reach for reach in models.Reach.objects.all()}
         requests_mock.get.return_value.text = self.page_contents
         
@@ -229,7 +229,7 @@ class Test_EABoards(TestCase):
         update_mock.assert_any_call(reach_map['radley'], 'DEC', board_shown = boards_shown)
         update_mock.assert_any_call(reach_map['abingdon'], 'NONE', board_shown = boards_shown)
         update_mock.assert_any_call(reach_map['wallingford'], 'INC', board_shown = boards_shown)
-        update_mock.assert_any_call(reach_map['sandford'], 'DEC', board_shown = boards_shown)
+        update_mock.assert_any_call(reach_map['sandford'], 'OUT', board_shown = boards_shown)
         
         requests_mock.get.return_value.raise_for_status.assert_not_called()
 

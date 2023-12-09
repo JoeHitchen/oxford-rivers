@@ -107,24 +107,30 @@ def scrape_ea_boards():
     """Retrieves stream advisory boards from the EA website"""
     
     board_text_map = {
-        'no stream warnings': models.Advisory.Boards.NONE,
-        'caution stream increasing': models.Advisory.Boards.INC,
-        'caution stream decreasing': models.Advisory.Boards.DEC,
-        'caution strong stream': models.Advisory.Boards.RED,
+        'no stream warning': models.Advisory.Boards.NONE,
+        'yellow caution: stream increasing': models.Advisory.Boards.INC,
+        'yellow caution: stream decreasing': models.Advisory.Boards.DEC,
+        'red caution: strong stream': models.Advisory.Boards.RED,
     }
     
-    def extract_board(main_column, downstream_lock):
-        """Extracts the board for a reach above a specific lock."""
+    def extract_board(main_column, reach):
+        """Extracts the board for a reach, or indicates an outage."""
         
-        reach_row = main_column.find(string = downstream_lock + ' Lock').parent.parent.parent
-        board_outer = reach_row.contents[1].contents[0]
-        board_inner = board_outer.contents[0].contents[0].contents[0].contents[0]
+        # Extract the boards
+        try:
+            lock_search_string = f'{reach.upstream_lock} Lock to {reach.downstream_lock} Lock'
+            reach_row = main_column.find(string = lock_search_string).parent.parent
+            board_text = reach_row.contents[3].contents[0]
+            
+            return board_text_map[board_text.lower()]
         
-        return board_text_map[board_inner.lower()]
+        # Indicate an outage on failure
+        except Exception:
+            return models.Advisory.Boards.OUT
     
     
     # Request and parse EA Boards page
-    response = requests.get('http://riverconditions.environment-agency.gov.uk/')
+    response = requests.get('https://www.gov.uk/guidance/river-thames-current-river-conditions')
     if not response.ok:
         logger.error('EA Boards - Error fetching page')
         response.raise_for_status()
@@ -132,17 +138,16 @@ def scrape_ea_boards():
     soup = BeautifulSoup(response.text, 'html.parser')
     
     # Extract last-updated datetime
-    last_updated_element = soup.find(class_ = 'last-update')
-    last_updated_string = last_updated_element.contents[0].split(': ')[1]
-    last_updated = datetime.strptime(last_updated_string, '%d %B %Y %H:%M')
+    last_updated_element = soup.find(attrs = {'name': 'govuk:updated-at'})
+    last_updated = datetime.fromisoformat(last_updated_element['content'])
     last_updated = last_updated.astimezone(zoneinfo.ZoneInfo('Europe/London'))
     logger.info('EA Boards - Last updated {}'.format(last_updated))
     
     # Extract boards
     boards = {}
-    main_column = soup.find(class_ = 'primary-column')
+    main_column = soup.find(class_ = 'govspeak')
     for reach in models.Reach.objects.all():
-        board = extract_board(main_column, reach.downstream_lock)
+        board = extract_board(main_column, reach)
         logger.info('EA Boards - {:11s} - {}'.format(
             str(reach),
             models.Advisory.Boards(board).label),
