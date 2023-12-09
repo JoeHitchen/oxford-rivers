@@ -102,14 +102,32 @@ class Reach(models.Model):
         ):
             return
         
-        # Update existing matching advisory
-        if self.current_advisory and self.current_advisory.board == new_board:
+        # Update existing matching advisory if no significant gap
+        if (
+            self.current_advisory and self.current_advisory.board == new_board
+            and self.current_advisory.last_seen >= timezone.now() - timedelta(hours = 24)
+        ):
             self.current_advisory.last_updated = board_shown
             self.current_advisory.last_seen = timezone.now()
             self.current_advisory.save()
         
-        # Create new advisory if mismatched or missing
+        # Mismatched or missing advisory
         else:
+        
+            # Create additional outage report if significant time gap
+            if (
+                self.current_advisory and new_board != Advisory.Boards.OUT
+                and self.current_advisory.last_seen <= timezone.now() - timedelta(hours = 4)
+            ):
+                self.advisories.create(
+                    board = Advisory.Boards.OUT,
+                    first_seen = self.current_advisory.last_seen + timedelta(hours = 1),
+                    first_updated = self.current_advisory.last_updated + timedelta(hours = 1),
+                    last_seen = timezone.now() - timedelta(hours = 1),
+                    last_updated = board_shown - timedelta(hours = 1),
+                )
+            
+            # Create new advisory
             self.advisories.create(
                 board = new_board,
                 first_updated = board_shown,

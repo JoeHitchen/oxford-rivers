@@ -195,6 +195,44 @@ class Test_Models_Reach(TestCase):
         self.assertEqual(self.reach.current_advisory.last_updated, self.updated_time)
     
     
+    def test__update_advisory__different_advisory_with_outage(self):
+        """Creates an intermediary outage status when previous status is more than 4 hours old."""
+        
+        # Prepare & run
+        previous_advisory = self.reach.advisories.create(
+            board = models.Advisory.Boards.INC,
+            first_seen = self.original_time,
+            first_updated = self.original_time,
+            last_seen = self.original_time,
+            last_updated = self.original_time,
+        )
+        self.assertEqual(self.reach.current_advisory, previous_advisory)
+        
+        self.reach.update_advisory(models.Advisory.Boards.RED, board_shown = self.updated_time)
+        
+        # Check previous advisory
+        previous_advisory.refresh_from_db()
+        self.assertNotEqual(self.reach.current_advisory, previous_advisory)
+        self.assertEqual(previous_advisory.first_seen, self.original_time)
+        self.assertEqual(previous_advisory.first_updated, self.original_time)
+        self.assertEqual(previous_advisory.last_seen, self.original_time)
+        self.assertEqual(previous_advisory.last_updated, self.original_time)
+        
+        # Check for itermediary outage
+        outage = self.reach.advisories.get(board = models.Advisory.Boards.OUT)
+        self.assertTrue(outage.first_seen > previous_advisory.last_seen)
+        self.assertTrue(outage.first_updated > previous_advisory.last_updated)
+        self.assertTrue(outage.last_seen < self.updated_time)
+        self.assertTrue(outage.last_updated < self.right_now)
+        
+        # Check new advisory
+        self.assertIsNotNone(self.reach.current_advisory)
+        self.assertTrue(self.reach.current_advisory.first_seen > self.right_now)
+        self.assertEqual(self.reach.current_advisory.first_updated, self.updated_time)
+        self.assertTrue(self.reach.current_advisory.last_seen > self.right_now)
+        self.assertEqual(self.reach.current_advisory.last_updated, self.updated_time)
+    
+    
     def test__update_advisory__same_advisory(self):
         """The `last_seen` and `last_updated` fields of the current advisory should be updated."""
         
@@ -217,6 +255,45 @@ class Test_Models_Reach(TestCase):
         self.assertEqual(previous_advisory.first_updated, self.original_time)
         self.assertTrue(previous_advisory.last_seen > self.right_now)
         self.assertEqual(previous_advisory.last_updated, self.updated_time)
+    
+    
+    def test__update_advisory__same_advisory_with_long_outage(self):
+        """After 24 hours, an outage is reported even if the status is the same."""
+        
+        # Prepare & run
+        older_original_time = self.original_time - timedelta(hours = 12)
+        previous_advisory = self.reach.advisories.create(
+            board = models.Advisory.Boards.RED,
+            first_seen = older_original_time,
+            first_updated = older_original_time,
+            last_seen = older_original_time,
+            last_updated = older_original_time,
+        )
+        self.assertEqual(self.reach.current_advisory, previous_advisory)
+        
+        self.reach.update_advisory(models.Advisory.Boards.RED, board_shown = self.updated_time)
+        
+        # Check previous advisory
+        previous_advisory.refresh_from_db()
+        self.assertNotEqual(self.reach.current_advisory, previous_advisory)
+        self.assertEqual(previous_advisory.first_seen, older_original_time)
+        self.assertEqual(previous_advisory.first_updated, older_original_time)
+        self.assertEqual(previous_advisory.last_seen, older_original_time)
+        self.assertEqual(previous_advisory.last_updated, older_original_time)
+        
+        # Check for itermediary outage
+        outage = self.reach.advisories.get(board = models.Advisory.Boards.OUT)
+        self.assertTrue(outage.first_seen > previous_advisory.last_seen)
+        self.assertTrue(outage.first_updated > previous_advisory.last_updated)
+        self.assertTrue(outage.last_seen < self.updated_time)
+        self.assertTrue(outage.last_updated < self.right_now)
+        
+        # Check new advisory
+        self.assertIsNotNone(self.reach.current_advisory)
+        self.assertTrue(self.reach.current_advisory.first_seen > self.right_now)
+        self.assertEqual(self.reach.current_advisory.first_updated, self.updated_time)
+        self.assertTrue(self.reach.current_advisory.last_seen > self.right_now)
+        self.assertEqual(self.reach.current_advisory.last_updated, self.updated_time)
     
     
     def test__update_advisory__outage_less_than_one_day(self):
