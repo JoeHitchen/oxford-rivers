@@ -229,7 +229,7 @@ class Test_EABoards(TestCase):
         update_mock.assert_any_call(reach_map['radley'], 'DEC', board_shown = boards_shown)
         update_mock.assert_any_call(reach_map['abingdon'], 'NONE', board_shown = boards_shown)
         update_mock.assert_any_call(reach_map['wallingford'], 'INC', board_shown = boards_shown)
-        update_mock.assert_any_call(reach_map['sandford'], 'DEC', board_shown = boards_shown)
+        update_mock.assert_any_call(reach_map['sandford'], 'OUT', board_shown = boards_shown)
         
         requests_mock.get.return_value.raise_for_status.assert_not_called()
 

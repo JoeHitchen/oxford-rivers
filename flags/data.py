@@ -114,13 +114,19 @@ def scrape_ea_boards():
     }
     
     def extract_board(main_column, reach):
-        """Extracts the board for a reach."""
+        """Extracts the board for a reach, or indicates an outage."""
         
-        lock_search_string = f'{reach.upstream_lock} Lock to {reach.downstream_lock} Lock'
-        reach_row = main_column.find(string = lock_search_string).parent.parent
-        board_text = reach_row.contents[3].contents[0]
+        # Extract the boards
+        try:
+            lock_search_string = f'{reach.upstream_lock} Lock to {reach.downstream_lock} Lock'
+            reach_row = main_column.find(string = lock_search_string).parent.parent
+            board_text = reach_row.contents[3].contents[0]
+            
+            return board_text_map[board_text.lower()]
         
-        return board_text_map[board_text.lower()]
+        # Indicate an outage on failure
+        except Exception:
+            return models.Advisory.Boards.OUT
     
     
     # Request and parse EA Boards page
