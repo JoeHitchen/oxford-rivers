@@ -217,7 +217,7 @@ class Test_EABoards(TestCase):
         """Parses the EA page and updates each reach appropriately."""
         
         london_time = zoneinfo.ZoneInfo('Europe/London')
-        boards_shown = datetime(2020, 10, 30, 11, 15).astimezone(london_time)
+        boards_shown = datetime.fromisoformat('2023-12-09T10:37:26Z').astimezone(london_time)
         reach_map = {reach.tag: reach for reach in models.Reach.objects.all()}
         requests_mock.get.return_value.text = self.page_contents
         
