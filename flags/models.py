@@ -175,7 +175,8 @@ class Status(models.Model):
             self.Flags.LIGHT: 'bg-lightblue',
             self.Flags.BLUE: 'bg-primary',
             self.Flags.AMBER: 'bg-warning',
-            self.Flags.RED: 'bg-danger',
+            self.Flags.RED: 'bg-danger text-light',
+            self.Flags.BLACK: 'bg-dark text-light',
         }.get(self.flag)
 
 
