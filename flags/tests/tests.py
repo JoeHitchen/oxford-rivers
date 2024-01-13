@@ -474,6 +474,17 @@ class Test_Views(TestCase):
     
     def setUp(self):
         self.reach = models.Reach.objects.get(tag = 'isis')
+        self.godstow = models.Reach.objects.get(tag = 'godstow')
+        
+        for reach in models.Reach.objects.filter(has_ourcs_flag = True):
+            reach.update_flag_status(
+                models.Status.Flags.GREEN,
+                set_at = timezone.now() - timedelta(reach.id * 11),
+            )
+            reach.update_flag_status(
+                models.Status.Flags.RED,
+                set_at = timezone.now() - timedelta(reach.id * 7),
+            )
         
         for reach in models.Reach.objects.all():
             reach.update_advisory(
@@ -621,4 +632,57 @@ class Test_Views(TestCase):
                 'flags:advisory_history',
                 kwargs = {'tag': self.reach.tag},
             ))
+    
+    
+    def test__data_health__healthy(self):
+        """The defaults set in these tests should be healthy."""
+        
+        response = self.client.get(reverse('flags:data_health'))
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['healthy'], 'HEALTHY')
+        self.assertEqual(response.json()['oldestCurrentFlag']['reach'], 'godstow')
+        self.assertEqual(response.json()['oldestCurrentAdvisory']['reach'], 'godstow')
+    
+    
+    def test__data_health__old_flag_status(self):
+        """All flag statuses must have been checked in the last four hours."""
+        
+        self.reach.current_flag_status.last_seen = timezone.now() - timedelta(hours = 5)
+        self.reach.current_flag_status.save()
+        
+        response = self.client.get(reverse('flags:data_health'))
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['healthy'], 'UNHEALTHY')
+        self.assertEqual(response.json()['oldestCurrentFlag']['reach'], 'isis')
+        self.assertEqual(response.json()['oldestCurrentAdvisory']['reach'], 'godstow')
+    
+    
+    def test__data_health__old_advisory(self):
+        """EA advisories must have been checked in the last four hours."""
+        
+        self.reach.current_advisory.last_seen = timezone.now() - timedelta(hours = 5)
+        self.reach.current_advisory.save()
+        
+        response = self.client.get(reverse('flags:data_health'))
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['healthy'], 'UNHEALTHY')
+        self.assertEqual(response.json()['oldestCurrentFlag']['reach'], 'godstow')
+        self.assertEqual(response.json()['oldestCurrentAdvisory']['reach'], 'isis')
+    
+    
+    def test__data_health__advisory_outage(self):
+        """Outages do not count as successfully checked advisories."""
+        
+        self.reach.current_advisory.board = models.Advisory.Boards.OUT
+        self.reach.current_advisory.save()
+        
+        response = self.client.get(reverse('flags:data_health'))
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['healthy'], 'UNHEALTHY')
+        self.assertEqual(response.json()['oldestCurrentFlag']['reach'], 'godstow')
+        self.assertEqual(response.json()['oldestCurrentAdvisory']['reach'], 'isis')
 
