@@ -23,14 +23,14 @@
         <div class="card card-standalone {{ reach.current_flag_status.styling }}">
           <div class="card-body">
             <h4 class="card-title text-center"><strong>{{ reach.current_flag_status }} Flag</strong></h4>
-            <table class="table table-sm table-borderless">
+            <table class="table table-sm table-borderless {{ reach.current_flag_status.styling }}">
               <tr>
-                <td class="text-left {{ reach.current_flag_status.styling.text }} p-0">First shown:</td>
-                <td class="text-right {{ reach.current_flag_status.styling.text }} p-0">{{ reach.current_flag_status.set_at|date:"d/m/Y H:i" }}</td>
+                <td class="text-left p-0">First shown:</td>
+                <td class="text-right p-0">{{ reach.current_flag_status.set_at|date:"d/m/Y H:i" }}</td>
               </tr>
               <tr>
-                <td class="text-left {{ reach.current_flag_status.styling.text }} p-0">Last checked:</td>
-                <td class="text-right {{ reach.current_flag_status.styling.text }} p-0">{{ reach.current_flag_status.last_seen|date:"d/m/Y H:i" }}</td>
+                <td class="text-left p-0">Last checked:</td>
+                <td class="text-right p-0">{{ reach.current_flag_status.last_seen|date:"d/m/Y H:i" }}</td>
               </tr>
             </table>
           </div>
