@@ -83,7 +83,7 @@ def data_health_api(request):
     )
     
     return JsonResponse({
-        'healthy': 'HEALTHY' if data_healthy else 'UNHEALTHY',
+        'health': 'HEALTHY' if data_healthy else 'DATED',
         'oldestCurrentFlag': {
             'reach': least_healthy_flag.reach.tag,
             'status': least_healthy_flag.flag,

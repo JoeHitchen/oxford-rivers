@@ -640,7 +640,7 @@ class Test_Views(TestCase):
         response = self.client.get(reverse('flags:data_health'))
         
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['healthy'], 'HEALTHY')
+        self.assertEqual(response.json()['health'], 'HEALTHY')
         self.assertEqual(response.json()['oldestCurrentFlag']['reach'], 'godstow')
         self.assertEqual(response.json()['oldestCurrentAdvisory']['reach'], 'godstow')
     
@@ -654,7 +654,7 @@ class Test_Views(TestCase):
         response = self.client.get(reverse('flags:data_health'))
         
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['healthy'], 'UNHEALTHY')
+        self.assertEqual(response.json()['health'], 'DATED')
         self.assertEqual(response.json()['oldestCurrentFlag']['reach'], 'isis')
         self.assertEqual(response.json()['oldestCurrentAdvisory']['reach'], 'godstow')
     
@@ -668,7 +668,7 @@ class Test_Views(TestCase):
         response = self.client.get(reverse('flags:data_health'))
         
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['healthy'], 'UNHEALTHY')
+        self.assertEqual(response.json()['health'], 'DATED')
         self.assertEqual(response.json()['oldestCurrentFlag']['reach'], 'godstow')
         self.assertEqual(response.json()['oldestCurrentAdvisory']['reach'], 'isis')
     
@@ -682,7 +682,7 @@ class Test_Views(TestCase):
         response = self.client.get(reverse('flags:data_health'))
         
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['healthy'], 'UNHEALTHY')
+        self.assertEqual(response.json()['health'], 'DATED')
         self.assertEqual(response.json()['oldestCurrentFlag']['reach'], 'godstow')
         self.assertEqual(response.json()['oldestCurrentAdvisory']['reach'], 'isis')
 
