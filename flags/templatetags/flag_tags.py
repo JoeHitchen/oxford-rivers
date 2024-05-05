@@ -25,6 +25,7 @@ def flag_colour(flag):
         models.Status.Flags.AMBER: 'bg-warning',
         models.Status.Flags.RED: 'bg-danger',
         models.Status.Flags.BLACK: 'bg-dark',
+        models.Status.Flags.OUTAGE: 'bg-info',
     }[flag]
 
 
