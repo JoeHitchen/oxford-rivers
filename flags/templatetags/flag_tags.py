@@ -32,25 +32,25 @@ def get_reach_advisory(data, reach):
 @register.filter
 def flag_colour(flag):
     return {
-        models.Status.Flags.GREY: 'bg-secondary',
-        models.Status.Flags.GREEN: 'bg-success',
-        models.Status.Flags.LIGHT: 'bg-lightblue',
-        models.Status.Flags.BLUE: 'bg-primary',
-        models.Status.Flags.AMBER: 'bg-warning',
-        models.Status.Flags.RED: 'bg-danger',
-        models.Status.Flags.BLACK: 'bg-dark',
-        models.Status.Flags.OUTAGE: 'bg-info',
+        models.Status.Flags.GREY: 'ourcs-grey',
+        models.Status.Flags.GREEN: 'ourcs-green',
+        models.Status.Flags.LIGHT: 'ourcs-light-blue',
+        models.Status.Flags.BLUE: 'ourcs-blue',
+        models.Status.Flags.AMBER: 'ourcs-amber',
+        models.Status.Flags.RED: 'ourcs-red',
+        models.Status.Flags.BLACK: 'ourcs-black',
+        models.Status.Flags.OUTAGE: 'ourcs-outage',
     }[flag]
 
 
 @register.filter
 def advisory_colour(flag):
     return {
-        models.Advisory.Boards.NONE: 'bg-success',
-        models.Advisory.Boards.INC: 'bg-warning',
-        models.Advisory.Boards.DEC: 'bg-warning',
-        models.Advisory.Boards.RED: 'bg-danger',
-        models.Advisory.Boards.OUT: 'bg-info',
+        models.Advisory.Boards.NONE: 'ea-clear',
+        models.Advisory.Boards.INC: 'ea-yellow',
+        models.Advisory.Boards.DEC: 'ea-yellow',
+        models.Advisory.Boards.RED: 'ea-red',
+        models.Advisory.Boards.OUT: 'ea-outage',
     }[flag]
 
 

@@ -1,3 +1,47 @@
+/* OURCs Palette -- https://coolors.co/ff1f1f-fbaf00-1446a0-64dbed-4d982a-aaaaaa */
+.ourcs-green {
+  background-color: #4d982a;
+}
+.ourcs-light-blue {
+  background-color: #64dbed;
+}
+.ourcs-blue {
+  background-color: #1446a0;
+}
+.ourcs-amber {
+  background-color: #fbaf00;
+}
+.ourcs-red {
+  background-color: #ff1f1f;
+}
+.ourcs-black {
+  background-color: #000000;
+}
+.ourcs-grey {
+  background-color: #aaaaaa;
+}
+
+/* EA Palette -- https://coolors.co/03071e-370617-6a040f-9d0208-d00000-dc2f02-e85d04-f48c06-faa307-ffba08 */
+.ea-clear {
+  background-color: none;
+}
+.ea-yellow {
+  background-color: #ffba08;
+}
+.ea-red {
+  background-color: #d00000;
+}
+
+.ourcs-outage, .ea-outage {
+  background-image:
+    repeating-linear-gradient(45deg, rgba(0, 0, 0, 0),rgba(0, 0, 0, 0) 5px, rgba(0, 0, 0, 0.3) 5px, rgba(0, 0, 0, 0.3) 6px),
+    repeating-linear-gradient(-45deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0) 5px, rgba(0, 0, 0, 0.3) 5px, rgba(0, 0, 0, 0.3) 6px);
+  background-size: 8px 8px, 8px 8px;
+}
+
+
+
+/* General pages */
 
 p:last-of-type, .table, .alert {
   margin-bottom: 0em;
@@ -28,20 +72,81 @@ div.col, div[class^="col-"], div[class*=" col-"] {
   background-color: cyan;
 }
 
-.timelines thead th {
+
+/* Timelines Colours Card */
+.timelines-colours-card {
+  margin-bottom: .5rem;
+}
+.timelines-colours-card .card-body {
+  padding-top: 0;
+}
+.timelines-colours-card .col-md {
+  margin-bottom: 0;
+}
+.timelines-colours-card .col-md div {
+  padding-bottom: 0.25em;
+}
+.timelines-colours-card .timelines-colours-line {
+  display: block;
+}
+.timelines-colours-card .timelines-colours-line span {
+  vertical-align: middle;
+}
+.timelines-colours-card .timelines-colours-line :first-child {
+  height: 25px;
+  width: 25px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 0.5em;
+}
+.timelines-colours-line .ea-clear, .timelines-colours-line .ea-yellow, .timelines-colours-line .ea-red, .timelines-colours-line .ea-outage {
+  border: thin black solid;
+}
+
+
+/* Timelines Table */
+.timelines-table table {
+  width: 100%;
+  min-width: 60em;
+}
+.timelines-table thead, .timelines-table tbody tr {
+  display: table;
+  width: 100%;
+  min-width: 60em;
+  table-layout: fixed;
+}
+.timelines-table tbody {
+  display: block;
+  overflow-y: auto;
+  table-layout: fixed;
+  max-height: 65vh;
+}
+
+.timelines-table {
+  border: thin rgba(0,0,0,0.75) solid;
+  border-radius: 0.25em;
+}
+.timelines-table thead {
+  border-bottom: rgba(0,0,0,0.75) solid;
+}
+.timelines-table thead tr:first-child {
+  border-bottom: thin rgba(0,0,0,0.75) solid;
+}
+.timelines-table .timelines-month-end {
+  border-top: rgba(0,0,0,0.75) solid;
+}
+.timelines-table .timelines-group-start, .timelines-table thead.thead-light .timelines-group-start {
+  border-left: rgba(0,0,0,0.75) solid;
+}
+.timelines-table td, .timelines-table thead.thead-light tr:not(:first-child) th:not(.timelines-group-start) {
+  border-left: thin rgba(0,0,0,0.75) solid;
+}
+
+.timelines-table thead th {
   vertical-align: middle;
   text-align: center;
 }
-
-.timelines-month-end {
-  border-top: black solid;
-}
-
-.timelines td, .timelines thead.thead-light tr:not(:first-child) th:not(.timelines-group-start) {
-  border-left: thin black solid;
-}
-
-.timelines .timelines-group-start, .timelines thead.thead-light .timelines-group-start {
-  border-left: black solid;
+.timelines-table tbody th {
+  text-align: center;
 }
 

@@ -8,15 +8,67 @@
       <div class="col">
         <h2>OURCs Flag & EA Advisory Timelines</h2>
         <p>
-          This page displays a timeline of the historical OURCs flags and EA advisories, to the extend that they have been observed by this project.
+          This page displays a timeline of the historical OURCs flags and EA advisories, to the extend that they have been observed by this project, and will automatically update daily as new data comes in.
+          Each day is represented by a single data point, taken at midnight &ndash; Changes to the OURCs flag or an EA advisory which are replaced before midnight the next day will not be reflected in this data set.
+          This page is designed to be <em>scraper friendly</em> and no attributation is required.
         </p>
+        <p>Be aware that:</p>
+        <ul class="mb-1">
+          <li>Light blue flag was introduced on the Isis in October 2021 and does not exist at Godstow</li>
+          <li>Blue flag was introduced at Godstow in May 2024</li>
+          <li>Most of 2023 is missing EA advisory data. The project had been mothballed and a known fault in data collection was not remedied in this time</li>
+          <li>Extended server maintainace lead to outages in Winter 2024</li>
+        </ul>
       </div>
     </div>
 
     <div class="row">
       <div class="col">
-        <div class="table-responsive">
-          <table class="table table-sm table-borderless timelines">
+        <div class="card card-dropdown timelines-colours-card">
+          <div
+              id="expandHeader"
+              class="card-header d-flex justify-content-between"
+              type="button"
+              data-toggle="collapse"
+              data-target="#expandBody"
+              style="border-bottom: 0px"
+          >
+            <span>Timeline Colours</span>
+            <span class="oi oi-chevron-bottom" id="interpretationArrow"></span>
+          </div>
+          <div class="collapse" id="expandBody"><div class="card-body">
+            <div class="row">
+              <div class="col-md">
+                <h5 class="mt-3">OURCs Flags</h5>
+                <div class="timelines-colours-line"><span class="ourcs-green"></span><span>Green Flag</span></div>
+                <div class="timelines-colours-line"><span class="ourcs-light-blue"></span><span>Light Blue Flag</span></div>
+                <div class="timelines-colours-line"><span class="ourcs-blue"></span><span>Blue Flag</span></div>
+                <div class="timelines-colours-line"><span class="ourcs-amber"></span><span>Amber Flag</span></div>
+              </div>
+              <div class="col-md">
+                <h5 class="mt-3 d-none d-md-block">&nbsp;</h5>
+                <div class="timelines-colours-line"><span class="ourcs-red"></span><span>Red Flag</span></div>
+                <div class="timelines-colours-line"><span class="ourcs-black"></span><span>Black Flag</span></div>
+                <div class="timelines-colours-line"><span class="ourcs-grey"></span><span>Grey Flag</span></div>
+                <div class="timelines-colours-line"><span class="ourcs-outage"></span><span>Outage</span></div>
+              </div>
+              <div class="col-md">
+                <h5 class="mt-3">EA Advisories</h5>
+                <div class="timelines-colours-line"><span class="ea-clear"></span><span>No Advisory</span></div>
+                <div class="timelines-colours-line"><span class="ea-yellow"></span><span>Yellow (Caution)</span></div>
+                <div class="timelines-colours-line"><span class="ea-red"></span><span>Red (Danger)</span></div>
+                <div class="timelines-colours-line"><span class="ea-outage"></span><span>Outage</span></div>
+              </div>
+            </div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="table-responsive timelines-table">
+          <table class="table table-sm table-borderless">
             <thead class="thead-light">
               <tr>
                 <th rowspan="2">Date</th>
@@ -34,8 +86,8 @@
             </thead>
 
             <tbody>{% for date, timeline_point in timeline_data.items reversed %}
-              <tr {% if date|is_month_end or forloop.first %}class="timelines-month-end" {% endif %}data-date="{{ date|date:"Y-m-d" }}">
-                {% if date|is_month_end or forloop.first %}<th rowspan="{{ date.day }}">{{ date|date:"F Y" }}</th>
+              <tr {% if date|is_month_end %}class="timelines-month-end" {% endif %}data-date="{{ date|date:"Y-m-d" }}">
+                {% if date|is_month_end or forloop.first %}<th rowspan="{{ date.day }}" class="text-secondary">{{ date|date:"F Y" }}</th>{% else %}<th></th>
                 {% endif %}{% for reach in flag_reaches %}<td class="{{ timeline_point|get_reach_flag:reach|flag_colour }}{% if forloop.first %} timelines-group-start{% endif %}" data-flag="{{ timeline_point|get_reach_flag:reach }}"></td>
                 {% endfor %}{% for reach in all_reaches %}
                 <td class="{{ timeline_point|get_reach_advisory:reach|advisory_colour }}{% if forloop.first %} timelines-group-start{% endif %}" data-advisory="{{ timeline_point|get_reach_advisory:reach }}"></td>{% endfor %}
@@ -45,4 +97,15 @@
         </div>
       </div>
     </div>
+    
+    <script type="text/javascript">
+      $('#expandBody').on('show.bs.collapse', function () {
+        $('#interpretationArrow').removeClass('oi-chevron-bottom').addClass('oi-chevron-top');
+        $('#expandHeader').css('border-bottom', '');
+      });
+      $('#expandBody').on('hidden.bs.collapse', function () {
+        $('#interpretationArrow').removeClass('oi-chevron-top').addClass('oi-chevron-bottom');
+        $('#expandHeader').css('border-bottom', '0px');
+      })
+    </script>
 {% endblock %}
