@@ -33,7 +33,13 @@
               </tr>
             </thead>
 
-            <tbody>{% for date in dates reversed %}{% timeline_row date flag_reaches all_reaches forloop.first %}
+            <tbody>{% for date, timeline_point in timeline_data.items reversed %}
+              <tr data-date="{{ date|date:"Y-m-d" }}">
+                {% if date|is_month_end or forloop.first %}<th rowspan="{{ date.day }}">{{ date|date:"Y-m-d" }}</th>
+                {% endif %}{% for reach in flag_reaches %}<td class="{{ timeline_point|get_reach_flag:reach|flag_colour }}" data-flag="{{ timeline_point|get_reach_flag:reach }}"></td>
+                {% endfor %}{% for reach in all_reaches %}
+                <td class="{{ timeline_point|get_reach_advisory:reach|advisory_colour }}" data-advisory="{{ timeline_point|get_reach_advisory:reach }}"></td>{% endfor %}
+              </tr>
             {% endfor %}</tbody>
           </table>
         </div>

@@ -1,7 +1,0 @@
-{% load flag_tags %}
-              <tr data-date="{{ date|date:"Y-m-d" }}">
-                {% if show_date %}<th rowspan="{{ date.day }}">{{ date|date:"Y-m-d" }}</th>
-                {% endif %}{% for flag in flag_data %}<td class="{{ flag|flag_colour }}" data-flag="{{ flag }}"></td>
-                {% endfor %}{% for advisory in advisory_data %}
-                <td class="{{ advisory|advisory_colour }}" data-advisory="{{ advisory }}"></td>{% endfor %}
-              </tr>

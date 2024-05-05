@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import timedelta
 
 from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
@@ -62,12 +62,7 @@ class Timelines(FlagNavMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
-        context['all_reaches'] = models.Reach.objects.order_by('id')
-        context['flag_reaches'] = models.Reach.objects.order_by('id').filter(has_ourcs_flag = True)
-        context['dates'] = analysis.get_date_range(
-            date.fromisoformat('2024-01-24'),
-            date.fromisoformat('2024-04-13'),
-        )
+        context['timeline_data'] = analysis.get_statuses_and_advisories_by_date()
         return context
 
 
