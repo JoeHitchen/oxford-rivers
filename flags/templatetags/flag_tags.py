@@ -1,7 +1,10 @@
 from math import floor
+from calendar import monthrange
+import random
 
 from django import template
 
+from .. import models
 from .. transits import Permissions
 
 register = template.Library()
@@ -10,6 +13,30 @@ register = template.Library()
 @register.filter
 def subtract(a, b):
     return a - b
+
+
+@register.filter
+def flag_colour(flag):
+    return {
+        models.Status.Flags.GREY: 'bg-secondary',
+        models.Status.Flags.GREEN: 'bg-success',
+        models.Status.Flags.LIGHT: 'bg-lightblue',
+        models.Status.Flags.BLUE: 'bg-primary',
+        models.Status.Flags.AMBER: 'bg-warning',
+        models.Status.Flags.RED: 'bg-danger',
+        models.Status.Flags.BLACK: 'bg-dark',
+    }[flag]
+
+
+@register.filter
+def advisory_colour(flag):
+    return {
+        models.Advisory.Boards.NONE: 'bg-success',
+        models.Advisory.Boards.INC: 'bg-warning',
+        models.Advisory.Boards.DEC: 'bg-warning',
+        models.Advisory.Boards.RED: 'bg-danger',
+        models.Advisory.Boards.OUT: 'bg-info',
+    }[flag]
 
 
 @register.filter
@@ -59,4 +86,14 @@ def transit_allowed_row(type, allowed, first = False):
         },
     }[allowed]
     return {'type': type, 'first': first, **switch_selected}
+
+
+@register.inclusion_tag('flag_tags/timeline_row.html')
+def timeline_row(date, flag_reaches, all_reaches, first_row = False):
+    return {
+        'date': date,
+        'flag_data': [random.choice(list(models.Status.Flags)) for reach in flag_reaches],
+        'advisory_data': [random.choice(list(models.Advisory.Boards)) for reach in all_reaches],
+        'show_date': date.day == monthrange(date.year, date.month)[1] or first_row,
+    }
 

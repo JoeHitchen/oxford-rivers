@@ -28,3 +28,8 @@ div.col, div[class^="col-"], div[class*=" col-"] {
   background-color: cyan;
 }
 
+.timelines thead th {
+  vertical-align: middle;
+  text-align: center;
+}
+

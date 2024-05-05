@@ -1,0 +1,42 @@
+{% extends 'flags/base.html' %}
+{% load flag_tags %}
+
+{% block title %}Django Flags - Timelines{% endblock %}
+
+{% block page_body %}
+    <div class="row">
+      <div class="col">
+        <h2>OURCs Flag & EA Advisory Timelines</h2>
+        <p>
+          This page displays a timeline of the historical OURCs flags and EA advisories, to the extend that they have been observed by this project.
+        </p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="table-responsive">
+          <table class="table table-sm table-borderless timelines">
+            <thead class="thead-light">
+              <tr>
+                <th rowspan="2">Date</th>
+                <th colspan="{{ flag_reaches|length }}">OURCs Flags</th>
+                <th colspan="{{ all_reaches|length }}">EA Advisories</th>
+              </tr>
+              <tr>
+                {% for reach in flag_reaches %}<th>
+                  {{ reach }}
+                </th>{% endfor %}
+                {% for reach in all_reaches %}<th>
+                  {{ reach }}
+                </th>{% endfor %}
+              </tr>
+            </thead>
+
+            <tbody>{% for date in dates reversed %}{% timeline_row date flag_reaches all_reaches forloop.first %}
+            {% endfor %}</tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+{% endblock %}

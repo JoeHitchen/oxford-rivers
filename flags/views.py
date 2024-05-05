@@ -1,11 +1,11 @@
-from datetime import timedelta
+from datetime import date, timedelta
 
 from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 from django.http import JsonResponse
 from django.utils import timezone
 
-from . import models, transits
+from . import models, transits, analysis
 
 
 class FlagNavMixin:
@@ -53,6 +53,22 @@ class AdvisoryHistory(FlagNavMixin, DetailView):
     slug_field = 'tag'
     slug_url_kwarg = 'tag'
     template_name = 'flags/advisory_history.html'
+
+
+class Timelines(FlagNavMixin, TemplateView):
+    
+    template_name = 'flags/timelines.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        context['all_reaches'] = models.Reach.objects.order_by('id')
+        context['flag_reaches'] = models.Reach.objects.order_by('id').filter(has_ourcs_flag = True)
+        context['dates'] = analysis.get_date_range(
+            date.fromisoformat('2024-01-24'),
+            date.fromisoformat('2024-04-13'),
+        )
+        return context
 
 
 def data_health_api(request):
