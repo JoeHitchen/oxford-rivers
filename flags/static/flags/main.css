@@ -33,3 +33,15 @@ div.col, div[class^="col-"], div[class*=" col-"] {
   text-align: center;
 }
 
+.timelines-month-end {
+  border-top: black solid;
+}
+
+.timelines td, .timelines thead.thead-light tr:not(:first-child) th:not(.timelines-group-start) {
+  border-left: thin black solid;
+}
+
+.timelines .timelines-group-start, .timelines thead.thead-light .timelines-group-start {
+  border-left: black solid;
+}
+

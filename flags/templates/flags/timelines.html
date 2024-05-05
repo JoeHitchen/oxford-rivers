@@ -20,25 +20,25 @@
             <thead class="thead-light">
               <tr>
                 <th rowspan="2">Date</th>
-                <th colspan="{{ flag_reaches|length }}">OURCs Flags</th>
-                <th colspan="{{ all_reaches|length }}">EA Advisories</th>
+                <th colspan="{{ flag_reaches|length }}" class="timelines-group-start">OURCs Flags</th>
+                <th colspan="{{ all_reaches|length }}" class="timelines-group-start">EA Advisories</th>
               </tr>
               <tr>
-                {% for reach in flag_reaches %}<th>
+                {% for reach in flag_reaches %}<th{% if forloop.first %} class="timelines-group-start"{% endif %}>
                   {{ reach }}
                 </th>{% endfor %}
-                {% for reach in all_reaches %}<th>
+                {% for reach in all_reaches %}<th{% if forloop.first %} class="timelines-group-start"{% endif %}>
                   {{ reach }}
                 </th>{% endfor %}
               </tr>
             </thead>
 
             <tbody>{% for date, timeline_point in timeline_data.items reversed %}
-              <tr data-date="{{ date|date:"Y-m-d" }}">
-                {% if date|is_month_end or forloop.first %}<th rowspan="{{ date.day }}">{{ date|date:"Y-m-d" }}</th>
-                {% endif %}{% for reach in flag_reaches %}<td class="{{ timeline_point|get_reach_flag:reach|flag_colour }}" data-flag="{{ timeline_point|get_reach_flag:reach }}"></td>
+              <tr {% if date|is_month_end or forloop.first %}class="timelines-month-end" {% endif %}data-date="{{ date|date:"Y-m-d" }}">
+                {% if date|is_month_end or forloop.first %}<th rowspan="{{ date.day }}">{{ date|date:"F Y" }}</th>
+                {% endif %}{% for reach in flag_reaches %}<td class="{{ timeline_point|get_reach_flag:reach|flag_colour }}{% if forloop.first %} timelines-group-start{% endif %}" data-flag="{{ timeline_point|get_reach_flag:reach }}"></td>
                 {% endfor %}{% for reach in all_reaches %}
-                <td class="{{ timeline_point|get_reach_advisory:reach|advisory_colour }}" data-advisory="{{ timeline_point|get_reach_advisory:reach }}"></td>{% endfor %}
+                <td class="{{ timeline_point|get_reach_advisory:reach|advisory_colour }}{% if forloop.first %} timelines-group-start{% endif %}" data-advisory="{{ timeline_point|get_reach_advisory:reach }}"></td>{% endfor %}
               </tr>
             {% endfor %}</tbody>
           </table>
