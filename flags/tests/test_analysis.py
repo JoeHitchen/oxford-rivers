@@ -55,7 +55,7 @@ class Test__GetStatusAndAdvisories(TestCase):
     def test__no_data(self):
         """The collation runs with an empty output if no data is set"""
 
-        all_data = analysis.get_statuses_and_advisories_by_date()
+        all_data = analysis.get_statuses_and_advisories_by_date(timezone.now().date())
         self.assertEqual(all_data, {})
 
     def test__flags__single_day(self):
@@ -68,7 +68,7 @@ class Test__GetStatusAndAdvisories(TestCase):
             last_seen = self.evening,
         )
 
-        all_data = analysis.get_statuses_and_advisories_by_date()
+        all_data = analysis.get_statuses_and_advisories_by_date(timezone.now().date())
         self.assertEqual(all_data, {})
 
     def test__flags__multi_day(self):
@@ -81,7 +81,7 @@ class Test__GetStatusAndAdvisories(TestCase):
             last_seen = self.evening - timedelta(1),
         )
 
-        all_data = analysis.get_statuses_and_advisories_by_date()
+        all_data = analysis.get_statuses_and_advisories_by_date(timezone.now().date())
 
         self.assertEqual(all_data, {
             (timezone.now() - timedelta(3)).date(): {
@@ -129,7 +129,7 @@ class Test__GetStatusAndAdvisories(TestCase):
             last_seen = self.morning - timedelta(4),
         )
 
-        all_data = analysis.get_statuses_and_advisories_by_date()
+        all_data = analysis.get_statuses_and_advisories_by_date(timezone.now().date())
 
         self.assertEqual(all_data, {
             (timezone.now() - timedelta(7)).date(): {
@@ -180,7 +180,7 @@ class Test__GetStatusAndAdvisories(TestCase):
             last_seen = self.evening,
         )
 
-        all_data = analysis.get_statuses_and_advisories_by_date()
+        all_data = analysis.get_statuses_and_advisories_by_date(timezone.now().date())
         self.assertEqual(all_data, {})
 
     def test__advisories__multi_day(self):
@@ -192,7 +192,7 @@ class Test__GetStatusAndAdvisories(TestCase):
             last_seen = self.evening - timedelta(2),
         )
 
-        all_data = analysis.get_statuses_and_advisories_by_date()
+        all_data = analysis.get_statuses_and_advisories_by_date(timezone.now().date())
         self.assertEqual(all_data, {
             (timezone.now() - timedelta(5)).date(): {
                 'advisories': {self.isis: models.Advisory.Boards.RED},
@@ -237,7 +237,7 @@ class Test__GetStatusAndAdvisories(TestCase):
             last_seen = self.morning - timedelta(6),
         )
 
-        all_data = analysis.get_statuses_and_advisories_by_date()
+        all_data = analysis.get_statuses_and_advisories_by_date(timezone.now().date())
         self.assertEqual(all_data, {
             (timezone.now() - timedelta(9)).date(): {
                 'advisories': {self.isis: models.Advisory.Boards.INC},
@@ -350,7 +350,7 @@ class Test__GetStatusAndAdvisories(TestCase):
             last_seen = self.morning - timedelta(6),
         )
 
-        all_data = analysis.get_statuses_and_advisories_by_date()
+        all_data = analysis.get_statuses_and_advisories_by_date(timezone.now().date())
         self.assertEqual(all_data, {
             (timezone.now() - timedelta(9)).date(): {
                 'statuses': {self.isis: models.Status.Flags.AMBER},
@@ -482,7 +482,7 @@ class Test__GetStatusAndAdvisories(TestCase):
             last_seen = self.morning - timedelta(6),
         )
 
-        all_data = analysis.get_statuses_and_advisories_by_date()
+        all_data = analysis.get_statuses_and_advisories_by_date(timezone.now().date())
         self.assertEqual(all_data, {
             (timezone.now() - timedelta(9)).date(): {
                 'advisories': {self.isis: models.Advisory.Boards.INC},

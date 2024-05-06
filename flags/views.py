@@ -62,7 +62,8 @@ class Timelines(FlagNavMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
-        context['timeline_data'] = analysis.get_statuses_and_advisories_by_date()
+        today = timezone.now().date()
+        context['timeline_data'] = analysis.get_statuses_and_advisories_by_date(today)
         return context
 
 

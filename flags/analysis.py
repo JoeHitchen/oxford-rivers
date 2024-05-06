@@ -58,7 +58,7 @@ def get_advisories_by_date():
 
 
 @cache
-def get_statuses_and_advisories_by_date():
+def get_statuses_and_advisories_by_date(date):
     """Creates a date-indexed dictionary of all flag statuses and advisories in the dataset."""
 
     all_data = {}
