@@ -23,6 +23,9 @@
             <a class="dropdown-item" href="{% url 'flags:advisory_history' nav_reach.tag %}">{{ nav_reach }}</a>{% endfor %}
           </div>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'flags:timelines' %}">Timelines</a>
+        </li>
       </ul>
     </div>
   </nav>

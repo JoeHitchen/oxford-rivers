@@ -149,6 +149,7 @@ class Status(models.Model):
         AMBER = ('A', 'Amber')
         RED = ('R', 'Red')
         BLACK = ('D', 'Black')
+        OUTAGE = ('O', 'Outage')
     
     reach = models.ForeignKey(Reach, models.CASCADE, related_name = 'statuses')
     flag = models.CharField(max_length = 1, choices = Flags.choices)
@@ -177,6 +178,7 @@ class Status(models.Model):
             self.Flags.AMBER: 'bg-warning',
             self.Flags.RED: 'bg-danger text-light',
             self.Flags.BLACK: 'bg-dark text-light',
+            self.Flags.OUTAGE: 'bg-secondary',
         }.get(self.flag)
 
 

@@ -5,7 +5,7 @@ from django.views.generic.detail import DetailView
 from django.http import JsonResponse
 from django.utils import timezone
 
-from . import models, transits
+from . import models, transits, analysis
 
 
 class FlagNavMixin:
@@ -53,6 +53,18 @@ class AdvisoryHistory(FlagNavMixin, DetailView):
     slug_field = 'tag'
     slug_url_kwarg = 'tag'
     template_name = 'flags/advisory_history.html'
+
+
+class Timelines(FlagNavMixin, TemplateView):
+    
+    template_name = 'flags/timelines.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        today = timezone.now().date()
+        context['timeline_data'] = analysis.get_statuses_and_advisories_by_date(today)
+        return context
 
 
 def data_health_api(request):

@@ -1,7 +1,9 @@
 from math import floor
+from calendar import monthrange
 
 from django import template
 
+from .. import models
 from .. transits import Permissions
 
 register = template.Library()
@@ -10,6 +12,46 @@ register = template.Library()
 @register.filter
 def subtract(a, b):
     return a - b
+
+
+@register.filter
+def is_month_end(date):
+    return date.day == monthrange(date.year, date.month)[1]
+
+
+@register.filter
+def get_reach_flag(data, reach):
+    return data.get('statuses', {}).get(reach, models.Status.Flags.OUTAGE)
+
+
+@register.filter
+def get_reach_advisory(data, reach):
+    return data.get('advisories', {}).get(reach, models.Advisory.Boards.OUT)
+
+
+@register.filter
+def flag_colour(flag):
+    return {
+        models.Status.Flags.GREY: 'ourcs-grey',
+        models.Status.Flags.GREEN: 'ourcs-green',
+        models.Status.Flags.LIGHT: 'ourcs-light-blue',
+        models.Status.Flags.BLUE: 'ourcs-blue',
+        models.Status.Flags.AMBER: 'ourcs-amber',
+        models.Status.Flags.RED: 'ourcs-red',
+        models.Status.Flags.BLACK: 'ourcs-black',
+        models.Status.Flags.OUTAGE: 'ourcs-outage',
+    }[flag]
+
+
+@register.filter
+def advisory_colour(flag):
+    return {
+        models.Advisory.Boards.NONE: 'ea-clear',
+        models.Advisory.Boards.INC: 'ea-yellow',
+        models.Advisory.Boards.DEC: 'ea-yellow',
+        models.Advisory.Boards.RED: 'ea-red',
+        models.Advisory.Boards.OUT: 'ea-outage',
+    }[flag]
 
 
 @register.filter
