@@ -87,7 +87,7 @@
 
             <tbody>{% for date, timeline_point in timeline_data.items reversed %}
               <tr {% if date|is_month_end %}class="timelines-month-end" {% endif %}data-date="{{ date|date:"Y-m-d" }}">
-                {% if date|is_month_end or forloop.first %}<th rowspan="{{ date.day }}" class="text-secondary">{{ date|date:"F Y" }}</th>{% else %}<th></th>
+                {% if date|is_month_end or forloop.first %}<th rowspan="{{ date.day }}" class="text-secondary">{{ date|date:"F Y" }}</th>
                 {% endif %}{% for reach in flag_reaches %}<td class="{{ timeline_point|get_reach_flag:reach|flag_colour }}{% if forloop.first %} timelines-group-start{% endif %}" data-flag="{{ timeline_point|get_reach_flag:reach }}"></td>
                 {% endfor %}{% for reach in all_reaches %}
                 <td class="{{ timeline_point|get_reach_advisory:reach|advisory_colour }}{% if forloop.first %} timelines-group-start{% endif %}" data-advisory="{{ timeline_point|get_reach_advisory:reach }}"></td>{% endfor %}

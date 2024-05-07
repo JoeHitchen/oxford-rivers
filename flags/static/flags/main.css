@@ -109,17 +109,22 @@ div.col, div[class^="col-"], div[class*=" col-"] {
   width: 100%;
   min-width: 60em;
 }
-.timelines-table thead, .timelines-table tbody tr {
-  display: table;
+.timelines-table thead {
+  display: inline-table;
   width: 100%;
   min-width: 60em;
   table-layout: fixed;
 }
 .timelines-table tbody {
+  width: 100%;
+  min-width: 60em;
   display: block;
   overflow-y: auto;
   table-layout: fixed;
   max-height: 65vh;
+}
+.timelines-table tbody td {
+  width: 11.11%;
 }
 
 .timelines-table {
