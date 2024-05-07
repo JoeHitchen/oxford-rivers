@@ -109,17 +109,37 @@ div.col, div[class^="col-"], div[class*=" col-"] {
   width: 100%;
   min-width: 60em;
 }
-.timelines-table thead, .timelines-table tbody tr {
-  display: table;
-  width: 100%;
-  min-width: 60em;
+.timelines-table thead {
+  display: block;
   table-layout: fixed;
 }
+.timelines-table thead tr {
+  display: flex;
+  width: 100%;
+  table-layout: fixed;
+}
+.timelines-table thead tr:first-child th:nth-child(1) {
+  width: 11.11%;
+}
+.timelines-table thead tr:first-child th:nth-child(2) {
+  width: 22.22%;
+}
+.timelines-table thead tr:first-child th:nth-child(3) {
+  width: 66.66%;
+}
+.timelines-table thead th {
+  width: 11.11%;
+}
 .timelines-table tbody {
+  width: 100%;
+  min-width: 60em;
   display: block;
   overflow-y: auto;
   table-layout: fixed;
   max-height: 65vh;
+}
+.timelines-table tbody td {
+  width: 11.11%;
 }
 
 .timelines-table {
@@ -129,7 +149,7 @@ div.col, div[class^="col-"], div[class*=" col-"] {
 .timelines-table thead {
   border-bottom: rgba(0,0,0,0.75) solid;
 }
-.timelines-table thead tr:first-child {
+.timelines-table thead tr:first-child th:not(:first-child) {
   border-bottom: thin rgba(0,0,0,0.75) solid;
 }
 .timelines-table .timelines-month-end {
@@ -138,7 +158,7 @@ div.col, div[class^="col-"], div[class*=" col-"] {
 .timelines-table .timelines-group-start, .timelines-table thead.thead-light .timelines-group-start {
   border-left: rgba(0,0,0,0.75) solid;
 }
-.timelines-table td, .timelines-table thead.thead-light tr:not(:first-child) th:not(.timelines-group-start) {
+.timelines-table td, .timelines-table thead.thead-light tr:last-child th:not(:first-child):not(.timelines-group-start) {
   border-left: thin rgba(0,0,0,0.75) solid;
 }
 
