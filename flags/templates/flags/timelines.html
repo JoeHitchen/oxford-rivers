@@ -76,7 +76,6 @@
                 <th colspan="{{ all_reaches|length }}" class="timelines-group-start">EA Advisories</th>
               </tr>
               <tr>
-                <th></th>
                 {% for reach in flag_reaches %}<th{% if forloop.first %} class="timelines-group-start"{% endif %}>
                   {{ reach }}
                 </th>{% endfor %}
