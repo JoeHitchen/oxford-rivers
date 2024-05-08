@@ -3,7 +3,7 @@ version: "3.7"
 services:
   server:
     build: .
-    image: django-flags
+    image: oxford-rivers
     command: gunicorn core.wsgi:application --bind 0.0.0.0:8000
     restart: always
     ports:
@@ -14,14 +14,14 @@ services:
 
   worker:
     build: .
-    image: django-flags
+    image: oxford-rivers
     command: celery -A core worker --loglevel=info
     restart: always
     env_file: .env
 
   scheduler:
     build: .
-    image: django-flags
+    image: oxford-rivers
     command: celery -A core beat --loglevel=info
     restart: always
     env_file: .env

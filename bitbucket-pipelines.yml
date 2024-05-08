@@ -27,18 +27,18 @@ pipelines:
           services:
             - docker
           script:
-            - docker build -t joehitchen/django-flags .
-            - docker save --output django-flags.docker joehitchen/django-flags
+            - docker build -t joehitchen/oxford-rivers .
+            - docker save --output oxford-rivers.docker joehitchen/oxford-rivers
           artifacts:
-            - django-flags.docker
+            - oxford-rivers.docker
       
       - step:
           name: Verify
           services:
             - docker
           script:
-            - docker load --input django-flags.docker
-            - docker run --rm joehitchen/django-flags python manage.py test
+            - docker load --input oxford-rivers.docker
+            - docker run --rm joehitchen/oxford-rivers python manage.py test
       
       - step:
           name: Publish
@@ -46,8 +46,8 @@ pipelines:
           services:
             - docker
           script:
-            - docker load --input django-flags.docker
+            - docker load --input oxford-rivers.docker
             - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-            - docker push joehitchen/django-flags
+            - docker push joehitchen/oxford-rivers
 
 

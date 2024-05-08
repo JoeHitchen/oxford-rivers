@@ -51,7 +51,7 @@ See below for more information._
 
 
 ## Running in production
-A Docker image of the project is available on [DockerHub](https://hub.docker.com/repository/docker/joehitchen/django-flags) as `joehitchen/django-flags` and this is the recommended deployment method, although others are possible.
+A Docker image of the project is available on [DockerHub](https://hub.docker.com/repository/docker/joehitchen/oxford-rivers) as `joehitchen/oxford-rivers` and this is the recommended deployment method, although others are possible.
 
 By default this image will run a Gunicorn HTTP web server on port 8000.
 The project is not arranged to support HTTPS connections directly, and should be placed behind a reverse proxy such as NGINX or Traefik.
