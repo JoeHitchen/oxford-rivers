@@ -6,6 +6,7 @@ import logging
 from django.test import TestCase
 from django.core.management import call_command
 from django.utils import timezone
+from bs4 import BeautifulSoup
 
 from .. import models
 from .. import data
@@ -232,4 +233,33 @@ class Test_EABoards(TestCase):
         update_mock.assert_any_call(reach_map['sandford'], 'OUT', board_shown = boards_shown)
         
         requests_mock.get.return_value.raise_for_status.assert_not_called()
+    
+    
+    def test__board_extraction(self):
+        """Checks that the board extractor can handle all noted variations of the text"""
+
+        reach = models.Reach.objects.get(tag = models.Reach.Common.GODS)
+
+        template = '''
+          <div><tr>
+            <td>Godstow Lock to Osney Lock</td>
+            <td>{}</td>
+          </tr></div>
+        '''
+
+        examples = [
+            ('No stream warning', models.Advisory.Boards.NONE),
+            ('No stream warnings', models.Advisory.Boards.NONE),
+            ('Yellow caution: stream increasing', models.Advisory.Boards.INC),
+            ('Yellow caution: stream decreasing', models.Advisory.Boards.DEC),
+            ('Yellow caution:  stream decreasing', models.Advisory.Boards.DEC),
+            ('Red caution: strong stream', models.Advisory.Boards.RED),
+            ('Outage', models.Advisory.Boards.OUT),
+        ]
+
+        for board_string, expected_board in examples:
+            with self.subTest(board_string):
+                soup = BeautifulSoup(template.format(board_string), features = 'html.parser')
+                parsed_board = data._extract_ea_board(soup, reach)
+                self.assertEqual(parsed_board, expected_board)
 

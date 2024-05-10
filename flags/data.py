@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 import logging
 import zoneinfo
+import re
 
 from django.utils import timezone
 from bs4 import BeautifulSoup
@@ -10,6 +11,14 @@ from . import models
 
 logger = logging.getLogger('Data')
 logger.setLevel('INFO')
+
+
+board_regex_map = {
+    'no(.*)warning': models.Advisory.Boards.NONE,
+    'yellow(.*)inc': models.Advisory.Boards.INC,
+    'yellow(.*)dec': models.Advisory.Boards.DEC,
+    'red': models.Advisory.Boards.RED,
+}
 
 
 def fetch_ourcs_flag(reach):
@@ -103,31 +112,29 @@ def scrape_ourcs_flag_history(reach):
     models.Status.objects.bulk_update(statuses, ['last_seen'])
 
 
+def _extract_ea_board(main_column, reach):
+    """Extracts the board for a reach, or indicates an outage."""
+
+    # Extract the boards
+    try:
+        lock_search_string = f'{reach.upstream_lock} Lock to {reach.downstream_lock} Lock'
+        reach_row = main_column.find(string = lock_search_string).parent.parent
+        board_text = reach_row.contents[3].contents[0].lower()
+
+        for regex, board in board_regex_map.items():
+            if re.search(regex, board_text):
+                return board
+
+        assert False, 'No regular expression matched'
+
+    # Indicate an outage on failure
+    except Exception as err:
+        logger.error(f'Board Parsing Error: {err.__str__()}')
+        return models.Advisory.Boards.OUT
+
+
 def scrape_ea_boards():
     """Retrieves stream advisory boards from the EA website"""
-    
-    board_text_map = {
-        'no stream warning': models.Advisory.Boards.NONE,
-        'yellow caution: stream increasing': models.Advisory.Boards.INC,
-        'yellow caution: stream decreasing': models.Advisory.Boards.DEC,
-        'red caution: strong stream': models.Advisory.Boards.RED,
-    }
-    
-    def extract_board(main_column, reach):
-        """Extracts the board for a reach, or indicates an outage."""
-        
-        # Extract the boards
-        try:
-            lock_search_string = f'{reach.upstream_lock} Lock to {reach.downstream_lock} Lock'
-            reach_row = main_column.find(string = lock_search_string).parent.parent
-            board_text = reach_row.contents[3].contents[0]
-            
-            return board_text_map[board_text.lower()]
-        
-        # Indicate an outage on failure
-        except Exception:
-            return models.Advisory.Boards.OUT
-    
     
     # Request and parse EA Boards page
     response = requests.get('https://www.gov.uk/guidance/river-thames-current-river-conditions')
@@ -147,7 +154,7 @@ def scrape_ea_boards():
     boards = {}
     main_column = soup.find(class_ = 'govspeak')
     for reach in models.Reach.objects.all():
-        board = extract_board(main_column, reach)
+        board = _extract_ea_board(main_column, reach)
         logger.info('EA Boards - {:11s} - {}'.format(
             str(reach),
             models.Advisory.Boards(board).label),
