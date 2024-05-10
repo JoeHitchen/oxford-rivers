@@ -1,12 +1,12 @@
-# Django Flags
-Django Flags is a monitoring service for the river levels and flow around Oxford, with a view to providing information for the Oxford University rowing community.
+# Oxford Rivers
+Oxford Rivers is a monitoring service for the river levels and flow around Oxford, with a view to providing information for the Oxford University rowing community.
 The project is written in Python and Django, and is geared towards deployment using Docker and Gunicorn, with a MySQL database and data collection performed by a Celery worker, scheduler, and Redis broker.
 
 A live deployment is currently running at [boards.other.fantasybumps.org.uk](https://boards.other.fantasybumps.org.uk).
 
 
 ## Running in development
-Django Flags has two requirements files:
+Oxford Rivers has two requirements files:
 
   * `requirements.txt` -
   This is the main requirements file and contains all the dependencies needed for running tests or a development server.
