@@ -17,7 +17,8 @@ class Reach(models.Model):
         SAND = 'sandford'
     
     name = models.CharField(max_length = 12)
-    tag = models.SlugField(max_length = 12, unique = True)  # Implicit db index
+    tag = models.SlugField(max_length = 12, unique = True, choices = Common.choices)
+    # ^ Implicit db index
     downstream_order = models.PositiveSmallIntegerField()
     has_ourcs_flag = models.BooleanField(default = False)
     
