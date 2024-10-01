@@ -1,8 +1,9 @@
 from unittest.mock import patch
 from datetime import timedelta
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.utils import timezone
+from django.core import mail
 
 from flags import models as flags
 
@@ -10,6 +11,10 @@ from .tasks import check_automated_flag
 from . import models
 
 
+mock_recipients = ['example@ourcs.org.uk', 'admin@mail.fantasybumps.org.uk']
+
+
+@override_settings(AUTOFLAG_NOTIFICATION_RECIPIENTS = mock_recipients)
 class Test__Automation(TestCase):
     fixtures = ['flags', 'autoflags']
 
@@ -32,6 +37,7 @@ class Test__Automation(TestCase):
 
         self.autoflag.refresh_from_db()
         self.assertEqual(self.autoflag.status, flags.Status.Flags.GREY)
+        self.assertEqual(len(mail.outbox), 0)
     
 
     @patch('automation.tasks.get_current_flag')
@@ -45,6 +51,7 @@ class Test__Automation(TestCase):
 
         self.autoflag.refresh_from_db()
         self.assertEqual(self.autoflag.status, flags.Status.Flags.GREY)
+        self.assertEqual(len(mail.outbox), 0)
 
 
     def test__ourcs_matches(self):
@@ -57,6 +64,7 @@ class Test__Automation(TestCase):
 
         self.autoflag.refresh_from_db()
         self.assertEqual(self.autoflag.status, flags.Status.Flags.GREEN)
+        self.assertEqual(len(mail.outbox), 0)
 
 
     def test__ourcs_differs(self):
@@ -67,4 +75,13 @@ class Test__Automation(TestCase):
 
         self.autoflag.refresh_from_db()
         self.assertEqual(self.autoflag.status, flags.Status.Flags.GREEN)
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].from_email, 'autoflag@mail.fantasybumps.org.uk')
+        self.assertEqual(mail.outbox[0].to, mock_recipients)
+        self.assertEqual(mail.outbox[0].subject, '[AutoFlag] Godstow: Green')
+        self.assertEqual(
+            mail.outbox[0].body,
+            'According to the latest differentials, the Godstow flag is now Green',
+        )
 

@@ -133,6 +133,16 @@ CELERY_BROKER_TRANSPORT_OPTIONS = json.loads(os.environ.get('CELERY_BROKER_OPTIO
 CELERY_WORKER_LOG_FORMAT = '%(processName)-17s %(levelname)-8s %(message)s'
 
 
+# Emails
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'localhost')
+EMAIL_HOST_USER = os.environ.get('EMAIL_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS', '')
+EMAIL_USE_TLS = EMAIL_HOST != 'localhost'
+DEFAULT_FROM_EMAIL = 'no-reply@mail.fantasybumps.org.uk'
+
+AUTOFLAG_NOTIFICATION_RECIPIENTS = os.environ.get('AUTOFLAG_NOTIFICATION_RECIPIENTS', '').split(',')  # noqa: E501
+
+
 # Other
 LOGGING = {
     'version': 1,
