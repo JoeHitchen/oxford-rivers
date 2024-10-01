@@ -6,8 +6,19 @@ from flags import models as flags
 from . import models
 
 
-def get_current_flag(autoflag):  # To be replaced with a proper lookup
+def get_current_isis_flag():  # To be replaced with a proper lookup
+    return flags.Status.Flags.BLUE
+
+
+def get_current_godstow_flag():  # To be replaced with a proper lookup
     return flags.Status.Flags.GREEN
+
+
+def get_current_flag(autoflag):
+    return {
+        flags.Reach.Common.ISIS: get_current_isis_flag,
+        flags.Reach.Common.GODS: get_current_godstow_flag,
+    }[flags.Reach.Common(autoflag.tag)]()
 
 
 def check_automated_flag(reach_tag):

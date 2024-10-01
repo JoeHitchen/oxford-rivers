@@ -40,7 +40,7 @@ class Test__Automation(TestCase):
         self.assertEqual(len(mail.outbox), 0)
     
 
-    @patch('automation.tasks.get_current_flag')
+    @patch('automation.tasks.get_current_godstow_flag')
     def test__no_change(self, lookup_mock):
         """No change is reported if the status is unchanged"""
 
@@ -83,5 +83,27 @@ class Test__Automation(TestCase):
         self.assertEqual(
             mail.outbox[0].body,
             'According to the latest differentials, the Godstow flag is now Green',
+        )
+
+
+    def test__isis(self):
+        """A change is reported if the status has changed"""
+
+        isis = models.AutoFlag.objects.get(tag = 'isis')  # Enabled & Grey by default
+        isis.statuses.create(flag = flags.Status.Flags.RED, set_at = timezone.now() - timedelta(1))
+
+        output = check_automated_flag('isis')
+        self.assertEqual(output, 'Notification')
+
+        isis.refresh_from_db()
+        self.assertEqual(isis.status, flags.Status.Flags.BLUE)
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].from_email, 'autoflag@mail.fantasybumps.org.uk')
+        self.assertEqual(mail.outbox[0].to, mock_recipients)
+        self.assertEqual(mail.outbox[0].subject, '[AutoFlag] Isis: Blue')
+        self.assertEqual(
+            mail.outbox[0].body,
+            'According to the latest differentials, the Isis flag is now Blue',
         )
 
