@@ -1,6 +1,8 @@
 from unittest.mock import patch
+from datetime import timedelta
 
 from django.test import TestCase
+from django.utils import timezone
 
 from flags import models as flags
 
@@ -13,6 +15,10 @@ class Test__Automation(TestCase):
 
     def setUp(self):
         self.autoflag = models.AutoFlag.objects.get(tag = 'godstow')  # Enabled & Grey by default
+        self.autoflag.statuses.create(
+            flag = flags.Status.Flags.RED,
+            set_at = timezone.now() - timedelta(1),
+        )
 
 
     def test__disabled(self):
@@ -41,11 +47,23 @@ class Test__Automation(TestCase):
         self.assertEqual(self.autoflag.status, flags.Status.Flags.GREY)
 
 
-    def test__changed(self):
+    def test__ourcs_matches(self):
+        """No change is reported if the new flag matches the OURCs flag"""
+
+        self.autoflag.statuses.create(flag = flags.Status.Flags.GREEN, set_at = timezone.now())
+
+        output = check_automated_flag('godstow')
+        self.assertEqual(output, 'No Notification')
+
+        self.autoflag.refresh_from_db()
+        self.assertEqual(self.autoflag.status, flags.Status.Flags.GREEN)
+
+
+    def test__ourcs_differs(self):
         """A change is reported if the status has changed"""
 
         output = check_automated_flag('godstow')
-        self.assertEqual(output, 'Change')
+        self.assertEqual(output, 'Notification')
 
         self.autoflag.refresh_from_db()
         self.assertEqual(self.autoflag.status, flags.Status.Flags.GREEN)

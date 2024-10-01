@@ -19,6 +19,9 @@ def check_automated_flag(reach_tag):
 
     autoflag.status = current_flag
     autoflag.save()
+
+    if autoflag.status == autoflag.current_flag_status.flag:  # Compares with latest OURCs fetch
+        return 'No Notification'
     
-    return 'Change'
+    return 'Notification'
 
