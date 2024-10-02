@@ -6,19 +6,37 @@ from flags import models as flags
 from . import models
 
 
-def get_current_isis_flag():  # To be replaced with a proper lookup
-    return flags.Status.Flags.BLUE
+isis_boundaries = [
+    (0.720, flags.Status.Flags.BLACK),
+    (0.535, flags.Status.Flags.RED),
+    (0.442, flags.Status.Flags.AMBER),
+    (0.330, flags.Status.Flags.BLUE),
+    (0.215, flags.Status.Flags.LIGHT),
+]
+
+godstow_boundaries = [
+    (0.75, flags.Status.Flags.RED),
+    (0.45, flags.Status.Flags.AMBER),
+]
 
 
-def get_current_godstow_flag():  # To be replaced with a proper lookup
-    return flags.Status.Flags.GREEN
+def get_current_differential(autoflag):  # To be replaced with a proper lookup
+    return 0.37
 
 
 def get_current_flag(autoflag):
-    return {
-        flags.Reach.Common.ISIS: get_current_isis_flag,
-        flags.Reach.Common.GODS: get_current_godstow_flag,
-    }[flags.Reach.Common(autoflag.tag)]()
+
+    boundaries = {
+        flags.Reach.Common.ISIS: isis_boundaries,
+        flags.Reach.Common.GODS: godstow_boundaries,
+    }[flags.Reach.Common(autoflag.tag)]
+
+    differential = get_current_differential(autoflag)
+    for boundary, flag in boundaries:
+        if differential >= boundary:
+            return flag
+
+    return flags.Status.Flags.GREEN
 
 
 def check_automated_flag(reach_tag):

@@ -7,7 +7,7 @@ from django.core import mail
 
 from flags import models as flags
 
-from .tasks import check_automated_flag
+from .tasks import check_automated_flag, get_current_flag
 from . import models
 
 
@@ -40,7 +40,7 @@ class Test__Automation(TestCase):
         self.assertEqual(len(mail.outbox), 0)
     
 
-    @patch('automation.tasks.get_current_godstow_flag')
+    @patch('automation.tasks.get_current_flag')
     def test__no_change(self, lookup_mock):
         """No change is reported if the status is unchanged"""
 
@@ -106,4 +106,64 @@ class Test__Automation(TestCase):
             mail.outbox[0].body,
             'According to the latest differentials, the Isis flag is now Blue',
         )
+
+
+class Test__GetCurrentFlag(TestCase):
+    fixtures = ['flags', 'autoflags']
+
+    def setUp(self):
+        self.autoflag = models.AutoFlag.objects.get(tag = 'godstow')
+
+    def test__isis(self):
+        """Tests the flag calculation for the Isis"""
+
+        isis_autoflag = models.AutoFlag.objects.get(tag = 'isis')
+        isis_cases = [
+            (0.05, flags.Status.Flags.GREEN),
+            (0.20, flags.Status.Flags.GREEN),
+            (0.22, flags.Status.Flags.LIGHT),
+            (0.24, flags.Status.Flags.LIGHT),
+            (0.31, flags.Status.Flags.LIGHT),
+            (0.33, flags.Status.Flags.BLUE),
+            (0.35, flags.Status.Flags.BLUE),
+            (0.43, flags.Status.Flags.BLUE),
+            (0.45, flags.Status.Flags.AMBER),
+            (0.47, flags.Status.Flags.AMBER),
+            (0.52, flags.Status.Flags.AMBER),
+            (0.54, flags.Status.Flags.RED),
+            (0.56, flags.Status.Flags.RED),
+            (0.70, flags.Status.Flags.RED),
+            (0.72, flags.Status.Flags.BLACK),
+            (0.74, flags.Status.Flags.BLACK),
+            (0.99, flags.Status.Flags.BLACK),
+        ]
+
+        for differential, expected_flag in isis_cases:
+            with self.subTest(differential):
+                with patch('automation.tasks.get_current_differential') as differential_mock:
+                    differential_mock.return_value = differential
+
+                    self.assertEqual(get_current_flag(isis_autoflag), expected_flag)
+
+    def test__godstow(self):
+        """Tests the flag calculation for Godstow"""
+
+        godstow_autoflag = models.AutoFlag.objects.get(tag = 'godstow')
+        godstow_cases = [
+            (0.05, flags.Status.Flags.GREEN),
+            (0.43, flags.Status.Flags.GREEN),
+            (0.45, flags.Status.Flags.AMBER),
+            (0.47, flags.Status.Flags.AMBER),
+            (0.73, flags.Status.Flags.AMBER),
+            (0.75, flags.Status.Flags.RED),
+            (0.77, flags.Status.Flags.RED),
+            (0.99, flags.Status.Flags.RED),
+        ]
+
+        for differential, expected_flag in godstow_cases:
+            with self.subTest(differential):
+                with patch('automation.tasks.get_current_differential') as differential_mock:
+                    differential_mock.return_value = differential
+
+                    self.assertEqual(get_current_flag(godstow_autoflag), expected_flag)
 
