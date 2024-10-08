@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.core import mail
 
+from core import tasks_app
 from flags import models as flags
 from jameson import models as jameson
 
@@ -46,9 +47,10 @@ def get_current_flag(autoflag):
     return flags.Status.Flags.GREEN
 
 
+@tasks_app.task
 def check_automated_flag(reach_tag):
 
-    autoflag = models.AutoFlag.objects.get(tag = reach_tag)
+    autoflag = models.AutoFlag.objects.get(tag = reach_tag.lower())
     if not autoflag.enabled:
         return 'Disabled'
 
@@ -72,4 +74,13 @@ def check_automated_flag(reach_tag):
         settings.AUTOFLAG_NOTIFICATION_RECIPIENTS,
     )
     return 'Notification'
+
+
+@tasks_app.on_after_finalize.connect
+def setup_periodic_tasks(sender, **kwargs):
+
+    autoflag_reaches = models.AutoFlag.objects.all()
+    for reach in autoflag_reaches:
+        sender.add_periodic_task(2 * 60, check_automated_flag.s(reach.tag.capitalize()))
+
 
