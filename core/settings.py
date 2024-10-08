@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'flags',
+    'jameson',
     'automation',
 ]
 
@@ -70,6 +71,14 @@ DATABASES = {
         'TEST': {
             'NAME': os.environ.get('DATABASE_NAME_TEST', 'test.sqlite3'),
         },
+    },
+    'jameson': {
+        'ENGINE': os.environ.get('JAMESON_ENGINE', 'django.db.backends.sqlite3'),
+        'HOST': os.environ.get('JAMESON_HOST', ''),
+        'PORT': os.environ.get('JAMESON_PORT', ''),
+        'USER': os.environ.get('JAMESON_USER', ''),
+        'PASSWORD': os.environ.get('JAMESON_PASS'),
+        'NAME': os.environ.get('JAMESON_NAME', 'database.sqlite3'),
     },
 }
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
