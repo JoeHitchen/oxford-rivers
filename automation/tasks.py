@@ -2,6 +2,7 @@ from django.conf import settings
 from django.core import mail
 
 from flags import models as flags
+from jameson import models as jameson
 
 from . import models
 
@@ -20,8 +21,14 @@ godstow_boundaries = [
 ]
 
 
-def get_current_differential(autoflag):  # To be replaced with a proper lookup
-    return 0.37
+def get_current_differential(autoflag):
+
+    reach = {
+        flags.Reach.Common.ISIS: jameson.Differential.Reach.ISIS,
+        flags.Reach.Common.GODS: jameson.Differential.Reach.GODSTOW,
+    }[flags.Reach.Common(autoflag.tag)]
+
+    return jameson.Differential.objects.using('jameson').filter(reach = reach)[0].differential
 
 
 def get_current_flag(autoflag):
