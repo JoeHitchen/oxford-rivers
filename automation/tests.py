@@ -14,6 +14,7 @@ from . import models
 mock_recipients = ['example@ourcs.org.uk', 'admin@mail.fantasybumps.org.uk']
 
 
+@patch('automation.tasks.get_current_differential', return_value = 0.37)
 @override_settings(AUTOFLAG_NOTIFICATION_RECIPIENTS = mock_recipients)
 class Test__Automation(TestCase):
     fixtures = ['flags', 'autoflags']
@@ -26,7 +27,7 @@ class Test__Automation(TestCase):
         )
 
 
-    def test__disabled(self):
+    def test__disabled(self, _differential_mock):
         """No action is performed if the autoflag is disabled"""
 
         self.autoflag.enabled = False
@@ -41,7 +42,7 @@ class Test__Automation(TestCase):
     
 
     @patch('automation.tasks.get_current_flag')
-    def test__no_change(self, lookup_mock):
+    def test__no_change(self, lookup_mock, _differential_mock):
         """No change is reported if the status is unchanged"""
 
         lookup_mock.return_value = flags.Status.Flags.GREY
@@ -54,7 +55,7 @@ class Test__Automation(TestCase):
         self.assertEqual(len(mail.outbox), 0)
 
 
-    def test__ourcs_matches(self):
+    def test__ourcs_matches(self, _differential_mock):
         """No change is reported if the new flag matches the OURCs flag"""
 
         self.autoflag.statuses.create(flag = flags.Status.Flags.GREEN, set_at = timezone.now())
@@ -67,7 +68,7 @@ class Test__Automation(TestCase):
         self.assertEqual(len(mail.outbox), 0)
 
 
-    def test__ourcs_differs(self):
+    def test__ourcs_differs(self, _differential_mock):
         """A change is reported if the status has changed"""
 
         output = check_automated_flag('godstow')
@@ -86,7 +87,7 @@ class Test__Automation(TestCase):
         )
 
 
-    def test__isis(self):
+    def test__isis(self, _differential_mock):
         """A change is reported if the status has changed"""
 
         isis = models.AutoFlag.objects.get(tag = 'isis')  # Enabled & Grey by default
