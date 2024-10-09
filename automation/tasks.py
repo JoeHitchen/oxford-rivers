@@ -8,6 +8,13 @@ from jameson import models as jameson
 from . import models
 
 
+class AutoFlagCheckOutput:
+    DISABLED = 'Disabled'
+    NO_CHANGE = 'No Change'
+    NO_NOTIFY = 'No Notify'
+    NOTIFY = 'Notify'
+
+
 isis_boundaries = [
     (0.720, flags.Status.Flags.BLACK),
     (0.535, flags.Status.Flags.RED),
@@ -52,17 +59,17 @@ def check_automated_flag(reach_tag):
 
     autoflag = models.AutoFlag.objects.get(tag = reach_tag.lower())
     if not autoflag.enabled:
-        return 'Disabled'
+        return AutoFlagCheckOutput.DISABLED
 
     current_flag = get_current_flag(autoflag)
     if current_flag == autoflag.status:
-        return 'No Change'
+        return AutoFlagCheckOutput.NO_CHANGE
 
     autoflag.status = current_flag
     autoflag.save()
 
     if autoflag.status == autoflag.current_flag_status.flag:  # Compares with latest OURCs fetch
-        return 'No Notification'
+        return AutoFlagCheckOutput.NO_NOTIFY
     
     mail.send_mail(
         f'[AutoFlag] {autoflag.tag.title()}: {autoflag.status.label}',
@@ -73,7 +80,7 @@ def check_automated_flag(reach_tag):
         'autoflag@mail.fantasybumps.org.uk',
         settings.AUTOFLAG_NOTIFICATION_RECIPIENTS,
     )
-    return 'Notification'
+    return AutoFlagCheckOutput.NOTIFY
 
 
 @tasks_app.on_after_finalize.connect
