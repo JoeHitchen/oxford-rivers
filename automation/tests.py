@@ -102,7 +102,7 @@ class Test__Automation(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].from_email, 'autoflag@mail.fantasybumps.org.uk')
         self.assertEqual(mail.outbox[0].to, mock_recipients)
-        self.assertEqual(mail.outbox[0].subject, '[AutoFlag] Isis: Blue')
+        self.assertEqual(mail.outbox[0].subject, '[AutoFlag] The Isis: Blue')
         self.assertEqual(
             mail.outbox[0].body,
             'According to the latest differentials, the Isis flag is now Blue',

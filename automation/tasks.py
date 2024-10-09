@@ -1,3 +1,5 @@
+import logging
+
 from django.conf import settings
 from django.core import mail
 
@@ -6,6 +8,9 @@ from flags import models as flags
 from jameson import models as jameson
 
 from . import models
+
+logger = logging.getLogger('Automation')
+logger.setLevel('INFO')
 
 
 class AutoFlagCheckOutput:
@@ -57,29 +62,57 @@ def get_current_flag(autoflag):
 @tasks_app.task
 def check_automated_flag(reach_tag):
 
+    no_action = '  ->  No further action required'
+
+    # Retrieve the automated flag record
     autoflag = models.AutoFlag.objects.get(tag = reach_tag.lower())
+    logger.info(f'AutoFlag - {autoflag.name} - Running automated flag indication...')
     if not autoflag.enabled:
+        logger.info(f'AutoFlag - {autoflag.name} - Automated updates disabled' + no_action)
         return AutoFlagCheckOutput.DISABLED
 
+    logger.info('AutoFlag - {} - Previous indication: {}'.format(
+        autoflag.name,
+        flags.Status.Flags(autoflag.status).label,
+    ))
+
+
+    # Determine if the flag has changed
     current_flag = get_current_flag(autoflag)
     if current_flag == autoflag.status:
+        logger.info(f'AutoFlag - {autoflag.name} - Indication unchanged' + no_action)
         return AutoFlagCheckOutput.NO_CHANGE
 
+    logger.info('AutoFlag - {} - Indication changed: {}'.format(
+        autoflag.name,
+        flags.Status.Flags(current_flag).label,
+    ))
     autoflag.status = current_flag
     autoflag.save()
 
-    if autoflag.status == autoflag.current_flag_status.flag:  # Compares with latest OURCs fetch
+
+    # Compare with the latest OURCs flag retrieval
+    if autoflag.status == autoflag.current_flag_status.flag:
+        logger.info(f'AutoFlag - {autoflag.name} - Matches active OURCs flag' + no_action)
         return AutoFlagCheckOutput.NO_NOTIFY
-    
+
+    logger.info('AutoFlag - {} - Active OURCs flag differs: {}'.format(
+        autoflag.name,
+        flags.Status.Flags(autoflag.current_flag_status.flag).label,
+    ))
+
+
+    # Send a notification if a flag change is due
     mail.send_mail(
-        f'[AutoFlag] {autoflag.tag.title()}: {autoflag.status.label}',
+        f'[AutoFlag] {autoflag.name}: {autoflag.status.label}',
         (
             'According to the latest differentials, '
-            f'the {autoflag.tag.title()} flag is now {autoflag.status.label}'
+            f'the {autoflag.tag.capitalize()} flag is now {autoflag.status.label}'
         ),
         'autoflag@mail.fantasybumps.org.uk',
         settings.AUTOFLAG_NOTIFICATION_RECIPIENTS,
     )
+    logger.info(f'AutoFlag - {autoflag.name} - A notification has been sent')
     return AutoFlagCheckOutput.NOTIFY
 
 
