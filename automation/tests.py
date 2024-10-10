@@ -7,7 +7,7 @@ from django.core import mail
 
 from flags import models as flags
 
-from .tasks import check_automated_flag, get_current_flag
+from .tasks import AutoFlagCheckOutput, check_automated_flag, get_current_flag
 from . import models
 
 
@@ -34,7 +34,7 @@ class Test__Automation(TestCase):
         self.autoflag.save()
 
         output = check_automated_flag('godstow')
-        self.assertEqual(output, 'Disabled')
+        self.assertEqual(output, AutoFlagCheckOutput.DISABLED)
 
         self.autoflag.refresh_from_db()
         self.assertEqual(self.autoflag.status, flags.Status.Flags.GREY)
@@ -48,7 +48,7 @@ class Test__Automation(TestCase):
         lookup_mock.return_value = flags.Status.Flags.GREY
 
         output = check_automated_flag('godstow')
-        self.assertEqual(output, 'No Change')
+        self.assertEqual(output, AutoFlagCheckOutput.NO_CHANGE)
 
         self.autoflag.refresh_from_db()
         self.assertEqual(self.autoflag.status, flags.Status.Flags.GREY)
@@ -61,7 +61,7 @@ class Test__Automation(TestCase):
         self.autoflag.statuses.create(flag = flags.Status.Flags.GREEN, set_at = timezone.now())
 
         output = check_automated_flag('godstow')
-        self.assertEqual(output, 'No Notification')
+        self.assertEqual(output, AutoFlagCheckOutput.NO_NOTIFY)
 
         self.autoflag.refresh_from_db()
         self.assertEqual(self.autoflag.status, flags.Status.Flags.GREEN)
@@ -72,7 +72,7 @@ class Test__Automation(TestCase):
         """A change is reported if the status has changed"""
 
         output = check_automated_flag('godstow')
-        self.assertEqual(output, 'Notification')
+        self.assertEqual(output, AutoFlagCheckOutput.NOTIFY)
 
         self.autoflag.refresh_from_db()
         self.assertEqual(self.autoflag.status, flags.Status.Flags.GREEN)
@@ -94,7 +94,7 @@ class Test__Automation(TestCase):
         isis.statuses.create(flag = flags.Status.Flags.RED, set_at = timezone.now() - timedelta(1))
 
         output = check_automated_flag('isis')
-        self.assertEqual(output, 'Notification')
+        self.assertEqual(output, AutoFlagCheckOutput.NOTIFY)
 
         isis.refresh_from_db()
         self.assertEqual(isis.status, flags.Status.Flags.BLUE)
@@ -102,7 +102,7 @@ class Test__Automation(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].from_email, 'autoflag@mail.fantasybumps.org.uk')
         self.assertEqual(mail.outbox[0].to, mock_recipients)
-        self.assertEqual(mail.outbox[0].subject, '[AutoFlag] Isis: Blue')
+        self.assertEqual(mail.outbox[0].subject, '[AutoFlag] The Isis: Blue')
         self.assertEqual(
             mail.outbox[0].body,
             'According to the latest differentials, the Isis flag is now Blue',
