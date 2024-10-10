@@ -1,7 +1,9 @@
+from datetime import timedelta
 import logging
 
 from django.conf import settings
 from django.core import mail
+from django.utils import timezone
 
 from core import tasks_app
 from flags import models as flags
@@ -11,6 +13,10 @@ from . import models
 
 logger = logging.getLogger('Automation')
 logger.setLevel('INFO')
+
+
+DIFFERENTIAL_TIME_WINDOW = timedelta(hours = 4)
+DIFFERENTIAL_RANGE_WINDOW = (-0.15, 1.40)
 
 
 class AutoFlagCheckOutput:
@@ -41,17 +47,29 @@ def get_current_differential(autoflag):
         flags.Reach.Common.GODS: jameson.Differential.Reach.GODSTOW,
     }[flags.Reach.Common(autoflag.tag)]
 
-    return jameson.Differential.objects.using('jameson').filter(reach = reach)[0].differential
+    differentials = jameson.Differential.objects.using('jameson').filter(
+        reach = reach,
+        time__range = (timezone.now() - DIFFERENTIAL_TIME_WINDOW, timezone.now()),
+        differential__range = DIFFERENTIAL_RANGE_WINDOW,
+    )
+    if len(differentials) == 0:
+        raise jameson.Differential.DoesNotExist
+
+    return differentials[0].differential
 
 
 def get_current_flag(autoflag):
+
+    try:
+        differential = get_current_differential(autoflag)
+    except jameson.Differential.DoesNotExist:
+        return flags.Status.Flags.GREY
 
     boundaries = {
         flags.Reach.Common.ISIS: isis_boundaries,
         flags.Reach.Common.GODS: godstow_boundaries,
     }[flags.Reach.Common(autoflag.tag)]
 
-    differential = get_current_differential(autoflag)
     for boundary, flag in boundaries:
         if differential >= boundary:
             return flag
