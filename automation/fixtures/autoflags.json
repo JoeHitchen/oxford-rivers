@@ -1,0 +1,18 @@
+[
+  {
+    "model": "automation.autoflag",
+    "pk": 1,
+    "fields": {
+      "enabled": true,
+      "status": "X"
+    }
+  },
+  {
+    "model": "automation.autoflag",
+    "pk": 2,
+    "fields": {
+      "enabled": true,
+      "status": "X"
+    }
+  }
+]

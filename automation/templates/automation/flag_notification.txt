@@ -1,0 +1,4 @@
+According to the latest differentials, the {{ autoflag.tag.capitalize }} flag is now {{ autoflag.status.label }}
+
+The data behind this notification can be viewed at https://flags.jamesonlee.com/{{ autoflag.tag }}
+
