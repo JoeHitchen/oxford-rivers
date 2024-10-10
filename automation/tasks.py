@@ -4,6 +4,7 @@ import logging
 from django.conf import settings
 from django.core import mail
 from django.utils import timezone
+from django.template.loader import render_to_string
 
 from core import tasks_app
 from flags import models as flags
@@ -124,11 +125,8 @@ def check_automated_flag(reach_tag):
     # Send a notification if a flag change is due
     mail_success = mail.send_mail(
         f'[AutoFlag] {autoflag.name}: {autoflag.status.label}',
-        (
-            'According to the latest differentials, '
-            f'the {autoflag.tag.capitalize()} flag is now {autoflag.status.label}'
-        ),
-        'autoflag@mail.fantasybumps.org.uk',
+        render_to_string('automation/flag_notification.txt', {'autoflag': autoflag}),
+        'Flag Automation <autoflag@mail.fantasybumps.org.uk>',
         settings.AUTOFLAG_NOTIFICATION_RECIPIENTS,
     )
     if not mail_success:
@@ -144,6 +142,6 @@ def setup_periodic_tasks(sender, **kwargs):
 
     autoflag_reaches = models.AutoFlag.objects.all()
     for reach in autoflag_reaches:
-        sender.add_periodic_task(2 * 60, check_automated_flag.s(reach.tag.capitalize()))
+        sender.add_periodic_task(0.5 * 60, check_automated_flag.s(reach.tag.capitalize()))
 
 

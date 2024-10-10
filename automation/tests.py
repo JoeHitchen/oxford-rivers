@@ -78,13 +78,14 @@ class Test__Automation(TestCase):
         self.assertEqual(self.autoflag.status, flags.Status.Flags.GREEN)
 
         self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].from_email, 'autoflag@mail.fantasybumps.org.uk')
+        self.assertEqual(
+            mail.outbox[0].from_email,
+            'Flag Automation <autoflag@mail.fantasybumps.org.uk>',
+        )
         self.assertEqual(mail.outbox[0].to, mock_recipients)
         self.assertEqual(mail.outbox[0].subject, '[AutoFlag] Godstow: Green')
-        self.assertEqual(
-            mail.outbox[0].body,
-            'According to the latest differentials, the Godstow flag is now Green',
-        )
+        self.assertIn('the Godstow flag is now Green', mail.outbox[0].body)
+        self.assertIn('https://flags.jamesonlee.com/godstow', mail.outbox[0].body)
 
 
     def test__isis(self, _differential_mock):
@@ -100,13 +101,14 @@ class Test__Automation(TestCase):
         self.assertEqual(isis.status, flags.Status.Flags.BLUE)
 
         self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].from_email, 'autoflag@mail.fantasybumps.org.uk')
+        self.assertEqual(
+            mail.outbox[0].from_email,
+            'Flag Automation <autoflag@mail.fantasybumps.org.uk>',
+        )
         self.assertEqual(mail.outbox[0].to, mock_recipients)
         self.assertEqual(mail.outbox[0].subject, '[AutoFlag] The Isis: Blue')
-        self.assertEqual(
-            mail.outbox[0].body,
-            'According to the latest differentials, the Isis flag is now Blue',
-        )
+        self.assertIn('the Isis flag is now Blue', mail.outbox[0].body)
+        self.assertIn('https://flags.jamesonlee.com/isis', mail.outbox[0].body)
 
 
 class Test__GetCurrentFlag(TestCase):
