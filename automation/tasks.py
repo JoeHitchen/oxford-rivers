@@ -23,6 +23,7 @@ class AutoFlagCheckOutput:
     DISABLED = 'Disabled'
     NO_CHANGE = 'No Change'
     NO_NOTIFY = 'No Notify'
+    NOTIFY_FAILED = 'Failed Notify'
     NOTIFY = 'Notify'
 
 
@@ -121,7 +122,7 @@ def check_automated_flag(reach_tag):
 
 
     # Send a notification if a flag change is due
-    mail.send_mail(
+    mail_success = mail.send_mail(
         f'[AutoFlag] {autoflag.name}: {autoflag.status.label}',
         (
             'According to the latest differentials, '
@@ -130,7 +131,11 @@ def check_automated_flag(reach_tag):
         'autoflag@mail.fantasybumps.org.uk',
         settings.AUTOFLAG_NOTIFICATION_RECIPIENTS,
     )
-    logger.info(f'AutoFlag - {autoflag.name} - A notification has been sent')
+    if not mail_success:
+        logger.error(f'AutoFlag - {autoflag.name} - Failed to send notification')
+        return AutoFlagCheckOutput.NOTIFY_FAILED
+
+    logger.info(f'AutoFlag - {autoflag.name} - Notification sent')
     return AutoFlagCheckOutput.NOTIFY
 
 
