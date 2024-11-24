@@ -16,7 +16,7 @@ logger = logging.getLogger('Automation')
 logger.setLevel('INFO')
 
 
-DIFFERENTIAL_TIME_WINDOW = timedelta(hours = 4)
+DIFFERENTIAL_TIME_WINDOW = timedelta(hours = 2)
 DIFFERENTIAL_RANGE_WINDOW = (-0.15, 1.40)
 
 
@@ -53,11 +53,11 @@ def get_current_differential(autoflag):
         reach = reach,
         time__range = (timezone.now() - DIFFERENTIAL_TIME_WINDOW, timezone.now()),
         differential__range = DIFFERENTIAL_RANGE_WINDOW,
-    )
+    ).values_list('differential', flat = True)
     if len(differentials) == 0:
         raise jameson.Differential.DoesNotExist
 
-    return differentials[0].differential
+    return sum(differentials) / len(differentials)
 
 
 def get_current_flag(autoflag):
