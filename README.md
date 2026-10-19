@@ -20,7 +20,8 @@ Automated quality control is performed through linting and testing.
  * Linting is performed with the `flake8` command, once the linting requirements have been installed.
  * Testing is performed with the build-in Django test runner, `python manage.py test`.
 
-Both are performed by the default pipeline.
+Both are performed by the GitHub Actions pipeline (`.github/workflows`), which also builds, & verifies the Docker image.
+Pushing to the `deploy` branch will also publish the built image to Docker Hub.
 Typing with MyPy may also be added in future (see the out-dated `trials/typing` branch), but previous integrations with Django and - in particular - Celery have been found lacking utility.
 
 A database can be created and populated with the following set of commands:

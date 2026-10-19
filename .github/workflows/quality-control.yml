@@ -1,0 +1,39 @@
+name: Quality Control
+
+on:
+  workflow_call:
+
+jobs:
+  qa:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Code Linting
+            group: linting
+            install: pip install -r requirements_linting.txt
+            command: flake8
+
+          - name: Testing
+            group: testing
+            install: pip install -r requirements.txt
+            command: python manage.py test
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: requirements*.txt
+
+      - name: Install dependencies
+        run: ${{ matrix.install }}
+
+      - name: Run checks
+        run: ${{ matrix.command }}

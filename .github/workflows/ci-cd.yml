@@ -1,0 +1,21 @@
+name: Rivers CI/CD
+
+on:
+  push:
+  schedule:
+    - cron: '34 3 * * 5'
+      timezone: 'Europe/London'
+
+jobs:
+  quality-control:
+    name: Quality Control
+    uses: ./.github/workflows/quality-control.yml
+
+  docker:
+    name: Docker
+    needs: quality-control
+    if: success() && contains(fromJSON('["refs/heads/master", "refs/heads/deploy"]'), github.ref)
+    uses: ./.github/workflows/docker-flow.yml
+    with:
+      publish: ${{ github.ref == 'refs/heads/deploy' }}
+    secrets: inherit
