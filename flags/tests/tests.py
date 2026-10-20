@@ -1,9 +1,12 @@
 from unittest.mock import patch
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone as dt_timezone
 
+from django.db import DatabaseError
 from django.test import TestCase, tag
 from django.utils import timezone
 from django.urls import reverse
+
+from jameson.models import Differential
 
 from .. import models, transits
 
@@ -497,8 +500,9 @@ class Test_Views(TestCase):
             )
     
     
+    @patch('flags.views.jameson.Differential.latest_by_reach', return_value = [])
     @patch('flags.transits.generate_transit_information')
-    def test__index__response(self, transit_mock):
+    def test__index__response(self, transit_mock, _differentials_mock):
         """Lists all the reaches, gets transit information, and generates a 200 response."""
         
         mock_transit_object = {
@@ -519,8 +523,37 @@ class Test_Views(TestCase):
         self.assertEqual(response.context['transits'], [mock_transit_object])
     
     
+    def test__index__differentials(self):
+        """Shows the latest differential for each reach with its time."""
+        
+        differential = Differential(
+            reach = Differential.Reach.ISIS,
+            time = datetime(2024, 9, 23, 21, 5, tzinfo = dt_timezone.utc),
+            differential = 0.25,
+        )
+        with patch.object(Differential, 'latest_by_reach', return_value = [differential]):
+            response = self.client.get(reverse('flags:index'))
+        
+        self.assertEqual(response.context['differentials'], [differential])
+        self.assertContains(response, '0.250')
+        self.assertContains(response, '23/09/2024 22:05')  # Rendered in local time (BST)
+    
+    
+    def test__index__differentials_unavailable(self):
+        """Still loads the rest of the page if the Jameson database cannot be queried."""
+        
+        with patch.object(Differential, 'latest_by_reach', side_effect = DatabaseError):
+            with patch('flags.views.logger') as logger_mock:  # Logging is disabled by test_data
+                response = self.client.get(reverse('flags:index'))
+        
+        self.assertEqual(response.status_code, 200)
+        logger_mock.exception.assert_called_once()
+        self.assertEqual(response.context['differentials'], [])
+    
+    
     @tag('query-count')
-    def test__index__query_count(self):
+    @patch('flags.views.jameson.Differential.latest_by_reach', return_value = [])
+    def test__index__query_count(self, _differentials_mock):
         """Expect:
             (1) SELECT reaches
             (1) PREFETCH advisories

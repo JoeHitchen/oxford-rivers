@@ -18,4 +18,30 @@ class Differential(models.Model):
         db_table = 'flag'
         managed = False
         ordering = ['reach', '-time']
+    
+    
+    @property
+    def band(self):
+        """The band this differential falls in, if its reach has any."""
+        
+        from . import bands  # Imported here as bands depends on this module
+        return bands.get_band(self.reach, self.differential)
+    
+    
+    @property
+    def history_url(self):
+        """The page on Jameson's site that shows the history for this reach."""
+        
+        return f'https://flags.jamesonlee.com/{self.get_reach_display().lower()}'
+    
+    
+    @classmethod
+    def latest_by_reach(cls):
+        """The most recent differential for each reach that has one, in reach order."""
+        
+        latest = (
+            cls.objects.using('jameson').filter(reach = reach).first()
+            for reach in cls.Reach.values
+        )
+        return [differential for differential in latest if differential is not None]
 

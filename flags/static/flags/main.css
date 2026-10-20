@@ -40,6 +40,37 @@
 }
 
 
+/* Jameson differential borderlines -- striped with the colours of the flags either side */
+.band-borderline {
+  background-image: repeating-linear-gradient(45deg, var(--band-a) 0, var(--band-a) 10px, var(--band-b) 10px, var(--band-b) 20px);
+}
+.band-borderline .band-text {
+  background-color: rgba(255, 255, 255, 0.85);
+  color: #212529;
+  padding: 0.25em 0.5em;
+  border-radius: 0.2em;
+}
+.band-green-blue {
+  --band-a: var(--success);
+  --band-b: var(--primary);
+}
+.band-blue-amber {
+  --band-a: var(--primary);
+  --band-b: var(--warning);
+}
+.band-amber-red {
+  --band-a: var(--warning);
+  --band-b: var(--danger);
+}
+.band-red-black {
+  --band-a: var(--danger);
+  --band-b: var(--dark);
+}
+.band-green-amber {
+  --band-a: var(--success);
+  --band-b: var(--warning);
+}
+
 
 /* General pages */
 

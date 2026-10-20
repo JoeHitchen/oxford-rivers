@@ -32,6 +32,39 @@
     </div>
     <!-- OURCs Flags -->
     
+    <!-- Differentials -->
+    <div class="row">
+      <div class="col">
+        <h2>Differentials</h2>
+        <p>
+          The latest stream differential recorded by Jameson for each reach.
+        </p>
+      </div>
+    </div>
+    <div class="row">
+      {% for differential in differentials %}<div class="col-sm-6 col-lg-4 col-xl">
+        <div class="card">
+          <div class="card-header">
+            {{ differential.get_reach_display }}
+          </div>
+          <div class="card-body {{ differential.band.styling }}">
+            <div class="band-text">
+              <span class="card-title"><strong>{{ differential.differential|floatformat:3 }}</strong></span>
+              {% if differential.band %}<br/>
+              <span>{{ differential.band.name }}</span>
+              {% endif %}<br/>
+              <span>{{ differential.time|date:"d/m/Y" }} {{ differential.time|date:"H:i" }}</span>
+            </div>
+          </div>
+          {% if differential.history_url %}<a href="{{ differential.history_url }}" target="_blank" class="card-footer text-dark d-flex justify-content-between">
+            <div>View History</div>
+            <div><span class="oi oi-external-link"></span></div>
+          </a>{% endif %}
+        </div>
+      </div>{% endfor %}
+    </div>
+    <!-- Differentials -->
+    
     <!-- Transits --->
     <div class="row">
       <div class="col">
