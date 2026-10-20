@@ -10,24 +10,25 @@ from .models import Differential
 class Test_Bands(SimpleTestCase):
     
     def test__isis(self):
-        """Names the band containing each differential, including the exact boundaries."""
+        """Names the band containing each differential, either side of each boundary."""
         
         cases = [
-            (-0.1, 'Low green'),
-            (0.099, 'Low green'),
-            (0.100, 'High green'),
-            (0.195, 'Green/blue borderline'),
-            (0.215, 'Green/blue borderline'),
-            (0.235, 'Low blue'),
-            (0.360, 'High blue'),
-            (0.442, 'Blue/amber borderline'),
-            (0.500, 'Amber'),
-            (0.535, 'Amber/red borderline'),
-            (0.600, 'Low red'),
-            (0.650, 'High red'),
-            (0.719, 'High red'),
-            (0.720, 'Black'),
-            (1.0, 'Black'),
+            (-0.100, 'Low Green'),
+            (0.099, 'Low Green'), (0.100, 'High Green'), (0.101, 'High Green'),
+            (0.194, 'High Green'), (0.195, 'Green/Blue Borderline'),
+            (0.196, 'Green/Blue Borderline'),
+            (0.234, 'Green/Blue Borderline'), (0.235, 'Low Blue'), (0.236, 'Low Blue'),
+            (0.296, 'Low Blue'), (0.297, 'Mid Blue'), (0.298, 'Mid Blue'),
+            (0.359, 'Mid Blue'), (0.360, 'High Blue'), (0.361, 'High Blue'),
+            (0.421, 'High Blue'), (0.422, 'Blue/Amber Borderline'),
+            (0.423, 'Blue/Amber Borderline'),
+            (0.461, 'Blue/Amber Borderline'), (0.462, 'Amber'), (0.463, 'Amber'),
+            (0.514, 'Amber'), (0.515, 'Amber/Red Borderline'),
+            (0.516, 'Amber/Red Borderline'),
+            (0.554, 'Amber/Red Borderline'), (0.555, 'Low Red'), (0.556, 'Low Red'),
+            (0.627, 'Low Red'), (0.628, 'High Red'), (0.629, 'High Red'),
+            (0.719, 'High Red'), (0.720, 'Black'), (0.721, 'Black'),
+            (1.000, 'Black'),
         ]
         for differential, expected in cases:
             with self.subTest(differential):
@@ -38,18 +39,20 @@ class Test_Bands(SimpleTestCase):
     
     
     def test__godstow(self):
-        """Names the band containing each differential, including the exact boundaries."""
+        """Names the band containing each differential, either side of each boundary."""
         
         cases = [
-            (0.0, 'Low green'),
-            (0.215, 'High green'),
-            (0.450, 'Green/amber borderline'),
-            (0.470, 'Low amber'),
-            (0.560, 'Mid amber'),
-            (0.640, 'High amber'),
-            (0.750, 'Amber/red borderline'),
-            (0.770, 'Red'),
-            (1.2, 'Red'),
+            (0.000, 'Low Green'),
+            (0.214, 'Low Green'), (0.215, 'High Green'), (0.216, 'High Green'),
+            (0.429, 'High Green'), (0.430, 'Green/Amber Borderline'),
+            (0.431, 'Green/Amber Borderline'),
+            (0.469, 'Green/Amber Borderline'), (0.470, 'Low Amber'), (0.471, 'Low Amber'),
+            (0.559, 'Low Amber'), (0.560, 'Mid Amber'), (0.561, 'Mid Amber'),
+            (0.639, 'Mid Amber'), (0.640, 'High Amber'), (0.641, 'High Amber'),
+            (0.729, 'High Amber'), (0.730, 'Amber/Red Borderline'),
+            (0.731, 'Amber/Red Borderline'),
+            (0.769, 'Amber/Red Borderline'), (0.770, 'Red'), (0.771, 'Red'),
+            (1.200, 'Red'),
         ]
         for differential, expected in cases:
             with self.subTest(differential):
@@ -69,7 +72,7 @@ class Test_Bands(SimpleTestCase):
         """Is available on the differential itself."""
         
         differential = Differential(reach = Differential.Reach.ISIS, differential = 0.3)
-        self.assertEqual(differential.band.name, 'Mid blue')
+        self.assertEqual(differential.band.name, 'Mid Blue')
         self.assertEqual(differential.band.styling, 'bg-primary')
     
     
@@ -122,7 +125,7 @@ class Test_Bands(SimpleTestCase):
                     continue
                 with self.subTest(f'{tag} {boundary}'):
                     band = bands.get_band(reach, boundary)
-                    self.assertTrue('borderline' in band.name or band.lower_bound == boundary)
+                    self.assertTrue('Borderline' in band.name or band.lower_bound == boundary)
     
     
     def test__out_of_date(self):

@@ -551,7 +551,7 @@ class Test_Views(TestCase):
         with patch.object(Differential, 'latest_by_reach', return_value = [differential]):
             response = self.client.get(reverse('flags:index'))
         
-        self.assertContains(response, 'Mid blue')
+        self.assertContains(response, 'Mid Blue')
         self.assertNotContains(response, '(Out of date)')
     
     

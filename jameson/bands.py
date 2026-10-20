@@ -1,11 +1,3 @@
-"""Named bands of differential, used to describe what a differential value means for a reach.
-
-Each band runs from its lower bound (inclusive) to the lower bound of the next band. The
-borderline bands are +/- 0.02 either side of the boundary between two flags, as set out for
-automated flagging in `automation.tasks`, except for black which starts at its boundary.
-Light blue is not treated as a distinct flag.
-"""
-
 from collections import namedtuple
 
 from . import models
@@ -28,27 +20,27 @@ def borderline(lower, upper):
 
 BANDS = {
     models.Differential.Reach.ISIS: [
-        Band(None, 'Low green', GREEN),
-        Band(0.100, 'High green', GREEN),
-        Band(0.195, 'Green/blue borderline', borderline('green', 'blue')),
-        Band(0.235, 'Low blue', BLUE),
-        Band(0.297, 'Mid blue', BLUE),
-        Band(0.360, 'High blue', BLUE),
-        Band(0.422, 'Blue/amber borderline', borderline('blue', 'amber')),
+        Band(None, 'Low Green', GREEN),
+        Band(0.100, 'High Green', GREEN),
+        Band(0.195, 'Green/Blue Borderline', borderline('green', 'blue')),
+        Band(0.235, 'Low Blue', BLUE),
+        Band(0.297, 'Mid Blue', BLUE),
+        Band(0.360, 'High Blue', BLUE),
+        Band(0.422, 'Blue/Amber Borderline', borderline('blue', 'amber')),
         Band(0.462, 'Amber', AMBER),
-        Band(0.515, 'Amber/red borderline', borderline('amber', 'red')),
-        Band(0.555, 'Low red', RED),
-        Band(0.628, 'High red', RED),
+        Band(0.515, 'Amber/Red Borderline', borderline('amber', 'red')),
+        Band(0.555, 'Low Red', RED),
+        Band(0.628, 'High Red', RED),
         Band(0.720, 'Black', BLACK),
     ],
     models.Differential.Reach.GODSTOW: [
-        Band(None, 'Low green', GREEN),
-        Band(0.215, 'High green', GREEN),
-        Band(0.430, 'Green/amber borderline', borderline('green', 'amber')),
-        Band(0.470, 'Low amber', AMBER),
-        Band(0.560, 'Mid amber', AMBER),
-        Band(0.640, 'High amber', AMBER),
-        Band(0.730, 'Amber/red borderline', borderline('amber', 'red')),
+        Band(None, 'Low Green', GREEN),
+        Band(0.215, 'High Green', GREEN),
+        Band(0.430, 'Green/Amber Borderline', borderline('green', 'amber')),
+        Band(0.470, 'Low Amber', AMBER),
+        Band(0.560, 'Mid Amber', AMBER),
+        Band(0.640, 'High Amber', AMBER),
+        Band(0.730, 'Amber/Red Borderline', borderline('amber', 'red')),
         Band(0.770, 'Red', RED),
     ],
 }
