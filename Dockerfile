@@ -1,4 +1,4 @@
-FROM python:3.11-alpine
+FROM python:3.14-alpine
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
@@ -12,9 +12,8 @@ RUN adduser --disabled-password python && chown -R python:python $HOME \
 
 RUN apk add --no-cache --update mariadb-connector-c-dev libcurl \
  && apk add --no-cache --virtual .build gcc musl-dev mariadb-dev curl-dev \
- && pip install --no-cache-dir mysqlclient celery[sqs] 'boto3==1.22.8' django-storages[s3] gunicorn \
+ && pip install --no-cache-dir mysqlclient 'celery[sqs]' 'boto3>=1.43.86' 'pycurl>=7.47.0' django-storages[s3] gunicorn \
  && apk del --purge .build
-# boto3 version pin required because messages are not received with the latest version
 
 COPY --chown=python requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt

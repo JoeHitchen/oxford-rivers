@@ -1,0 +1,122 @@
+name: Docker
+
+concurrency:
+  group: docker-${{ github.ref }}
+  cancel-in-progress: false
+
+on:
+  workflow_call:
+    inputs:
+      publish:
+        type: boolean
+        default: false
+
+jobs:
+  building:
+    name: Building
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Build Docker image
+        run: docker build -t joehitchen/oxford-rivers .
+
+      - name: Run tests to verify image
+        run: docker run --rm joehitchen/oxford-rivers python manage.py test
+
+      - name: Save image
+        run: docker save --output oxford-rivers.docker joehitchen/oxford-rivers
+
+      - name: Store image artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: oxford-rivers-docker
+          path: oxford-rivers.docker
+
+  runtime-testing:
+    name: ${{ matrix.name }}
+    needs: building
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Server Testing
+            container-name: server-check
+            run-args: -p 8000:8000 -e DJANGO_HOSTS=localhost
+            command: >-
+              sh -c "python manage.py migrate && gunicorn core.wsgi:application --bind 0.0.0.0:8000 --logger-class overrides.GunicornLogger"
+            ready-check: curl -sf -o /dev/null http://localhost:8000/robots.txt
+
+          - name: Worker Testing
+            container-name: worker-check
+            run-args: -e CELERY_BROKER=memory://
+            command: celery --app=core worker --loglevel=info
+            ready-check: docker logs worker-check 2>&1 | grep -q 'ready\.'
+
+          - name: Scheduler Testing
+            container-name: scheduler-check
+            run-args: -e CELERY_BROKER=memory://
+            command: >-
+              sh -c "python manage.py migrate && celery --app=core beat --loglevel=info"
+            ready-check: 'docker logs scheduler-check 2>&1 | grep -q ''beat: Starting\.\.\.'''
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Load built image
+        uses: ./.github/actions/load-image
+
+      - name: Start container
+        run: docker run -d --name ${{ matrix.container-name }} ${{ matrix.run-args }} joehitchen/oxford-rivers ${{ matrix.command }}
+
+      - name: Wait for container to become ready
+        run: |
+          for i in $(seq 1 30); do
+            if ${{ matrix.ready-check }}; then
+              echo "Ready - checking container remains running"
+              sleep 5
+              if [ "$(docker inspect -f '{{.State.Running}}' ${{ matrix.container-name }} 2>/dev/null)" != "true" ]; then
+                echo "::error::${{ matrix.container-name }} exited after reporting ready"
+                docker logs ${{ matrix.container-name }}
+                exit 1
+              fi
+              exit 0
+            fi
+            if [ "$(docker inspect -f '{{.State.Running}}' ${{ matrix.container-name }} 2>/dev/null)" != "true" ]; then
+              echo "::error::${{ matrix.container-name }} exited unexpectedly"
+              docker logs ${{ matrix.container-name }}
+              exit 1
+            fi
+            sleep 1
+          done
+          echo "::error::${{ matrix.container-name }} did not become ready within 30s"
+          docker logs ${{ matrix.container-name }}
+          exit 1
+
+      - name: Stop container
+        if: always()
+        run: docker stop ${{ matrix.container-name }} || true
+
+  publishing:
+    name: Publishing
+    needs: runtime-testing
+    if: inputs.publish && success()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ vars.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Load built image
+        uses: ./.github/actions/load-image
+
+      - name: Push Docker image
+        run: docker push joehitchen/oxford-rivers

@@ -1,0 +1,15 @@
+name: Load image
+description: Download the oxford-rivers-docker build artifact and load it into the local Docker daemon
+
+runs:
+  using: composite
+  steps:
+    - name: Retrieve image artifact
+      uses: actions/download-artifact@v8
+      with:
+        name: oxford-rivers-docker
+        path: .
+
+    - name: Load image into Docker
+      shell: bash
+      run: docker load --input oxford-rivers.docker
