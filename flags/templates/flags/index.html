@@ -48,9 +48,9 @@
             {{ differential.get_reach_display }}
           </div>
           <div class="card-body {% if differential.out_of_date %}text-light bg-secondary{% else %}{{ differential.band.styling }}{% endif %}">
-            <span class="card-title"><strong>{{ differential.differential|floatformat:3 }}</strong></span>
+            <span class="card-title"><strong>{{ differential.differential|floatformat:3 }}&nbsp;m{% if differential.out_of_date %} (Out of date){% endif %}</strong></span>
             {% if differential.band or differential.out_of_date %}<br/>
-            <span>{{ differential.band.name }}{% if differential.out_of_date %} (Out of date){% endif %}</span>
+            <span><strong>{{ differential.band.name }}</strong></span>
             {% endif %}<br/>
             <span>{{ differential.time|date:"d/m/Y" }} {{ differential.time|date:"H:i" }}</span>
           </div>
