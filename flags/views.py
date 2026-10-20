@@ -46,6 +46,10 @@ class Index(FlagNavMixin, TemplateView):
             logger.exception('Unable to retrieve differentials from the Jameson database')
             context['differentials'] = []
         
+        reach_names = {reach.tag: reach.name for reach in context['all_reaches']}
+        for differential in context['differentials']:
+            differential.reach_name = reach_names.get(differential.tag)
+        
         return context
 
 

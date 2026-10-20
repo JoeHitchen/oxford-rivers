@@ -535,8 +535,25 @@ class Test_Views(TestCase):
             response = self.client.get(reverse('flags:index'))
         
         self.assertEqual(response.context['differentials'], [differential])
+        self.assertEqual(response.context['differentials'][0].reach_name, 'The Isis')
         self.assertContains(response, '0.250')
         self.assertContains(response, '23/09/2024 22:05')  # Rendered in local time (BST)
+        self.assertContains(response, '(Out of date)')
+    
+    
+    def test__index__differentials_current(self):
+        """Names the band without marking recent differentials as out of date."""
+        
+        differential = Differential(
+            reach = Differential.Reach.ISIS,
+            time = timezone.now() - timedelta(minutes = 5),
+            differential = 0.3,
+        )
+        with patch.object(Differential, 'latest_by_reach', return_value = [differential]):
+            response = self.client.get(reverse('flags:index'))
+        
+        self.assertContains(response, 'Mid blue')
+        self.assertNotContains(response, '(Out of date)')
     
     
     def test__index__differentials_unavailable(self):

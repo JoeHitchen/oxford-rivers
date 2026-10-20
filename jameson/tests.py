@@ -1,4 +1,7 @@
+from datetime import timedelta
+
 from django.test import SimpleTestCase
+from django.utils import timezone
 
 from . import bands
 from .models import Differential
@@ -109,3 +112,18 @@ class Test_Bands(SimpleTestCase):
                 with self.subTest(f'{tag} {boundary}'):
                     band = bands.get_band(reach, boundary)
                     self.assertIn('borderline', band.name)
+    
+    
+    def test__out_of_date(self):
+        """Is out of date when more than four hours old."""
+        
+        for age, expected in [
+            (timedelta(hours = 3, minutes = 59), False),
+            (timedelta(hours = 4, minutes = 1), True),
+        ]:
+            with self.subTest(age):
+                differential = Differential(
+                    reach = Differential.Reach.ISIS,
+                    time = timezone.now() - age,
+                )
+                self.assertEqual(differential.out_of_date, expected)
