@@ -40,14 +40,15 @@
 }
 
 
-/* Jameson differential borderlines -- striped with the colours of the flags either side */
+/* Jameson differential borderlines -- split diagonally between the colours of the flags either side */
 .band-borderline {
-  background-image: repeating-linear-gradient(45deg, var(--band-a) 0, var(--band-a) 10px, var(--band-b) 10px, var(--band-b) 20px);
+  background-image: linear-gradient(to bottom right, var(--band-a) 50%, var(--band-b) 50%);
 }
 .band-borderline .band-text {
   background-color: rgba(255, 255, 255, 0.85);
   color: #212529;
-  padding: 0.25em 0.5em;
+  display: inline-block;
+  padding: 0 0.5em;
   border-radius: 0.2em;
 }
 .band-green-blue {
