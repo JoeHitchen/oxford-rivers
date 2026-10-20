@@ -1,0 +1,20 @@
+minimum_pre_commit_version: "4.0.0"
+fail_fast: true
+
+repos:
+  - repo: local
+    hooks:
+
+      - id: flake8
+        name: Python linting (flake8)
+        entry: flake8
+        language: system
+        pass_filenames: false
+        stages: [pre-commit]
+
+      - id: django-tests
+        name: Unit tests (Django)
+        entry: python manage.py test
+        language: system
+        pass_filenames: false
+        stages: [pre-commit]

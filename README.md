@@ -6,7 +6,7 @@ A live deployment is currently running at [boards.other.fantasybumps.org.uk](htt
 
 
 ## Running in development
-Oxford Rivers has two requirements files:
+Oxford Rivers has three requirements files:
 
   * `requirements.txt` -
   This is the main requirements file and contains all the dependencies needed for running tests or a development server.
@@ -14,6 +14,7 @@ Oxford Rivers has two requirements files:
   since these packages facilitate connections to external services which can be substituted out in development,
   e.g. for an SQLite database, or the `runserver` command.
   * `requirements_linting.txt` - This describes the requirements needed for running the Flake8 linting.
+  * `requirements_dev.txt` - This describes the additional tooling needed for development, currently just `pre-commit`.
 
 Automated quality control is performed through linting and testing.
 
@@ -22,6 +23,11 @@ Automated quality control is performed through linting and testing.
 
 Both are performed by the GitHub Actions pipeline (`.github/workflows`), which also builds, & verifies the Docker image.
 Pushing to the `deploy` branch will also publish the built image to Docker Hub.
+Both checks are also run on every commit by [pre-commit](https://pre-commit.com/) hooks, which can be installed after installing the development requirements with:
+
+    pip install -r requirements_dev.txt
+    pre-commit install
+
 Typing with MyPy may also be added in future (see the out-dated `trials/typing` branch), but previous integrations with Django and - in particular - Celery have been found lacking utility.
 
 A database can be created and populated with the following set of commands:
