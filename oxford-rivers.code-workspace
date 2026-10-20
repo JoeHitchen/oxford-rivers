@@ -1,0 +1,44 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "cSpell.enabled": true,
+        "cSpell.language": "en-GB",
+        "cSpell.words": [
+            "autoflag",
+            "autoflags",
+            "fantasybumps",
+            "forloop",
+            "glogging",
+            "godstow",
+            "govspeak",
+            "govuk",
+            "gunicorn",
+            "joehitchen",
+            "loglevel",
+            "mysqlclient",
+            "osney",
+            "ourcs",
+            "runserver",
+            "vars",
+            "walli",
+            "wsgi"
+        ],
+        "flake8.importStrategy": "fromEnvironment",
+        "window.title": "Oxford Rivers"
+    },
+    "extensions": {
+        "recommendations": [
+            "github.vscode-github-actions",
+            "ms-python.flake8",
+            "ms-python.python",
+            "usernamehw.errorlens",
+            "redhat.vscode-yaml",
+            "streetsidesoftware.code-spell-checker",
+            "streetsidesoftware.code-spell-checker-british-english"
+        ]
+    }
+}
