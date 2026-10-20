@@ -1,11 +1,17 @@
 from datetime import timedelta
+import logging
 
+from django.db import DatabaseError
 from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 from django.http import JsonResponse
 from django.utils import timezone
 
+from jameson import models as jameson
+
 from . import models, transits, analysis
+
+logger = logging.getLogger(__name__)
 
 
 class FlagNavMixin:
@@ -33,6 +39,12 @@ class Index(FlagNavMixin, TemplateView):
             context['flag_reaches'],
             context['all_reaches'],
         )
+        
+        try:
+            context['differentials'] = jameson.Differential.latest_by_reach()
+        except DatabaseError:
+            logger.exception('Unable to retrieve differentials from the Jameson database')
+            context['differentials'] = []
         
         return context
 
