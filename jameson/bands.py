@@ -2,7 +2,8 @@
 
 Each band runs from its lower bound (inclusive) to the lower bound of the next band. The
 borderline bands are +/- 0.02 either side of the boundary between two flags, as set out for
-automated flagging in `automation.tasks`. Light blue is not treated as a distinct flag.
+automated flagging in `automation.tasks`, except for black which starts at its boundary.
+Light blue is not treated as a distinct flag.
 """
 
 from collections import namedtuple
@@ -38,8 +39,7 @@ BANDS = {
         Band(0.515, 'Amber/red borderline', borderline('amber', 'red')),
         Band(0.555, 'Low red', RED),
         Band(0.628, 'High red', RED),
-        Band(0.700, 'Red/black borderline', borderline('red', 'black')),
-        Band(0.740, 'Black', BLACK),
+        Band(0.720, 'Black', BLACK),
     ],
     models.Differential.Reach.GODSTOW: [
         Band(None, 'Low green', GREEN),

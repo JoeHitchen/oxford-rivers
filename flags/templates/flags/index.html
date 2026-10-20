@@ -48,13 +48,11 @@
             {{ differential.get_reach_display }}
           </div>
           <div class="card-body {% if differential.out_of_date %}text-light bg-secondary{% else %}{{ differential.band.styling }}{% endif %}">
-            <div class="band-text">
-              <span class="card-title"><strong>{{ differential.differential|floatformat:3 }}</strong></span>
-              {% if differential.band or differential.out_of_date %}<br/>
-              <span>{{ differential.band.name }}{% if differential.out_of_date %} (Out of date){% endif %}</span>
-              {% endif %}<br/>
-              <span>{{ differential.time|date:"d/m/Y" }} {{ differential.time|date:"H:i" }}</span>
-            </div>
+            <span class="card-title"><strong>{{ differential.differential|floatformat:3 }}</strong></span>
+            {% if differential.band or differential.out_of_date %}<br/>
+            <span>{{ differential.band.name }}{% if differential.out_of_date %} (Out of date){% endif %}</span>
+            {% endif %}<br/>
+            <span>{{ differential.time|date:"d/m/Y" }} {{ differential.time|date:"H:i" }}</span>
           </div>
           {% if differential.history_url %}<a href="{{ differential.history_url }}" target="_blank" class="card-footer text-dark d-flex justify-content-between">
             <div>View History</div>

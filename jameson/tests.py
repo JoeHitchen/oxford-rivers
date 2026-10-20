@@ -25,8 +25,8 @@ class Test_Bands(SimpleTestCase):
             (0.535, 'Amber/red borderline'),
             (0.600, 'Low red'),
             (0.650, 'High red'),
-            (0.720, 'Red/black borderline'),
-            (0.740, 'Black'),
+            (0.719, 'High red'),
+            (0.720, 'Black'),
             (1.0, 'Black'),
         ]
         for differential, expected in cases:
@@ -104,7 +104,10 @@ class Test_Bands(SimpleTestCase):
     
     
     def test__bands_match_automation_boundaries(self):
-        """Every flag boundary used for automated flagging sits inside a borderline band."""
+        """Every flag boundary used for automated flagging sits inside a borderline band.
+        
+        The exception is black, which starts exactly at its boundary.
+        """
         
         from automation import tasks
         
@@ -119,7 +122,7 @@ class Test_Bands(SimpleTestCase):
                     continue
                 with self.subTest(f'{tag} {boundary}'):
                     band = bands.get_band(reach, boundary)
-                    self.assertIn('borderline', band.name)
+                    self.assertTrue('borderline' in band.name or band.lower_bound == boundary)
     
     
     def test__out_of_date(self):
