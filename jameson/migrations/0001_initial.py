@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Differential',
             fields=[
-                ('reach', models.IntegerField(choices=[(1, 'Isis'), (2, 'Godstow'), (3, 'Radley'), (4, 'Abingdon'), (5, 'Wallingford')])),
+                ('reach', models.IntegerField(choices=[(1, 'The Isis'), (2, 'Godstow'), (3, 'Radley'), (4, 'Abingdon'), (5, 'Wallingford')])),
                 ('time', models.DateTimeField(primary_key=True, serialize=False)),
                 ('differential', models.FloatField(db_column='flow')),
             ],
