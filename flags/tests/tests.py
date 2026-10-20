@@ -218,7 +218,7 @@ class Test_Models_Reach(TestCase):
         self.assertEqual(previous_advisory.last_seen, self.original_time)
         self.assertEqual(previous_advisory.last_updated, self.original_time)
         
-        # Check for itermediary outage
+        # Check for intermediary outage
         outage = self.reach.advisories.get(board = models.Advisory.Boards.OUT)
         self.assertTrue(outage.first_seen > previous_advisory.last_seen)
         self.assertTrue(outage.first_updated > previous_advisory.last_updated)
@@ -281,7 +281,7 @@ class Test_Models_Reach(TestCase):
         self.assertEqual(previous_advisory.last_seen, older_original_time)
         self.assertEqual(previous_advisory.last_updated, older_original_time)
         
-        # Check for itermediary outage
+        # Check for intermediary outage
         outage = self.reach.advisories.get(board = models.Advisory.Boards.OUT)
         self.assertTrue(outage.first_seen > previous_advisory.last_seen)
         self.assertTrue(outage.first_updated > previous_advisory.last_updated)
