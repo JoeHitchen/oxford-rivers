@@ -535,7 +535,6 @@ class Test_Views(TestCase):
             response = self.client.get(reverse('flags:index'))
         
         self.assertEqual(response.context['differentials'], [differential])
-        self.assertEqual(response.context['differentials'][0].reach_name, 'The Isis')
         self.assertContains(response, '0.250')
         self.assertContains(response, '23/09/2024 22:05')  # Rendered in local time (BST)
         self.assertContains(response, '(Out of date)')

@@ -45,7 +45,7 @@
       {% for differential in differentials %}<div class="col-sm-6 col-lg-4 col-xl">
         <div class="card">
           <div class="card-header">
-            {{ differential.reach_name|default:differential.get_reach_display }}
+            {{ differential.get_reach_display }}
           </div>
           <div class="card-body {% if differential.out_of_date %}text-light bg-secondary{% else %}{{ differential.band.styling }}{% endif %}">
             <div class="band-text">

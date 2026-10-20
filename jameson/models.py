@@ -7,7 +7,7 @@ from django.utils import timezone
 class Differential(models.Model):
     
     class Reach(models.IntegerChoices):
-        ISIS = (1, 'Isis')
+        ISIS = (1, 'The Isis')
         GODSTOW = (2, 'Godstow')
         RADLEY = (3, 'Radley')
         ABINGDON = (4, 'Abingdon')
@@ -25,8 +25,8 @@ class Differential(models.Model):
     
     @property
     def tag(self):
-        """The reach's name in lower case, which matches the tags used in the flags app."""
-        return self.get_reach_display().lower()
+        """The reach's tag, which matches those used in the flags app and on Jameson's site."""
+        return self.Reach(self.reach).name.lower()
     
     
     @property

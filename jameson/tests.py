@@ -80,6 +80,14 @@ class Test_Bands(SimpleTestCase):
         self.assertEqual(band.styling, 'band-borderline band-green-amber')
     
     
+    def test__tag(self):
+        """Matches the flags app tags, and not the display name."""
+        
+        differential = Differential(reach = Differential.Reach.ISIS)
+        self.assertEqual(differential.get_reach_display(), 'The Isis')
+        self.assertEqual(differential.tag, 'isis')
+    
+    
     def test__history_url(self):
         """Links to the reach's page on Jameson's site."""
         
