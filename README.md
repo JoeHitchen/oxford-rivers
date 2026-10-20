@@ -1,6 +1,6 @@
 # Oxford Rivers
 Oxford Rivers is a monitoring service for the river levels and flow around Oxford, with a view to providing information for the Oxford University rowing community.
-The project is written in Python and Django, and is geared towards deployment using Docker and Gunicorn, with a MySQL database and data collection performed by a Celery worker, scheduler, and Redis broker.
+The project is written in Python and Django, and is geared towards deployment using Docker and Gunicorn, with a MySQL database and data collection performed by a Celery worker, scheduler, and an Amazon SQS message broker.
 
 A live deployment is currently running at [boards.other.fantasybumps.org.uk](https://boards.other.fantasybumps.org.uk).
 
@@ -10,7 +10,7 @@ Oxford Rivers has three requirements files:
 
   * `requirements.txt` -
   This is the main requirements file and contains all the dependencies needed for running tests or a development server.
-  For simplicity, this file deliberately excludes the production-only dependencies of `mysqlclient`, `redis`, and `gunicorn`,
+  For simplicity, this file deliberately excludes the production-only dependencies of `mysqlclient`, `gunicorn`, and the SQS transport packages (`boto3` and `pycurl`),
   since these packages facilitate connections to external services which can be substituted out in development,
   e.g. for an SQLite database, or the `runserver` command.
   * `requirements_linting.txt` - This describes the requirements needed for running the Flake8 linting.
@@ -73,8 +73,11 @@ To keep the data displayed up-to-date, regular retrievals from external sources 
 This can be done by running the management commands on a regular basis - 
 e.g. by scheduling a cron job on the server that calls the management commands using `docker run` or `docker exec` in some way - 
 or by making use of the Celery framework provided.
-The image contains all the connections necessary for a Celery worker and Celery Beat scheduler to operate, with Redis as a message broker between them.
-No special configuration is required for the Redis service, while the two Celery services should be pointed at it using the `CELERY_BROKER` environment variable and also be passed all the same environment variables as the web server.
+The image contains all the connections necessary for a Celery worker and Celery Beat scheduler to operate, with Amazon SQS as a message broker between them.
+The two Celery services should be pointed at it using the `CELERY_BROKER` environment variable (e.g. `sqs://`) and also be passed all the same environment variables as the web server.
+Any further transport settings, such as the AWS region or a queue name prefix, can be provided as a JSON object in the `CELERY_BROKER_OPTIONS` environment variable, and AWS credentials are picked up from the usual environment variables or the host's IAM role.
+The image does not contain the packages for other brokers, such as Redis, so these would need adding to the Dockerfile.
+For testing the Celery services without a broker, `CELERY_BROKER=memory://` can be used, although tasks cannot then be passed between the processes.
 Once configured, the Celery services can be run with the commands:
 
     Worker: celery --app=core worker --log-level=info
