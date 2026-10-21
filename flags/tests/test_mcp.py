@@ -2,6 +2,7 @@ import json
 from datetime import timedelta
 from unittest.mock import patch
 
+from django.db import DatabaseError
 from django.test import TestCase
 from django.utils import timezone
 
@@ -42,7 +43,7 @@ class Test_MCP(TestCase):
         """Makes a real tool call to /mcp and returns the JSON-RPC result."""
 
         with patch(
-            'flags.mcp.jameson.Differential.latest_by_reach',
+            'flags.views.jameson.Differential.latest_by_reach',
             return_value = self.differentials,
         ):
             response = self.client.post(
@@ -137,3 +138,31 @@ class Test_MCP(TestCase):
         for transit in transits:
             self.assertEqual(transit['rowing'], 'PERMITTED')
             self.assertEqual(transit['launches'], 'PERMITTED')
+    
+    
+    def test__differentials_missing(self):
+        """Returns a tool-level error if no differentials are available."""
+        
+        self.differentials = []
+        self.assertTrue(self.tool_call('get_river_conditions')['isError'])
+    
+    
+    def test__jameson_unreachable(self):
+        """Returns a tool-level error rather than partial data if Jameson cannot be queried."""
+        
+        with patch(
+            'flags.views.jameson.Differential.latest_by_reach',
+            side_effect = DatabaseError,
+        ):
+            response = self.client.post(
+                '/mcp',
+                data = json.dumps({
+                    'jsonrpc': '2.0',
+                    'id': 1,
+                    'method': 'tools/call',
+                    'params': {'name': 'get_river_conditions', 'arguments': {}},
+                }),
+                content_type = 'application/json',
+                HTTP_ACCEPT = 'application/json',
+            )
+        self.assertTrue(response.json()['result']['isError'])

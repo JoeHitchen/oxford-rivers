@@ -3,9 +3,7 @@ from typing import Any
 from mcp_server import MCPToolset
 from django.utils import timezone
 
-from jameson import models as jameson
-
-from . import models, transits
+from . import views
 
 
 def _iso(moment):
@@ -25,22 +23,23 @@ class OxfordRiversMCP(MCPToolset):
         refreshed recently and should not be relied on.
         """
 
-        all_reaches = models.Reach.objects.prefetch_related('advisories')
-        flag_reaches = (
-            models.Reach.objects.filter(has_ourcs_flag = True)
-            .order_by('pk')
-            .prefetch_related('statuses')
-        )
+        assert self.request is not None  # Needed for MyPy
+        context = views.Index(request = self.request).get_context_data()
+
+        # The index page tolerates an unreachable Jameson database, but the differentials
+        # should always be populated so an empty list is treated as a failure here
+        if not context['differentials']:
+            raise RuntimeError('No differentials available - the Jameson database may be down')
 
         return {
             'generated_at': _iso(timezone.now()),
-            'flags': [self._describe_flag(reach) for reach in flag_reaches],
+            'flags': [self._describe_flag(reach) for reach in context['flag_reaches']],
             'differentials': [
                 self._describe_differential(differential)
-                for differential in jameson.Differential.latest_by_reach()
+                for differential in context['differentials']
             ],
-            'advisories': [self._describe_advisory(reach) for reach in all_reaches],
-            'transits': transits.generate_transit_information(flag_reaches, all_reaches),
+            'advisories': [self._describe_advisory(reach) for reach in context['all_reaches']],
+            'transits': context['transits'],
         }
 
 
