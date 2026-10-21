@@ -2,7 +2,6 @@ import json
 from datetime import timedelta
 from unittest.mock import patch
 
-from django.db import DatabaseError
 from django.test import TestCase
 from django.utils import timezone
 
@@ -58,7 +57,8 @@ class Test_MCP(TestCase):
                 HTTP_ACCEPT = 'application/json',
             )
         self.assertEqual(response.status_code, 200)
-        return response.json()['result']
+        self.assertFalse(response.json()['result']['isError'])
+        return response.json()['result']['structuredContent']
 
 
     def test__tool_listed(self):
@@ -77,10 +77,7 @@ class Test_MCP(TestCase):
     def test__flags(self):
         """Describes the current flag for each OURCs reach."""
 
-        result = self.tool_call('get_river_conditions')
-        self.assertFalse(result['isError'])
-
-        flags = result['structuredContent']['flags']
+        flags = self.tool_call('get_river_conditions')['flags']
         self.assertEqual([flag['reach'] for flag in flags], ['isis', 'godstow'])
         for flag in flags:
             self.assertEqual(flag['flag'], {'code': 'G', 'label': 'Green'})
@@ -94,7 +91,7 @@ class Test_MCP(TestCase):
 
         models.Status.objects.filter(reach__tag = 'godstow').delete()
 
-        flags = self.tool_call('get_river_conditions')['structuredContent']['flags']
+        flags = self.tool_call('get_river_conditions')['flags']
         self.assertIsNone(flags[1]['flag'])
 
 
@@ -102,8 +99,9 @@ class Test_MCP(TestCase):
         """Describes value, staleness and band for each differential."""
 
         result = self.tool_call('get_river_conditions')
-        by_reach = {d['reach']: d for d in result['structuredContent']['differentials']}
+        self.assertTrue(result['differentials_available'])
 
+        by_reach = {d['reach']: d for d in result['differentials']}
         self.assertEqual(list(by_reach), ['isis', 'godstow', 'radley'])
         self.assertEqual(by_reach['isis']['value'], 0.12)
         self.assertEqual(by_reach['isis']['band'], 'High Green')
@@ -111,13 +109,26 @@ class Test_MCP(TestCase):
         self.assertTrue(by_reach['godstow']['stale'])
         self.assertEqual(by_reach['godstow']['band'], 'Green/Amber Borderline')
         self.assertIsNone(by_reach['radley']['band'])
+    
+    
+    def test__differentials_missing(self):
+        """Returns the rest of the data, flagging the differentials as unavailable, if none are
+        found (the index view maps an unreachable Jameson database to the same empty list)."""
+        
+        self.differentials = []
+        result = self.tool_call('get_river_conditions')
+        
+        self.assertFalse(result['differentials_available'])
+        self.assertEqual(result['differentials'], [])
+        self.assertEqual(len(result['flags']), 2)
+        self.assertEqual(len(result['advisories']), models.Reach.objects.count())
+        self.assertEqual(len(result['transits']), 3)
 
 
     def test__advisories(self):
         """Describes the current EA board for every reach."""
 
-        result = self.tool_call('get_river_conditions')
-        advisories = result['structuredContent']['advisories']
+        advisories = self.tool_call('get_river_conditions')['advisories']
 
         self.assertEqual(len(advisories), models.Reach.objects.count())
         for advisory in advisories:
@@ -128,8 +139,7 @@ class Test_MCP(TestCase):
     def test__transits(self):
         """Includes the transit information used by the index page."""
 
-        result = self.tool_call('get_river_conditions')
-        transits = result['structuredContent']['transits']
+        transits = self.tool_call('get_river_conditions')['transits']
 
         self.assertEqual(
             [transit['destination'] for transit in transits],
@@ -138,31 +148,3 @@ class Test_MCP(TestCase):
         for transit in transits:
             self.assertEqual(transit['rowing'], 'PERMITTED')
             self.assertEqual(transit['launches'], 'PERMITTED')
-    
-    
-    def test__differentials_missing(self):
-        """Returns a tool-level error if no differentials are available."""
-        
-        self.differentials = []
-        self.assertTrue(self.tool_call('get_river_conditions')['isError'])
-    
-    
-    def test__jameson_unreachable(self):
-        """Returns a tool-level error rather than partial data if Jameson cannot be queried."""
-        
-        with patch(
-            'flags.views.jameson.Differential.latest_by_reach',
-            side_effect = DatabaseError,
-        ):
-            response = self.client.post(
-                '/mcp',
-                data = json.dumps({
-                    'jsonrpc': '2.0',
-                    'id': 1,
-                    'method': 'tools/call',
-                    'params': {'name': 'get_river_conditions', 'arguments': {}},
-                }),
-                content_type = 'application/json',
-                HTTP_ACCEPT = 'application/json',
-            )
-        self.assertTrue(response.json()['result']['isError'])
