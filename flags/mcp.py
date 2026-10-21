@@ -19,6 +19,8 @@ class OxfordRiversMCP(MCPToolset):
         differentials (with bands), EA stream advisory boards, and whether rowing and launch
         transits are permitted.
 
+        Transit permissions of APPROVAL require specific approval - refer to the OURCs rules.
+
         All times are Europe/London. Entries marked out of date or stale have not been
         refreshed recently and should not be relied on.
 

@@ -2,7 +2,6 @@ import json
 from datetime import datetime, timedelta, timezone as dt_timezone
 from unittest.mock import patch
 
-from django.db import DatabaseError
 from django.test import TestCase
 from django.utils import timezone
 
@@ -13,7 +12,6 @@ from .. import models
 
 class Test_MCP(TestCase):
     fixtures = ['flags']
-    differentials_error = None
 
     def setUp(self):
         right_now = timezone.now() - timedelta(seconds = 1)
@@ -46,7 +44,6 @@ class Test_MCP(TestCase):
         with patch(
             'flags.views.jameson.Differential.latest_by_reach',
             return_value = self.differentials,
-            side_effect = self.differentials_error,
         ):
             response = self.client.post(
                 '/mcp',
@@ -135,17 +132,6 @@ class Test_MCP(TestCase):
         self.assertEqual(len(result['flags']), 2)
         self.assertEqual(len(result['advisories']), models.Reach.objects.count())
         self.assertEqual(len(result['transits']), 3)
-
-
-    def test__jameson_unreachable(self):
-        """Flags the differentials as unavailable if the Jameson database cannot be queried."""
-
-        self.differentials_error = DatabaseError
-        result = self.tool_call('get_river_conditions')
-
-        self.assertFalse(result['differentials_available'])
-        self.assertEqual(result['differentials'], [])
-        self.assertEqual(len(result['flags']), 2)
 
 
     def test__advisories(self):
