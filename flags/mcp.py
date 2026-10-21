@@ -1,8 +1,14 @@
 from typing import Any
 
 from mcp_server import MCPToolset
+from django.utils import timezone
 
 from . import views
+
+
+def local_isoformat(moment):
+    """ISO 8601 string in Django's local time zone, including the UTC offset."""
+    return timezone.localtime(moment).isoformat()
 
 
 class OxfordRiversMCP(MCPToolset):
@@ -21,7 +27,6 @@ class OxfordRiversMCP(MCPToolset):
         is missing, not that there is nothing to report.
         """
 
-        assert self.request is not None  # Needed for MyPy
         context = views.Index(request = self.request).get_context_data()
 
         return {
@@ -38,14 +43,16 @@ class OxfordRiversMCP(MCPToolset):
 
     @staticmethod
     def _serialise_ourcs_flag(reach):
-        status = reach.current_flag_status
         return {
             'reach': reach.tag,
-            'flag': status and {'code': status.flag, 'label': status.get_flag_display()},
-            'set_at': status and status.set_at.astimezone().isoformat(),
-            'set_by': status and status.set_by,
-            'last_seen': status and status.last_seen.astimezone().isoformat(),
-            'out_of_date': status and status.out_of_date,
+            'flag': {
+                'code': reach.current_flag_status.flag,
+                'label': reach.current_flag_status.get_flag_display(),
+            },
+            'set_at': local_isoformat(reach.current_flag_status.set_at),
+            'set_by': reach.current_flag_status.set_by,
+            'last_seen': local_isoformat(reach.current_flag_status.last_seen),
+            'out_of_date': reach.current_flag_status.out_of_date,
         }
 
 
@@ -55,7 +62,7 @@ class OxfordRiversMCP(MCPToolset):
             'reach': differential.tag,
             'value': differential.differential,
             'unit': 'm',
-            'time': differential.time.astimezone().isoformat(),
+            'time': local_isoformat(differential.time),
             'stale': differential.out_of_date,
             'band': differential.band and differential.band.name,
         }
@@ -63,15 +70,14 @@ class OxfordRiversMCP(MCPToolset):
 
     @staticmethod
     def _serialise_advisory(reach):
-        advisory = reach.current_advisory
         return {
             'reach': reach.tag,
-            'board': advisory and {
-                'code': advisory.board,
-                'label': advisory.get_board_display(),
+            'board': {
+                'code': reach.current_advisory.board,
+                'label': reach.current_advisory.get_board_display(),
             },
-            'first_updated': advisory and advisory.first_updated.astimezone().isoformat(),
-            'last_updated': advisory and advisory.last_updated.astimezone().isoformat(),
-            'last_seen': advisory and advisory.last_seen.astimezone().isoformat(),
-            'out_of_date': advisory and advisory.out_of_date,
+            'first_updated': local_isoformat(reach.current_advisory.first_updated),
+            'last_updated': local_isoformat(reach.current_advisory.last_updated),
+            'last_seen': local_isoformat(reach.current_advisory.last_seen),
+            'out_of_date': reach.current_advisory.out_of_date,
         }

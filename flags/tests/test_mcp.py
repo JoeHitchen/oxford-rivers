@@ -1,7 +1,8 @@
 import json
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone as dt_timezone
 from unittest.mock import patch
 
+from django.db import DatabaseError
 from django.test import TestCase
 from django.utils import timezone
 
@@ -12,6 +13,7 @@ from .. import models
 
 class Test_MCP(TestCase):
     fixtures = ['flags']
+    differentials_error = None
 
     def setUp(self):
         right_now = timezone.now() - timedelta(seconds = 1)
@@ -44,6 +46,7 @@ class Test_MCP(TestCase):
         with patch(
             'flags.views.jameson.Differential.latest_by_reach',
             return_value = self.differentials,
+            side_effect = self.differentials_error,
         ):
             response = self.client.post(
                 '/mcp',
@@ -86,13 +89,22 @@ class Test_MCP(TestCase):
             self.assertRegex(flag['last_seen'], r'^\d{4}-\d\d-\d\dT[\d:.]+\+0[01]:00$')
 
 
-    def test__flag_missing(self):
-        """Reports null rather than failing for a reach that has never had a flag."""
+    def test__times_local(self):
+        """Gives every time in London time, with the offset in force at that time."""
 
-        models.Status.objects.filter(reach__tag = 'godstow').delete()
+        summer = datetime(2026, 7, 1, 12, tzinfo = dt_timezone.utc)
+        winter = datetime(2026, 1, 1, 12, tzinfo = dt_timezone.utc)
+        models.Status.objects.update(set_at = summer, last_seen = winter)
+        models.Advisory.objects.update(first_updated = summer, last_seen = winter)
+        self.differentials[0].time = summer
 
-        flags = self.tool_call('get_river_conditions')['flags']
-        self.assertIsNone(flags[1]['flag'])
+        result = self.tool_call('get_river_conditions')
+
+        self.assertEqual(result['flags'][0]['set_at'], '2026-07-01T13:00:00+01:00')
+        self.assertEqual(result['flags'][0]['last_seen'], '2026-01-01T12:00:00+00:00')
+        self.assertEqual(result['differentials'][0]['time'], '2026-07-01T13:00:00+01:00')
+        self.assertEqual(result['advisories'][0]['first_updated'], '2026-07-01T13:00:00+01:00')
+        self.assertEqual(result['advisories'][0]['last_seen'], '2026-01-01T12:00:00+00:00')
 
 
     def test__differentials(self):
@@ -123,6 +135,17 @@ class Test_MCP(TestCase):
         self.assertEqual(len(result['flags']), 2)
         self.assertEqual(len(result['advisories']), models.Reach.objects.count())
         self.assertEqual(len(result['transits']), 3)
+
+
+    def test__jameson_unreachable(self):
+        """Flags the differentials as unavailable if the Jameson database cannot be queried."""
+
+        self.differentials_error = DatabaseError
+        result = self.tool_call('get_river_conditions')
+
+        self.assertFalse(result['differentials_available'])
+        self.assertEqual(result['differentials'], [])
+        self.assertEqual(len(result['flags']), 2)
 
 
     def test__advisories(self):
