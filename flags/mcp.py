@@ -21,24 +21,31 @@ class OxfordRiversMCP(MCPToolset):
 
         Transit permissions of APPROVAL require specific approval - refer to the OURCs rules.
 
-        All times are Europe/London. Entries marked out of date or stale have not been
-        refreshed recently and should not be relied on.
+        Flags, differentials and advisories are each keyed by reach (e.g. `isis`, `godstow`).
+        All times are Europe/London. Entries marked out_of_date have not been refreshed recently
+        and should not be relied on.
 
         `differentials_available` is false if no differentials could be retrieved (for example, if
-        the Jameson database is unreachable). The empty `differentials` list then means the data
+        the Jameson database is unreachable). The empty `differentials` object then means the data
         is missing, not that there is nothing to report.
         """
 
         context = views.Index(request = self.request).get_context_data()
 
         return {
-            'flags': [self._serialise_ourcs_flag(reach) for reach in context['flag_reaches']],
+            'flags': {
+                reach.tag: self._serialise_ourcs_flag(reach)
+                for reach in context['flag_reaches']
+            },
             'differentials_available': bool(context['differentials']),
-            'differentials': [
-                self._serialise_differential(differential)
+            'differentials': {
+                differential.tag: self._serialise_differential(differential)
                 for differential in context['differentials']
-            ],
-            'advisories': [self._serialise_advisory(reach) for reach in context['all_reaches']],
+            },
+            'advisories': {
+                reach.tag: self._serialise_advisory(reach)
+                for reach in context['all_reaches']
+            },
             'transits': context['transits'],
         }
 
@@ -46,7 +53,6 @@ class OxfordRiversMCP(MCPToolset):
     @staticmethod
     def _serialise_ourcs_flag(reach):
         return {
-            'reach': reach.tag,
             'flag': {
                 'code': reach.current_flag_status.flag,
                 'label': reach.current_flag_status.get_flag_display(),
@@ -61,11 +67,10 @@ class OxfordRiversMCP(MCPToolset):
     @staticmethod
     def _serialise_differential(differential):
         return {
-            'reach': differential.tag,
-            'value': differential.differential,
+            'value': round(differential.differential, 3),  # As shown on the index page
             'unit': 'm',
             'time': local_isoformat(differential.time),
-            'stale': differential.out_of_date,
+            'out_of_date': differential.out_of_date,
             'band': differential.band and differential.band.name,
         }
 
@@ -73,7 +78,8 @@ class OxfordRiversMCP(MCPToolset):
     @staticmethod
     def _serialise_advisory(reach):
         return {
-            'reach': reach.tag,
+            'upstream_lock': reach.upstream_lock,
+            'downstream_lock': reach.downstream_lock,
             'board': {
                 'code': reach.current_advisory.board,
                 'label': reach.current_advisory.get_board_display(),

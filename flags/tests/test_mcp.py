@@ -78,8 +78,8 @@ class Test_MCP(TestCase):
         """Describes the current flag for each OURCs reach."""
 
         flags = self.tool_call('get_river_conditions')['flags']
-        self.assertEqual([flag['reach'] for flag in flags], ['isis', 'godstow'])
-        for flag in flags:
+        self.assertEqual(list(flags), ['isis', 'godstow'])
+        for flag in flags.values():
             self.assertEqual(flag['flag'], {'code': 'G', 'label': 'Green'})
             self.assertEqual(flag['set_by'], 'Test Coach')
             self.assertFalse(flag['out_of_date'])
@@ -97,11 +97,12 @@ class Test_MCP(TestCase):
 
         result = self.tool_call('get_river_conditions')
 
-        self.assertEqual(result['flags'][0]['set_at'], '2026-07-01T13:00:00+01:00')
-        self.assertEqual(result['flags'][0]['last_seen'], '2026-01-01T12:00:00+00:00')
-        self.assertEqual(result['differentials'][0]['time'], '2026-07-01T13:00:00+01:00')
-        self.assertEqual(result['advisories'][0]['first_updated'], '2026-07-01T13:00:00+01:00')
-        self.assertEqual(result['advisories'][0]['last_seen'], '2026-01-01T12:00:00+00:00')
+        self.assertEqual(result['flags']['isis']['set_at'], '2026-07-01T13:00:00+01:00')
+        self.assertEqual(result['flags']['isis']['last_seen'], '2026-01-01T12:00:00+00:00')
+        self.assertEqual(result['differentials']['isis']['time'], '2026-07-01T13:00:00+01:00')
+        advisory = result['advisories']['isis']
+        self.assertEqual(advisory['first_updated'], '2026-07-01T13:00:00+01:00')
+        self.assertEqual(advisory['last_seen'], '2026-01-01T12:00:00+00:00')
 
 
     def test__differentials(self):
@@ -110,12 +111,12 @@ class Test_MCP(TestCase):
         result = self.tool_call('get_river_conditions')
         self.assertTrue(result['differentials_available'])
 
-        by_reach = {d['reach']: d for d in result['differentials']}
+        by_reach = result['differentials']
         self.assertEqual(list(by_reach), ['isis', 'godstow', 'radley'])
         self.assertEqual(by_reach['isis']['value'], 0.12)
         self.assertEqual(by_reach['isis']['band'], 'High Green')
-        self.assertFalse(by_reach['isis']['stale'])
-        self.assertTrue(by_reach['godstow']['stale'])
+        self.assertFalse(by_reach['isis']['out_of_date'])
+        self.assertTrue(by_reach['godstow']['out_of_date'])
         self.assertEqual(by_reach['godstow']['band'], 'Green/Amber Borderline')
         self.assertIsNone(by_reach['radley']['band'])
     
@@ -128,7 +129,7 @@ class Test_MCP(TestCase):
         result = self.tool_call('get_river_conditions')
         
         self.assertFalse(result['differentials_available'])
-        self.assertEqual(result['differentials'], [])
+        self.assertEqual(result['differentials'], {})
         self.assertEqual(len(result['flags']), 2)
         self.assertEqual(len(result['advisories']), models.Reach.objects.count())
         self.assertEqual(len(result['transits']), 3)
@@ -140,9 +141,33 @@ class Test_MCP(TestCase):
         advisories = self.tool_call('get_river_conditions')['advisories']
 
         self.assertEqual(len(advisories), models.Reach.objects.count())
-        for advisory in advisories:
+        self.assertEqual(
+            list(advisories),
+            [reach.tag for reach in models.Reach.objects.all()],
+        )
+        for advisory in advisories.values():
             self.assertEqual(advisory['board'], {'code': 'NONE', 'label': 'No advisory'})
             self.assertFalse(advisory['out_of_date'])
+
+
+    def test__advisories__locks(self):
+        """Names the locks bounding each advisory's stretch of river."""
+
+        advisories = self.tool_call('get_river_conditions')['advisories']
+
+        self.assertEqual(advisories['isis']['upstream_lock'], 'Osney')
+        self.assertEqual(advisories['isis']['downstream_lock'], 'Iffley')
+        self.assertEqual(advisories['godstow']['upstream_lock'], 'Godstow')
+        self.assertEqual(advisories['godstow']['downstream_lock'], 'Osney')
+
+
+    def test__differentials__rounded(self):
+        """Rounds values to the three decimal places shown on the index page."""
+
+        self.differentials[0].differential = -0.04552
+        result = self.tool_call('get_river_conditions')
+
+        self.assertEqual(result['differentials']['isis']['value'], -0.046)
 
 
     def test__transits(self):
