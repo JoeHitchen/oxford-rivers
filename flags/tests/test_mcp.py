@@ -1,61 +1,13 @@
 import json
-from datetime import date, datetime, timedelta, timezone as dt_timezone
-from unittest.mock import PropertyMock, patch
+from datetime import timedelta
+from unittest.mock import patch
 
-from django.test import TestCase, SimpleTestCase
+from django.test import TestCase
 from django.utils import timezone
 
 from jameson.models import Differential
 
-from .. import models, suntimes
-
-
-class Test_SunTimes(SimpleTestCase):
-
-    # Reference values are from SunCalc 1.8.0 (as used by OURCs) at 51.7435313, -1.2512201,
-    # displayed in London time, either side of both 2026 clock changes
-    REFERENCE = {
-        date(2026, 3, 28): ('05:51', '18:31'),
-        date(2026, 3, 29): ('06:48', '19:33'),  # Clocks go forward
-        date(2026, 3, 30): ('06:46', '19:34'),
-        date(2026, 6, 21): ('04:47', '21:28'),
-        date(2026, 10, 24): ('07:45', '17:55'),
-        date(2026, 10, 25): ('06:47', '16:53'),  # Clocks go back
-        date(2026, 10, 26): ('06:49', '16:51'),
-        date(2026, 12, 21): ('08:10', '15:57'),
-    }
-
-    def test__matches_suncalc(self):
-        """Sunrise and sunset match those OURCs displays, including across clock changes."""
-
-        for day, (sunrise, sunset) in self.REFERENCE.items():
-            with self.subTest(day):
-                times = suntimes.get_sun_times(day)
-                self.assertEqual(times['sunrise'].strftime('%H:%M'), sunrise)
-                self.assertEqual(times['sunset'].strftime('%H:%M'), sunset)
-
-
-    def test__boating_window(self):
-        """First boating is an hour before sunrise and last landing an hour after sunset."""
-
-        for day in self.REFERENCE:
-            with self.subTest(day):
-                times = suntimes.get_sun_times(day)
-                self.assertEqual(times['sunrise'] - times['first_boating'], timedelta(hours = 1))
-                self.assertEqual(times['last_landing'] - times['sunset'], timedelta(hours = 1))
-
-
-    def test__london_offsets(self):
-        """Times carry the offset in force on the day."""
-
-        self.assertEqual(
-            suntimes.get_sun_times(date(2026, 3, 28))['sunrise'].utcoffset(),
-            timedelta(0),
-        )
-        self.assertEqual(
-            suntimes.get_sun_times(date(2026, 3, 29))['sunrise'].utcoffset(),
-            timedelta(hours = 1),
-        )
+from .. import models
 
 
 class Test_MCP(TestCase):
@@ -89,14 +41,10 @@ class Test_MCP(TestCase):
     def tool_call(self, name, arguments = None):
         """Makes a real tool call to /mcp and returns the JSON-RPC result."""
 
-        with (
-            patch(
-                'flags.mcp.jameson.Differential.latest_by_reach',
-                return_value = self.differentials,
-            ),
-            patch.object(Differential, 'trend', new_callable = PropertyMock) as trend,
+        with patch(
+            'flags.mcp.jameson.Differential.latest_by_reach',
+            return_value = self.differentials,
         ):
-            trend.return_value = 'rising'
             response = self.client.post(
                 '/mcp',
                 data = json.dumps({
@@ -150,7 +98,7 @@ class Test_MCP(TestCase):
 
 
     def test__differentials(self):
-        """Describes value, staleness, band and trend for each differential."""
+        """Describes value, staleness and band for each differential."""
 
         result = self.tool_call('get_river_conditions')
         by_reach = {d['reach']: d for d in result['structuredContent']['differentials']}
@@ -159,7 +107,6 @@ class Test_MCP(TestCase):
         self.assertEqual(by_reach['isis']['value'], 0.12)
         self.assertEqual(by_reach['isis']['band'], 'High Green')
         self.assertFalse(by_reach['isis']['stale'])
-        self.assertEqual(by_reach['isis']['trend'], 'rising')
         self.assertTrue(by_reach['godstow']['stale'])
         self.assertEqual(by_reach['godstow']['band'], 'Green/Amber Borderline')
         self.assertIsNone(by_reach['radley']['band'])
@@ -190,56 +137,3 @@ class Test_MCP(TestCase):
         for transit in transits:
             self.assertEqual(transit['rowing'], 'PERMITTED')
             self.assertEqual(transit['launches'], 'PERMITTED')
-
-
-    def test__sun_times(self):
-        """Gives sun times for the requested date."""
-
-        result = self.tool_call('get_river_conditions', {'date': '2026-03-29'})
-        sun_times = result['structuredContent']['sun_times']
-
-        self.assertEqual(sun_times['date'], '2026-03-29')
-        self.assertEqual(sun_times['sunrise'], '2026-03-29T06:48:00+01:00')
-        self.assertEqual(sun_times['sunset'], '2026-03-29T19:33:00+01:00')
-        self.assertEqual(sun_times['first_boating'], '2026-03-29T05:48:00+01:00')
-        self.assertEqual(sun_times['last_landing'], '2026-03-29T20:33:00+01:00')
-
-
-    def test__sun_times__default_today(self):
-        """Defaults to today's sun times."""
-
-        result = self.tool_call('get_river_conditions')
-        self.assertEqual(
-            result['structuredContent']['sun_times']['date'],
-            timezone.localdate().isoformat(),
-        )
-
-
-    def test__invalid_date(self):
-        """Returns a tool-level error for a malformed date."""
-
-        result = self.tool_call('get_river_conditions', {'date': 'tomorrow'})
-        self.assertTrue(result['isError'])
-
-
-class Test_Differential_trend(SimpleTestCase):
-
-    def trend(self, earlier, now):
-        reading = Differential(
-            reach = Differential.Reach.ISIS,
-            time = datetime(2026, 1, 1, 12, tzinfo = dt_timezone.utc),
-            differential = now,
-        )
-        earliest = earlier and Differential(differential = earlier)
-        with patch.object(Differential, 'objects') as objects:
-            objects.using.return_value.filter.return_value.order_by.return_value.first.return_value = earliest  # noqa: E501
-            return reading.trend
-
-    def test__trend(self):
-        """Compares against the earliest reading in the window, with a tolerance for noise."""
-
-        self.assertEqual(self.trend(0.100, 0.120), 'rising')
-        self.assertEqual(self.trend(0.120, 0.100), 'falling')
-        self.assertEqual(self.trend(0.100, 0.105), 'steady')
-        self.assertEqual(self.trend(0.105, 0.100), 'steady')
-        self.assertIsNone(self.trend(None, 0.100))

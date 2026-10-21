@@ -13,9 +13,6 @@ class Differential(models.Model):
         ABINGDON = (4, 'Abingdon')
         WALLINGFORD = (5, 'Wallingford')
     
-    TREND_WINDOW = timedelta(hours = 2)
-    TREND_THRESHOLD = 0.010  # Metres of change over the window needed to count as moving
-
     reach = models.IntegerField(choices = Reach.choices)
     time = models.DateTimeField(primary_key = True)
     differential = models.FloatField(db_column = 'flow')
@@ -45,34 +42,6 @@ class Differential(models.Model):
         return bands.get_band(self.reach, self.differential)
     
     
-    @property
-    def trend(self):
-        """Whether the differential rose, fell or held steady over the preceding two hours.
-
-        None if there is no earlier reading in that window to compare against.
-        """
-
-        earliest = (
-            Differential.objects.using('jameson')
-            .filter(
-                reach = self.reach,
-                time__gte = self.time - self.TREND_WINDOW,
-                time__lt = self.time,
-            )
-            .order_by('time')
-            .first()
-        )
-        if earliest is None:
-            return None
-
-        change = self.differential - earliest.differential
-        if change >= self.TREND_THRESHOLD:
-            return 'rising'
-        if change <= -self.TREND_THRESHOLD:
-            return 'falling'
-        return 'steady'
-
-
     @property
     def history_url(self):
         """The page on Jameson's site that shows the history for this reach."""

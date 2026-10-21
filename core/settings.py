@@ -159,7 +159,7 @@ DJANGO_MCP_GLOBAL_SERVER_CONFIG = {
     'instructions': (
         'Oxford Rivers reports the state of the River Thames around Oxford for rowers: '
         'OURCs flags (Isis and Godstow reaches), Jameson stream differentials, EA stream '
-        'advisory boards, which transits are permitted, and sun times. '
+        'advisory boards, which transits are permitted. '
         'Call get_river_conditions() for exact, current values. '
         'Everything exposed here is read-only and already public on the website.'
     ),

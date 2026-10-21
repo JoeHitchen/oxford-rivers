@@ -1,4 +1,3 @@
-import datetime
 from typing import Any
 
 from mcp_server import MCPToolset
@@ -6,7 +5,7 @@ from django.utils import timezone
 
 from jameson import models as jameson
 
-from . import models, suntimes, transits
+from . import models, transits
 
 
 def _iso(moment):
@@ -17,20 +16,14 @@ def _iso(moment):
 class OxfordRiversMCP(MCPToolset):
     """Read-only river status, built from the same data and properties as the index page."""
 
-    def get_river_conditions(self, date: str | None = None) -> dict[str, Any]:
+    def get_river_conditions(self) -> dict[str, Any]:
         """Retrieve the current state of the Oxford rivers: OURCs flags, Jameson stream
-        differentials (with bands and trends), EA stream advisory boards, whether rowing
-        and launch transits are permitted, and sunrise/sunset times.
+        differentials (with bands), EA stream advisory boards, and whether rowing and launch
+        transits are permitted.
 
-        `date` (YYYY-MM-DD, optional) selects the day for the sun times, which default to today.
         All times are Europe/London. Entries marked out of date or stale have not been
         refreshed recently and should not be relied on.
         """
-
-        try:
-            sun_day = datetime.date.fromisoformat(date) if date else timezone.localdate()
-        except ValueError:
-            raise ValueError(f'Invalid date "{date}" - expected YYYY-MM-DD')
 
         all_reaches = models.Reach.objects.prefetch_related('advisories')
         flag_reaches = (
@@ -48,7 +41,6 @@ class OxfordRiversMCP(MCPToolset):
             ],
             'advisories': [self._describe_advisory(reach) for reach in all_reaches],
             'transits': transits.generate_transit_information(flag_reaches, all_reaches),
-            'sun_times': self._describe_sun_times(sun_day),
         }
 
 
@@ -75,7 +67,6 @@ class OxfordRiversMCP(MCPToolset):
             'time': _iso(differential.time),
             'stale': differential.out_of_date,
             'band': band and band.name,
-            'trend': differential.trend,
         }
 
 
@@ -92,12 +83,4 @@ class OxfordRiversMCP(MCPToolset):
             'last_updated': advisory and _iso(advisory.last_updated),
             'last_seen': advisory and _iso(advisory.last_seen),
             'out_of_date': advisory and advisory.out_of_date,
-        }
-
-
-    @staticmethod
-    def _describe_sun_times(day):
-        return {
-            'date': day.isoformat(),
-            **{name: _iso(moment) for name, moment in suntimes.get_sun_times(day).items()},
         }
