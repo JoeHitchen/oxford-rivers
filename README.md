@@ -57,6 +57,28 @@ _While it is possible to run and test the Celery processes locally, a production
 See below for more information._
 
 
+## MCP server
+The site also acts as an [MCP](https://modelcontextprotocol.io/) server at `/mcp`, built with `django-mcp-server`, so that AI clients can read the river state directly rather than scraping the index page.
+It is served by the same container as the rest of the site, is read-only, and (like the index page) needs no authentication.
+To use it, add `https://<live-domain>/mcp` as a remote custom connector in your preferred AI tool.
+
+It provides a single tool, `get_river_conditions`, which takes no arguments and returns the current OURCs flags, Jameson differentials (with indicative bands, where defined), EA advisory boards and whether transit are permitted.
+The flags, differentials and advisories are each keyed by reach (e.g. `isis`, `godstow`), and each advisory names the locks bounding its stretch of river.
+These are built from the same data and model properties as the index page (`flags.views.Index`), so the two cannot drift apart.
+Every call reads the database afresh, so nothing is cached.
+If no differentials are available, `differentials_available` is `false` and the `differentials` object is empty, and clients should treat that as missing data rather than "nothing to report".
+
+To try it locally, run the development server on its default port, 8000, and use the project's `.mcp.json`, which points an MCP client such as Claude Code at it:
+
+    python manage.py runserver
+
+Agents testing their own changes should run a server on a spare port instead (e.g. `python manage.py runserver 8765`) and call `/mcp` on it directly, to avoid clashing with a development server already running on port 8000.
+
+The differentials come from the unmanaged `jameson.Differential` model, which reads a `flag` table (`time`, `reach`, and `flow` columns) from the `jameson` database.
+Without access to Jameson's database, the table must be created by hand with some sample rows; otherwise the differentials will be reported as unavailable.
+The tool's tests (`flags/tests/test_mcp.py`) make real JSON-RPC calls to `/mcp` and mock the Jameson lookup.
+
+
 ## Running in production
 A Docker image of the project is available on [DockerHub](https://hub.docker.com/repository/docker/joehitchen/oxford-rivers) as `joehitchen/oxford-rivers` and this is the recommended deployment method, although others are possible.
 

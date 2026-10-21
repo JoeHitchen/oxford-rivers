@@ -9,6 +9,7 @@ from . import settings
 
 urlpatterns = [
     path('robots.txt', TemplateView.as_view(template_name = 'core/robots.txt')),
+    path('', include('mcp_server.urls')),
     path('', include('flags.urls')),
     path('', RedirectView.as_view(  # Dummy view to provide site 'index' name
         url = reverse_lazy('flags:index'),

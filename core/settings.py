@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'mcp_server',
     'flags',
     'jameson',
     'automation',
@@ -150,6 +151,19 @@ EMAIL_USE_TLS = EMAIL_HOST != 'localhost'
 DEFAULT_FROM_EMAIL = 'no-reply@mail.fantasybumps.org.uk'
 
 AUTOFLAG_NOTIFICATION_RECIPIENTS = os.environ.get('AUTOFLAG_NOTIFICATION_RECIPIENTS', '').split(',')  # noqa: E501
+
+
+# MCP server
+DJANGO_MCP_GLOBAL_SERVER_CONFIG = {
+    'stateless': True,  # No container/session state to share between requests.
+    'instructions': (
+        'Oxford Rivers reports the state of the River Thames around Oxford for rowers: '
+        'OURCs flags (Isis and Godstow reaches), Jameson stream differentials, EA stream '
+        'advisory boards, which transits are permitted. '
+        'Call get_river_conditions() for the latest information. '
+        'Everything exposed here is read-only and already public on the website.'
+    ),
+}
 
 
 # Other

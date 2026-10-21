@@ -1,4 +1,6 @@
 django < 6
+django-mcp-server
+mcp < 2
 celery
 requests
 beautifulsoup4
