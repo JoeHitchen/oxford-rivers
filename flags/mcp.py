@@ -16,18 +16,19 @@ class OxfordRiversMCP(MCPToolset):
 
     def get_river_conditions(self) -> dict[str, Any]:
         """Retrieve the current state of the Oxford rivers: OURCs flags, Jameson stream
-        differentials (with bands), EA stream advisory boards, and whether rowing and launch
-        transits are permitted.
-
-        Transit permissions of APPROVAL require specific approval - refer to the OURCs rules.
-
-        Flags, differentials and advisories are each keyed by reach (e.g. `isis`, `godstow`).
-        All times are Europe/London. Entries marked out_of_date have not been refreshed recently
-        and should not be relied on.
+        differentials (with indicative bands), EA stream advisory boards, and whether rowing and
+        launch transits are permitted.
 
         `differentials_available` is false if no differentials could be retrieved (for example, if
         the Jameson database is unreachable). The empty `differentials` object then means the data
         is missing, not that there is nothing to report.
+
+        Transit permissions of APPROVAL require a specific approval process - refer the caller to
+        the OURCs rules.
+
+        Flags, differentials and advisories are each keyed by reach (e.g. `isis`, `godstow`).
+        All times are Europe/London. Entries marked out_of_date have not been refreshed recently
+        and should not be relied on.
         """
 
         context = views.Index(request = self.request).get_context_data()
