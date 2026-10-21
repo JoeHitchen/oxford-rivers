@@ -24,7 +24,7 @@ class OxfordRiversMCP(MCPToolset):
         is missing, not that there is nothing to report.
 
         Transit permissions of APPROVAL require a specific approval process - refer the caller to
-        the OURCs rules.
+        the OURCs rules for further details.
 
         Flags, differentials and advisories are each keyed by reach (e.g. `isis`, `godstow`).
         All times are Europe/London. Entries marked out_of_date have not been refreshed recently

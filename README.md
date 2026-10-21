@@ -58,11 +58,11 @@ See below for more information._
 
 
 ## MCP server
-The site also acts as an [MCP](https://modelcontextprotocol.io/) server at `/mcp`, built with `django-mcp-server`, so that Claude and other AI clients can read the river state directly rather than scraping the index page.
+The site also acts as an [MCP](https://modelcontextprotocol.io/) server at `/mcp`, built with `django-mcp-server`, so that AI clients can read the river state directly rather than scraping the index page.
 It is served by the same container as the rest of the site, is read-only, and (like the index page) needs no authentication.
-To use it, add `https://<your domain>/mcp` as a remote custom connector in Claude.
+To use it, add `https://<live-domain>/mcp` as a remote custom connector in your preferred AI tool.
 
-It provides a single tool, `get_river_conditions`, which takes no arguments and returns the current OURCs flags, Jameson differentials (with bands, where defined), EA advisory boards and the transit permissions.
+It provides a single tool, `get_river_conditions`, which takes no arguments and returns the current OURCs flags, Jameson differentials (with indicative bands, where defined), EA advisory boards and whether transit are permitted.
 The flags, differentials and advisories are each keyed by reach (e.g. `isis`, `godstow`), and each advisory names the locks bounding its stretch of river.
 These are built from the same data and model properties as the index page (`flags.views.Index`), so the two cannot drift apart.
 Every call reads the database afresh, so nothing is cached.
