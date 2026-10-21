@@ -28,13 +28,13 @@ class Test_MCP(TestCase):
             )
 
         self.differentials = [
-            Differential(reach = Differential.Reach.ISIS, time = right_now, differential = 0.12),
+            Differential(reach = Differential.Reach.ISIS, time = right_now, differential = 0.1267),
             Differential(
                 reach = Differential.Reach.GODSTOW,
                 time = right_now - timedelta(hours = 5),
-                differential = 0.45,
+                differential = 0.4568,
             ),
-            Differential(reach = Differential.Reach.RADLEY, time = right_now, differential = 0.3),
+            Differential(reach = Differential.Reach.RADLEY, time = right_now, differential = 0.30),
         ]
 
 
@@ -61,7 +61,7 @@ class Test_MCP(TestCase):
         return response.json()['result']['structuredContent']
 
 
-    def test__tool_listed(self):
+    def test__tools(self):
         """Lists the tool."""
 
         response = self.client.post(
@@ -74,7 +74,7 @@ class Test_MCP(TestCase):
         self.assertIn('get_river_conditions', names)
 
 
-    def test__flags(self):
+    def test__conditions__flags(self):
         """Describes the current flag for each OURCs reach."""
 
         flags = self.tool_call('get_river_conditions')['flags']
@@ -86,42 +86,22 @@ class Test_MCP(TestCase):
             self.assertRegex(flag['last_seen'], r'^\d{4}-\d\d-\d\dT[\d:.]+\+0[01]:00$')
 
 
-    def test__times_local(self):
-        """Gives every time in London time, with the offset in force at that time."""
-
-        summer = datetime(2026, 7, 1, 12, tzinfo = dt_timezone.utc)
-        winter = datetime(2026, 1, 1, 12, tzinfo = dt_timezone.utc)
-        models.Status.objects.update(set_at = summer, last_seen = winter)
-        models.Advisory.objects.update(first_updated = summer, last_seen = winter)
-        self.differentials[0].time = summer
-
-        result = self.tool_call('get_river_conditions')
-
-        self.assertEqual(result['flags']['isis']['set_at'], '2026-07-01T13:00:00+01:00')
-        self.assertEqual(result['flags']['isis']['last_seen'], '2026-01-01T12:00:00+00:00')
-        self.assertEqual(result['differentials']['isis']['time'], '2026-07-01T13:00:00+01:00')
-        advisory = result['advisories']['isis']
-        self.assertEqual(advisory['first_updated'], '2026-07-01T13:00:00+01:00')
-        self.assertEqual(advisory['last_seen'], '2026-01-01T12:00:00+00:00')
-
-
-    def test__differentials(self):
+    def test__conditions__differentials(self):
         """Describes value, staleness and band for each differential."""
 
         result = self.tool_call('get_river_conditions')
         self.assertTrue(result['differentials_available'])
 
-        by_reach = result['differentials']
-        self.assertEqual(list(by_reach), ['isis', 'godstow', 'radley'])
-        self.assertEqual(by_reach['isis']['value'], 0.12)
-        self.assertEqual(by_reach['isis']['band'], 'High Green')
-        self.assertFalse(by_reach['isis']['out_of_date'])
-        self.assertTrue(by_reach['godstow']['out_of_date'])
-        self.assertEqual(by_reach['godstow']['band'], 'Green/Amber Borderline')
-        self.assertIsNone(by_reach['radley']['band'])
+        self.assertEqual(list(result['differentials']), ['isis', 'godstow', 'radley'])
+        self.assertEqual(result['differentials']['isis']['value'], 0.127)  # Rounded to 3 d.p.
+        self.assertEqual(result['differentials']['isis']['band'], 'High Green')
+        self.assertFalse(result['differentials']['isis']['out_of_date'])
+        self.assertTrue(result['differentials']['godstow']['out_of_date'])
+        self.assertEqual(result['differentials']['godstow']['band'], 'Green/Amber Borderline')
+        self.assertIsNone(result['differentials']['radley']['band'])
     
     
-    def test__differentials_missing(self):
+    def test__conditions__differentials_missing(self):
         """Returns the rest of the data, flagging the differentials as unavailable, if none are
         found (the index view maps an unreachable Jameson database to the same empty list)."""
         
@@ -135,7 +115,7 @@ class Test_MCP(TestCase):
         self.assertEqual(len(result['transits']), 3)
 
 
-    def test__advisories(self):
+    def test__conditions__advisories(self):
         """Describes the current EA board for every reach."""
 
         advisories = self.tool_call('get_river_conditions')['advisories']
@@ -145,32 +125,16 @@ class Test_MCP(TestCase):
             list(advisories),
             [reach.tag for reach in models.Reach.objects.all()],
         )
-        for advisory in advisories.values():
+
+        reach_map = {reach.tag: reach for reach in models.Reach.objects.all()}
+        for reach, advisory in advisories.items():
             self.assertEqual(advisory['board'], {'code': 'NONE', 'label': 'No advisory'})
             self.assertFalse(advisory['out_of_date'])
+            self.assertEqual(advisory['upstream_lock'], reach_map[reach].upstream_lock)
+            self.assertEqual(advisory['downstream_lock'], reach_map[reach].downstream_lock)
 
 
-    def test__advisories__locks(self):
-        """Names the locks bounding each advisory's stretch of river."""
-
-        advisories = self.tool_call('get_river_conditions')['advisories']
-
-        self.assertEqual(advisories['isis']['upstream_lock'], 'Osney')
-        self.assertEqual(advisories['isis']['downstream_lock'], 'Iffley')
-        self.assertEqual(advisories['godstow']['upstream_lock'], 'Godstow')
-        self.assertEqual(advisories['godstow']['downstream_lock'], 'Osney')
-
-
-    def test__differentials__rounded(self):
-        """Rounds values to the three decimal places shown on the index page."""
-
-        self.differentials[0].differential = -0.04552
-        result = self.tool_call('get_river_conditions')
-
-        self.assertEqual(result['differentials']['isis']['value'], -0.046)
-
-
-    def test__transits(self):
+    def test__conditions__transits(self):
         """Includes the transit information used by the index page."""
 
         transits = self.tool_call('get_river_conditions')['transits']
@@ -182,3 +146,24 @@ class Test_MCP(TestCase):
         for transit in transits:
             self.assertEqual(transit['rowing'], 'PERMITTED')
             self.assertEqual(transit['launches'], 'PERMITTED')
+
+
+    def test__conditions__times_local(self):
+        """Gives every time in London time, with the offset in force at that time."""
+
+        summer = datetime(2026, 7, 1, 12, tzinfo = dt_timezone.utc)
+        winter = datetime(2026, 1, 1, 12, tzinfo = dt_timezone.utc)
+        models.Status.objects.update(set_at = summer, last_seen = winter)
+        models.Advisory.objects.update(first_updated = summer, last_seen = winter)
+        self.differentials[0].time = summer
+
+        result = self.tool_call('get_river_conditions')
+
+        self.assertEqual(result['flags']['isis']['set_at'], '2026-07-01T13:00:00+01:00')
+        self.assertEqual(result['flags']['isis']['last_seen'], '2026-01-01T12:00:00+00:00')
+        self.assertEqual(result['differentials']['isis']['time'], '2026-07-01T13:00:00+01:00')
+        self.assertEqual(result['advisories']['isis']['last_seen'], '2026-01-01T12:00:00+00:00')
+        self.assertEqual(
+            result['advisories']['isis']['first_updated'],
+            '2026-07-01T13:00:00+01:00',
+        )

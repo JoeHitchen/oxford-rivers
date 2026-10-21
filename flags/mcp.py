@@ -44,7 +44,7 @@ class OxfordRiversMCP(MCPToolset):
                 for differential in context['differentials']
             },
             'advisories': {
-                reach.tag: self._serialise_advisory(reach)
+                reach.tag: self._serialise_ea_advisory(reach)
                 for reach in context['all_reaches']
             },
             'transits': context['transits'],
@@ -77,7 +77,7 @@ class OxfordRiversMCP(MCPToolset):
 
 
     @staticmethod
-    def _serialise_advisory(reach):
+    def _serialise_ea_advisory(reach):
         return {
             'upstream_lock': reach.upstream_lock,
             'downstream_lock': reach.downstream_lock,
