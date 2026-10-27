@@ -5,6 +5,7 @@ from unittest.mock import patch
 from django.test import TestCase
 from django.utils import timezone
 
+from discharges import models as discharges
 from jameson.models import Differential
 
 from .. import models
@@ -72,6 +73,7 @@ class Test_MCP(TestCase):
         )
         names = [tool['name'] for tool in response.json()['result']['tools']]
         self.assertIn('get_river_conditions', names)
+        self.assertIn('get_recent_sewage_discharges', names)
 
 
     def test__conditions__flags(self):
@@ -166,4 +168,121 @@ class Test_MCP(TestCase):
         self.assertEqual(
             result['advisories']['isis']['first_updated'],
             '2026-07-01T13:00:00+01:00',
+        )
+
+
+    def make_discharges(self):
+        """An active event, a recently ended one and one too old to be reported."""
+
+        right_now = timezone.now()
+        thames = discharges.Station.objects.create(
+            permit_number = 'TEST.0001',
+            name = 'Thames Test',
+            watercourse = 'Test Brook',
+            river = discharges.Station.Rivers.THAMES,
+            last_reading_at = right_now - timedelta(minutes = 10),
+        )
+        cherwell = discharges.Station.objects.create(
+            permit_number = 'TEST.0002',
+            name = 'Cherwell Test',
+            watercourse = 'Cherwell Brook',
+            river = discharges.Station.Rivers.CHERWELL,
+            last_reading_at = right_now - timedelta(minutes = 10),
+        )
+        thames.events.create(start_at = right_now - timedelta(hours = 3))
+        cherwell.events.create(
+            start_at = right_now - timedelta(hours = 9),
+            end_at = right_now - timedelta(hours = 5),
+            end_seen = right_now - timedelta(hours = 4, minutes = 50),
+        )
+        cherwell.events.create(
+            start_at = right_now - timedelta(days = 5),
+            end_at = right_now - timedelta(days = 4),
+            end_seen = right_now - timedelta(days = 4),
+        )
+
+
+    def test__conditions__discharges(self):
+        """Counts the active and recent discharges, leaving the detail to the other tool."""
+
+        self.make_discharges()
+
+        result = self.tool_call('get_river_conditions')
+
+        self.assertEqual(result['discharges'], {
+            'active': 1,
+            'recent': 1,
+            'out_of_date': False,
+            'details_tool': 'get_recent_sewage_discharges',
+        })
+        self.assertIn('get_recent_sewage_discharges', result['discharges']['details_tool'])
+
+
+    def test__conditions__discharges_none(self):
+        """Reports zero discharges, flagged out of date if there have been no readings."""
+
+        result = self.tool_call('get_river_conditions')
+
+        self.assertEqual(result['discharges']['active'], 0)
+        self.assertEqual(result['discharges']['recent'], 0)
+        self.assertTrue(result['discharges']['out_of_date'])
+
+
+    def test__discharges__details(self):
+        """Describes active and recent discharges separately, omitting those that are older."""
+
+        self.make_discharges()
+
+        result = self.tool_call('get_recent_sewage_discharges')
+
+        self.assertFalse(result['out_of_date'])
+        self.assertEqual(result['window_hours'], 48)
+        self.assertEqual(len(result['active']), 1)
+        self.assertEqual(len(result['recent']), 1)
+
+        active = result['active'][0]
+        self.assertEqual(active['station'], 'Thames Test')
+        self.assertEqual(active['river'], 'thames')
+        self.assertEqual(active['watercourse'], 'Test Brook')
+        self.assertNotIn('end_at', active)
+        station = discharges.Station.objects.get(permit_number = 'TEST.0001')
+        self.assertEqual(
+            active['latest_update_seen'],
+            timezone.localtime(station.last_reading_at).isoformat(),
+        )
+
+        recent = result['recent'][0]
+        self.assertEqual(recent['station'], 'Cherwell Test')
+        self.assertEqual(recent['river'], 'cherwell')
+        self.assertIn('end_at', recent)
+        self.assertLess(recent['end_at'], recent['latest_update_seen'])
+        for event in (active, recent):
+            self.assertRegex(event['start_at'], r'^\d{4}-\d\d-\d\dT[\d:.]+\+0[01]:00$')
+
+
+    def test__discharges__details_none(self):
+        """Returns empty lists, flagged out of date, when there is no data."""
+
+        result = self.tool_call('get_recent_sewage_discharges')
+
+        self.assertEqual(result['active'], [])
+        self.assertEqual(result['recent'], [])
+        self.assertTrue(result['out_of_date'])
+
+
+    def test__discharges__consistent_with_index(self):
+        """Draws on the same events as the index page."""
+
+        self.make_discharges()
+
+        with patch(
+            'flags.views.jameson.Differential.latest_by_reach',
+            return_value = [],
+        ):
+            index_events = self.client.get('/').context['discharge_events']
+        result = self.tool_call('get_recent_sewage_discharges')
+
+        self.assertEqual(
+            len(index_events),
+            len(result['active']) + len(result['recent']),
         )

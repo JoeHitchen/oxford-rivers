@@ -3,6 +3,8 @@ from typing import Any
 from mcp_server import MCPToolset
 from django.utils import timezone
 
+from discharges import models as discharges
+
 from . import views
 
 
@@ -29,6 +31,12 @@ class OxfordRiversMCP(MCPToolset):
         Flags, differentials and advisories are each keyed by reach (e.g. `isis`, `godstow`).
         All times are Europe/London. Entries marked out_of_date have not been refreshed recently
         and should not be relied on.
+
+        `discharges` counts the sewage discharges reported by Thames Water's monitors upstream of
+        Oxford (on the Thames, Cherwell and Seacourt Stream): those `active` now and those that
+        have ended within the last 48 hours (`recent`). These are only reports from monitors, so
+        zero is NOT evidence that the river is safe. Call get_recent_sewage_discharges for the
+        details.
         """
 
         context = views.Index(request = self.request).get_context_data()
@@ -48,6 +56,39 @@ class OxfordRiversMCP(MCPToolset):
                 for reach in context['all_reaches']
             },
             'transits': context['transits'],
+            'discharges': self._summarise_discharges(
+                context['discharge_events'],
+                context['discharges_out_of_date'],
+            ),
+        }
+
+
+    def get_recent_sewage_discharges(self) -> dict[str, Any]:
+        """Retrieve the sewage discharges reported by Thames Water's storm discharge monitors
+        upstream of Oxford, on the Thames, the Cherwell and the Seacourt Stream.
+
+        `active` discharges are ongoing, and `recent` discharges have ended within the last
+        `window_hours`. Each gives the `river` (thames, cherwell or seacourt), the monitor's
+        station and `watercourse`, and when the discharge started (`start_at`) and was first seen
+        by us (`start_seen`). `latest_update_seen` is when our latest information on the discharge
+        is from: the last time it was seen discharging for active events (so it can be out of
+        date if the monitor has gone offline), or when the end was seen for recent events.
+
+        These are only reports from monitors, which are sometimes offline or inaccurate, so empty
+        lists are NOT evidence that the river is safe. `out_of_date` is true if we have not had a
+        reading from Thames Water recently, in which case nothing here should be relied on.
+        All times are Europe/London.
+        """
+
+        events = list(discharges.DischargeEvent.objects.recent_listing())
+
+        return {
+            'out_of_date': discharges.Station.readings_out_of_date(),
+            'window_hours': int(discharges.RECENT_WINDOW.total_seconds() // 3600),
+            'active': [self._serialise_discharge(event) for event in events if event.is_active],
+            'recent': [
+                self._serialise_discharge(event) for event in events if not event.is_active
+            ],
         }
 
 
@@ -90,3 +131,30 @@ class OxfordRiversMCP(MCPToolset):
             'last_seen': local_isoformat(reach.current_advisory.last_seen),
             'out_of_date': reach.current_advisory.out_of_date,
         }
+
+
+    @staticmethod
+    def _summarise_discharges(events, out_of_date):
+        return {
+            'active': sum(event.is_active for event in events),
+            'recent': sum(not event.is_active for event in events),
+            'out_of_date': out_of_date,
+            'details_tool': 'get_recent_sewage_discharges',
+        }
+
+
+    @staticmethod
+    def _serialise_discharge(event):
+        serialised = {
+            'station': event.station.name,
+            'river': event.station.river,
+            'watercourse': event.station.watercourse,
+            'start_at': local_isoformat(event.start_at),
+            'start_seen': local_isoformat(event.start_seen),
+        }
+        if event.end_at:
+            serialised['end_at'] = local_isoformat(event.end_at)
+        serialised['latest_update_seen'] = (
+            event.latest_update_seen and local_isoformat(event.latest_update_seen)
+        )
+        return serialised

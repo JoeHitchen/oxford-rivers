@@ -47,9 +47,7 @@ class Index(FlagNavMixin, TemplateView):
             logger.exception('Unable to retrieve differentials from the Jameson database')
             context['differentials'] = []
 
-        context['discharge_events'] = (
-            discharges.DischargeEvent.objects.recent().select_related('station').active_first()
-        )
+        context['discharge_events'] = discharges.DischargeEvent.objects.recent_listing()
         context['discharges_out_of_date'] = discharges.Station.readings_out_of_date()
 
         return context
