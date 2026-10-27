@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from django.db import models
 from django.utils import timezone
+from django.utils.functional import cached_property
 
 RECENT_WINDOW = timedelta(hours = 48)
 OUT_OF_DATE_AFTER = timedelta(hours = 2)
@@ -32,6 +33,36 @@ class Station(models.Model):
         return self.name
 
 
+    @cached_property
+    def open_event(self):
+        """The event for the discharge that is currently in progress, if any."""
+        return self.events.active().first()
+    
+    
+    def record_discharging(self, status_changed):
+        """Updates the records to reflect the monitor reporting an ongoing discharge."""
+        
+        if not self.open_event:
+            self.events.create(start_at = status_changed)
+        
+        self.last_reading_at = timezone.now()
+        self.save(update_fields = ['last_reading_at'])
+        self.__dict__.pop('open_event', None)
+    
+    
+    def record_not_discharging(self, status_changed):
+        """Updates the records to reflect the monitor reporting no discharge."""
+        
+        if self.open_event:
+            self.open_event.end_at = max(status_changed, self.open_event.start_at)
+            self.open_event.end_seen = timezone.now()
+            self.open_event.save()
+        
+        self.last_reading_at = timezone.now()
+        self.save(update_fields = ['last_reading_at'])
+        self.__dict__.pop('open_event', None)
+    
+    
     @classmethod
     def readings_out_of_date(cls):
         """Whether no monitor has given a real reading recently.
