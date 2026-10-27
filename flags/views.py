@@ -7,6 +7,7 @@ from django.views.generic.detail import DetailView
 from django.http import JsonResponse
 from django.utils import timezone
 
+from discharges import models as discharges
 from jameson import models as jameson
 
 from . import models, transits, analysis
@@ -45,7 +46,12 @@ class Index(FlagNavMixin, TemplateView):
         except DatabaseError:
             logger.exception('Unable to retrieve differentials from the Jameson database')
             context['differentials'] = []
-        
+
+        context['discharge_events'] = (
+            discharges.DischargeEvent.objects.recent().select_related('station').active_first()
+        )
+        context['discharges_out_of_date'] = discharges.Station.readings_out_of_date()
+
         return context
 
 

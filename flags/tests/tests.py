@@ -575,9 +575,11 @@ class Test_Views(TestCase):
             (1) PREFETCH advisories
             (1) SELECT reaches with an OURCs flag
             (1) PREFETCH flag statuses for reaches with an OURCs flag
+            (1) SELECT newest discharge monitor reading
+            (1) SELECT recent discharge events, with their stations
         """
-        
-        with self.assertNumQueries(4):
+
+        with self.assertNumQueries(6):
             self.client.get(reverse('flags:index'))
     
     

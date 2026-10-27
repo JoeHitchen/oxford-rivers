@@ -87,6 +87,10 @@ class DischargeEventQuerySet(models.QuerySet):
             | models.Q(end_at__gte = timezone.now() - RECENT_WINDOW),
         )
 
+    def active_first(self):
+        """Orders active events before ended ones, then newest first."""
+        return self.order_by(models.F('end_at').asc(nulls_first = True), '-start_at')
+
 
 class DischargeEvent(models.Model):
     """A period of discharge at a station.

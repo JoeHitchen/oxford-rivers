@@ -1,0 +1,30 @@
+<div class="table-responsive">
+  <table class="table table-sm">
+    <thead>
+      <tr>
+        <th>Station</th>
+        <th>River</th>
+        <th>Started</th>{% if show_start_seen %}
+        <th>Start first seen</th>{% endif %}
+        <th>Ended</th>
+        <th>Last updated</th>
+      </tr>
+    </thead>
+    <tbody>{% for event in events %}
+      <tr class="{% if event.is_active %}table-danger{% else %}text-muted{% endif %}">
+        <td>
+          <a href="{% url 'discharges:history' %}?station={{ event.station.permit_number }}" class="{% if event.is_active %}text-danger{% else %}text-muted{% endif %}">{{ event.station.name }}</a>
+          <br/><small>{{ event.station.watercourse }}</small>
+        </td>
+        <td>{{ event.station.get_river_display }}</td>
+        <td>{{ event.start_at|date:"d/m/Y H:i" }}</td>{% if show_start_seen %}
+        <td>{{ event.start_seen|date:"d/m/Y H:i" }}</td>{% endif %}
+        <td>{% if event.is_active %}<strong>Active</strong>{% else %}{{ event.end_at|date:"d/m/Y H:i" }}{% endif %}</td>
+        <td>{{ event.latest_update_seen|date:"d/m/Y H:i"|default:"-" }}</td>
+      </tr>{% empty %}
+      <tr>
+        <td colspan="{% if show_start_seen %}6{% else %}5{% endif %}" class="text-center">{{ empty_message }}</td>
+      </tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
