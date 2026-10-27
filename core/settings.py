@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     'mcp_server',
     'flags',
     'jameson',
+    'discharges',
     'automation',
 ]
 

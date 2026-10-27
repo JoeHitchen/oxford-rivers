@@ -1,0 +1,872 @@
+[
+  {
+    "model": "discharges.station",
+    "pk": 1,
+    "fields": {
+      "permit_number": "CATM.3134",
+      "name": "Witney",
+      "watercourse": "Curbridge Ditch",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 2,
+    "fields": {
+      "permit_number": "CATM.3189",
+      "name": "Lower Cherwell St, Banbury",
+      "watercourse": "River Cherwell",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 3,
+    "fields": {
+      "permit_number": "CATM.3518",
+      "name": "Fairford",
+      "watercourse": "River Coln",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 4,
+    "fields": {
+      "permit_number": "CATM.3520",
+      "name": "Kempsford",
+      "watercourse": "Dudgrove Stream",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 5,
+    "fields": {
+      "permit_number": "CATM.3521",
+      "name": "Carterton",
+      "watercourse": "Shill Brook",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 6,
+    "fields": {
+      "permit_number": "CAWM.0083",
+      "name": "Middleton Cheney",
+      "watercourse": "Washle Brook",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 7,
+    "fields": {
+      "permit_number": "CAWM.0638",
+      "name": "Tackley",
+      "watercourse": "Tributary of River Cherwell",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 8,
+    "fields": {
+      "permit_number": "CAWM.1403",
+      "name": "Beckley",
+      "watercourse": "Otmoor Lane Ditch",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 9,
+    "fields": {
+      "permit_number": "CNTD.0001",
+      "name": "Andoversford",
+      "watercourse": "River Coln",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 10,
+    "fields": {
+      "permit_number": "CNTD.0010",
+      "name": "Moreton Pinkney",
+      "watercourse": "Ashby Brook",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 11,
+    "fields": {
+      "permit_number": "CNTD.0012",
+      "name": "Northleach",
+      "watercourse": "River Leach",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 12,
+    "fields": {
+      "permit_number": "CNTD.0016",
+      "name": "South Leigh",
+      "watercourse": "Limb Brook",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 13,
+    "fields": {
+      "permit_number": "CNTD.0017",
+      "name": "Swindon (Rodbourne)",
+      "watercourse": "River Ray",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 14,
+    "fields": {
+      "permit_number": "CNTD.0021",
+      "name": "Banbury",
+      "watercourse": "River Cherwell",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 15,
+    "fields": {
+      "permit_number": "CNTD.0023",
+      "name": "Bicester",
+      "watercourse": "Langford Brook",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 16,
+    "fields": {
+      "permit_number": "CNTD.0040",
+      "name": "Aston Le Walls",
+      "watercourse": "Tributary of Highfurlong Brook",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 17,
+    "fields": {
+      "permit_number": "CNTD.0051",
+      "name": "Purton",
+      "watercourse": "Tributary of River Key",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 18,
+    "fields": {
+      "permit_number": "CNTD.0064",
+      "name": "Chadlington",
+      "watercourse": "Chadlington Stream",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 19,
+    "fields": {
+      "permit_number": "CNTD.0075",
+      "name": "Highworth",
+      "watercourse": "Westrop Brook",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 20,
+    "fields": {
+      "permit_number": "CNTM.0214",
+      "name": "Bucknell",
+      "watercourse": "Town Brook",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 21,
+    "fields": {
+      "permit_number": "CNTW.0472",
+      "name": "Banbury Rd Middleton Cheney",
+      "watercourse": "Middleton Brook",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 22,
+    "fields": {
+      "permit_number": "CSAC.0876",
+      "name": "Stanton Fitzwarren STW",
+      "watercourse": "Groundwater",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 23,
+    "fields": {
+      "permit_number": "CSSC.1001",
+      "name": "Clanfield",
+      "watercourse": "Marsh Lane West Ditch",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 24,
+    "fields": {
+      "permit_number": "CSSC.1006",
+      "name": "Avon Dassett",
+      "watercourse": "Hanwell Brook",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 25,
+    "fields": {
+      "permit_number": "CSSC.1091",
+      "name": "Combe",
+      "watercourse": "River Evenlode",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 26,
+    "fields": {
+      "permit_number": "CSSC.1369",
+      "name": "Farnborough (Warks)",
+      "watercourse": "Tributary of Hanwell Brook",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 27,
+    "fields": {
+      "permit_number": "CSSC.1370",
+      "name": "Eydon",
+      "watercourse": "Ashby Brook",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 28,
+    "fields": {
+      "permit_number": "CSSC.1383",
+      "name": "Hornton",
+      "watercourse": "Hornton Stream",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 29,
+    "fields": {
+      "permit_number": "CSSC.1406",
+      "name": "Ludgershall",
+      "watercourse": "Ludgershall Brook",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 30,
+    "fields": {
+      "permit_number": "CSSC.1425",
+      "name": "Sevenhampton Village",
+      "watercourse": "Tributary of River Cole",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 31,
+    "fields": {
+      "permit_number": "CSSC.1434",
+      "name": "Shutford",
+      "watercourse": "Shutford Stream",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 32,
+    "fields": {
+      "permit_number": "CSSC.1439",
+      "name": "Stanton Harcourt",
+      "watercourse": "Harcourt Brook",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 33,
+    "fields": {
+      "permit_number": "CSSC.1451",
+      "name": "Warmington",
+      "watercourse": "Hanwell Brook",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 34,
+    "fields": {
+      "permit_number": "CSSC.2321",
+      "name": "Woodstock",
+      "watercourse": "River Glyme",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 35,
+    "fields": {
+      "permit_number": "CSSC.2339",
+      "name": "Kings Sutton",
+      "watercourse": "Kings Sutton Stream",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 36,
+    "fields": {
+      "permit_number": "CSSC.2343",
+      "name": "Faringdon",
+      "watercourse": "Faringdon Stream",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 37,
+    "fields": {
+      "permit_number": "CSSC.2347",
+      "name": "Finstock",
+      "watercourse": "River Evenlode",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 38,
+    "fields": {
+      "permit_number": "CSSC.2452",
+      "name": "Ampney St Peter",
+      "watercourse": "Ampney Brook",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 39,
+    "fields": {
+      "permit_number": "CSSC.2458",
+      "name": "Bloxham",
+      "watercourse": "Bloxham Brook",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 40,
+    "fields": {
+      "permit_number": "CSSC.2470",
+      "name": "Cricklade",
+      "watercourse": "Tributary of River Thames",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 41,
+    "fields": {
+      "permit_number": "CSSC.5783",
+      "name": "Church Hanborough",
+      "watercourse": "Hanborough Stream",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 42,
+    "fields": {
+      "permit_number": "CSSC.7686",
+      "name": "Greatworth",
+      "watercourse": "Tributary of Farthinghoe Stream",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 43,
+    "fields": {
+      "permit_number": "CTCP.0026",
+      "name": "Burford",
+      "watercourse": "River Windrush",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 44,
+    "fields": {
+      "permit_number": "CTCR.1313",
+      "name": "Islip",
+      "watercourse": "River Ray",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 45,
+    "fields": {
+      "permit_number": "CTCR.1722",
+      "name": "Bletchingdon",
+      "watercourse": "Bletchingdon Stream",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 46,
+    "fields": {
+      "permit_number": "CTCR.1750",
+      "name": "Cirencester",
+      "watercourse": "Shorncote Ditch",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 47,
+    "fields": {
+      "permit_number": "CTCR.1766",
+      "name": "Chacombe",
+      "watercourse": "Chacombe Brook",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 48,
+    "fields": {
+      "permit_number": "CTCR.1776",
+      "name": "Byfield",
+      "watercourse": "Byfield Brook",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 49,
+    "fields": {
+      "permit_number": "CTCR.1793",
+      "name": "Chipping Warden",
+      "watercourse": "Tributary of River Cherwell",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 50,
+    "fields": {
+      "permit_number": "CTCR.1796",
+      "name": "Hook Norton",
+      "watercourse": "Hook Norton Brook",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 51,
+    "fields": {
+      "permit_number": "CTCR.1797",
+      "name": "Lechlade",
+      "watercourse": "River Leach",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 52,
+    "fields": {
+      "permit_number": "CTCR.1833",
+      "name": "Wardington",
+      "watercourse": "Tributary of River Cherwell",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 53,
+    "fields": {
+      "permit_number": "CTCR.1850",
+      "name": "Middle Barton",
+      "watercourse": "River Dorn",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 54,
+    "fields": {
+      "permit_number": "CTCR.1851",
+      "name": "Cropredy",
+      "watercourse": "River Cherwell",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 55,
+    "fields": {
+      "permit_number": "CTCR.1853",
+      "name": "Woodford Halse",
+      "watercourse": "River Cherwell",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 56,
+    "fields": {
+      "permit_number": "CTCR.1981",
+      "name": "Kingham",
+      "watercourse": "Cornwell Brook",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 57,
+    "fields": {
+      "permit_number": "CTCR.2036",
+      "name": "Bourton-On-The-Water",
+      "watercourse": "Groundwater",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 58,
+    "fields": {
+      "permit_number": "EPRFB3198RS",
+      "name": "Hattchets Cricklade",
+      "watercourse": "Tributary of River Thames",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 59,
+    "fields": {
+      "permit_number": "RET/TH/24",
+      "name": "Highworth Eastrop",
+      "watercourse": "Groundwater",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 60,
+    "fields": {
+      "permit_number": "TEMP.0707",
+      "name": "Clifton",
+      "watercourse": "Clifton Brook",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 61,
+    "fields": {
+      "permit_number": "TEMP.1250",
+      "name": "Kilda Road",
+      "watercourse": "Westrop Brook",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 62,
+    "fields": {
+      "permit_number": "TEMP.2220",
+      "name": "Weston-On-The-Green",
+      "watercourse": "Gallos Brook",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 63,
+    "fields": {
+      "permit_number": "TEMP.2373",
+      "name": "Bampton",
+      "watercourse": "Shill Brook",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 64,
+    "fields": {
+      "permit_number": "TEMP.2395",
+      "name": "Bledington",
+      "watercourse": "Bledington Brook",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 65,
+    "fields": {
+      "permit_number": "TEMP.2400",
+      "name": "Blunsdon",
+      "watercourse": "Tributary of Share Ditch",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 66,
+    "fields": {
+      "permit_number": "TEMP.2457",
+      "name": "Cassington",
+      "watercourse": "River Thames",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 67,
+    "fields": {
+      "permit_number": "TEMP.2466",
+      "name": "Charlbury",
+      "watercourse": "River Evenlode",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 68,
+    "fields": {
+      "permit_number": "TEMP.2467",
+      "name": "Charlton-On-Otmoor",
+      "watercourse": "River Ray",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 69,
+    "fields": {
+      "permit_number": "TEMP.2512",
+      "name": "Culworth",
+      "watercourse": "Tributary of Culworth Brook",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 70,
+    "fields": {
+      "permit_number": "TEMP.2606",
+      "name": "Fergusson Road, Banbury",
+      "watercourse": "Tributary of River Cherwell",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 71,
+    "fields": {
+      "permit_number": "TEMP.2626",
+      "name": "Grendon Underwood",
+      "watercourse": "River Ray",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 72,
+    "fields": {
+      "permit_number": "TEMP.2648",
+      "name": "Hanwell",
+      "watercourse": "Hanwell Brook",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 73,
+    "fields": {
+      "permit_number": "TEMP.2658",
+      "name": "Heyford",
+      "watercourse": "River Cherwell",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 74,
+    "fields": {
+      "permit_number": "TEMP.2667",
+      "name": "Horley (Oxon)",
+      "watercourse": "Sor Brook",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 75,
+    "fields": {
+      "permit_number": "TEMP.2675",
+      "name": "Hannington",
+      "watercourse": "Bydemill Ditch",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 76,
+    "fields": {
+      "permit_number": "TEMP.2765",
+      "name": "Marsh Gibbon",
+      "watercourse": "Summerstown Ditch",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 77,
+    "fields": {
+      "permit_number": "TEMP.2773",
+      "name": "Middleton Stoney",
+      "watercourse": "Gagle Brook",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 78,
+    "fields": {
+      "permit_number": "TEMP.2776",
+      "name": "Milton-Under-Wychwood",
+      "watercourse": "Littlestock Brook",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 79,
+    "fields": {
+      "permit_number": "TEMP.2851",
+      "name": "Ratley",
+      "watercourse": "Tributary of Sor Brook",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 80,
+    "fields": {
+      "permit_number": "TEMP.2892",
+      "name": "Shotteswell",
+      "watercourse": "Hanwell Brook",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 81,
+    "fields": {
+      "permit_number": "TEMP.2893",
+      "name": "Shrivenham",
+      "watercourse": "Tuckmill Brook",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 82,
+    "fields": {
+      "permit_number": "TEMP.2906",
+      "name": "Standlake",
+      "watercourse": "River Windrush",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 83,
+    "fields": {
+      "permit_number": "TEMP.2973",
+      "name": "The Willows, North Hinksey Lane",
+      "watercourse": "Seacourt Stream",
+      "river": "seacourt"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 84,
+    "fields": {
+      "permit_number": "TEMP.3002",
+      "name": "Weston-On-The-Green STW",
+      "watercourse": "Gallos Brook",
+      "river": "cherwell"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 85,
+    "fields": {
+      "permit_number": "TEMP.3035",
+      "name": "West Way, Botley (Syphon)",
+      "watercourse": "Seacourt Stream",
+      "river": "seacourt"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 86,
+    "fields": {
+      "permit_number": "UCSO.0357",
+      "name": "Faringdon House CSO",
+      "watercourse": "River Thames",
+      "river": "thames"
+    }
+  },
+  {
+    "model": "discharges.station",
+    "pk": 87,
+    "fields": {
+      "permit_number": "UCSO.0366",
+      "name": "Marston St Lawrence",
+      "watercourse": "Tributary of Farthinghoe Stream",
+      "river": "cherwell"
+    }
+  }
+]
