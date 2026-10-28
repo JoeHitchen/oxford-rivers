@@ -1,0 +1,44 @@
+{% extends 'flags/base.html' %}
+
+{% block title %}Oxford Rivers - Sewage Discharges{% endblock %}
+
+{% block page_body %}
+    <div class="row">
+      <div class="col">
+        <h1>Sewage Discharges{% if station %} - {{ station.name }}{% endif %}</h1>
+        <p>
+          Every discharge we have recorded from Thames Water's storm discharge monitors upstream of Oxford, on the Thames, the Cherwell and the Seacourt Stream, newest first.
+          {% if station %}<a href="{% url 'discharges:history' %}">Show all stations</a>.{% endif %}
+        </p>
+        <p class="text-muted">
+          A discharge being shown means a monitor has reported one, not that it is confirmed.
+          The absence of a discharge does not mean the river is safe.
+          Times are those reported by Thames Water; "Last updated" is when we last heard about the discharge from the monitor.
+        </p>
+      </div>
+    </div>
+
+    {% if readings_out_of_date %}<div class="row"><div class="col"><div class="alert alert-danger" role="alert">
+      We have not been able to retrieve readings from Thames Water in over two hours.
+    </div></div></div>{% endif %}
+
+    <div class="row">
+      <div class="col">
+        {% include 'discharges/event_table.html' with events=page_obj show_start_seen=True empty_message="No discharges have been recorded." %}
+      </div>
+    </div>
+
+    {% if is_paginated %}<div class="row">
+      <div class="col">
+        <nav>
+          <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}<li class="page-item"><a class="page-link" href="?{% if station %}station={{ station.permit_number }}&{% endif %}page={{ page_obj.previous_page_number }}">Newer</a></li>{% endif %}
+            <li class="page-item disabled"><span class="page-link">Page {{ page_obj.number }} of {{ paginator.num_pages }}</span></li>
+            {% if page_obj.has_next %}<li class="page-item"><a class="page-link" href="?{% if station %}station={{ station.permit_number }}&{% endif %}page={{ page_obj.next_page_number }}">Older</a></li>{% endif %}
+          </ul>
+        </nav>
+      </div>
+    </div>{% endif %}
+
+    <p class="text-muted"><small>Discharge data from <a href="https://data.thameswater.co.uk/" target="_blank">Thames Water Open Data</a>.</small></p>
+{% endblock %}

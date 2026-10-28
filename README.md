@@ -33,19 +33,25 @@ Typing with MyPy may also be added in future (see the out-dated `trials/typing` 
 A database can be created and populated with the following set of commands:
 
     python manage.py migrate
-    python manage.py loaddata flags
+    python manage.py loaddata flags stations
     python manage.py scrape_ea_boards
     python manage.py scrape_ourcs_flag_history
     python manage.py fetch_ourcs_flags
+    python manage.py fetch_thames_water_discharges
 
 Unless configured otherwise in `core/settings.py:DATABASES`, an SQLite database called `database.sqlite3` will be created in the project root.
-The latter three commands here are custom data collection commands provided by the project.
+The latter four commands here are custom data collection commands provided by the project.
 
   * `scrape_ea_boards` retrieves the current EA boards from [their status page](http://riverconditions.environment-agency.gov.uk/).
   * `scrape_ourcs_flag_history` retrieves the history of the OURCs flag from [their flag information](https://ourcs.co.uk/information/flags/isis/) [pages](https://ourcs.co.uk/information/flags/godstow/).
   * `fetch_ourcs_flag` retrieves the current OURCs flag statuses from [their API](https://ourcs.co.uk/api/flags/status/isis/) [endpoints](https://ourcs.co.uk/api/flags/status/godstow/).
+  * `fetch_thames_water_discharges` retrieves the current status of Thames Water's storm discharge monitors from [their open data API](https://docs.api.thameswater.co.uk/s/communityasset/a08Pz00000PCH8OIAX/apiexpopendatarest?groupId=d2e00707-fa02-453b-af2a-ff387546960e&assetId=api-exp-opendata-rest&minorVersion=2.0).
+    Only the monitors loaded from the `stations` fixture (those upstream of Oxford on the Thames, Cherwell and Seacourt Stream) are recorded, and the API needs no credentials.
+    A discharge event is recorded for each period a monitor reports `Discharging`, starting and ending at the times Thames Water gives, alongside when this project first saw each.
+    Offline monitors are ignored, so the absence of an event is not evidence that the river is safe.
+    The API's timestamps carry no time zone, and are assumed to be Europe/London local time.
 
-`scrape_ea_boards` and `fetch_ourcs_flag` should be run regularly to keep the data displayed up-to-date, but `scrape_ourcs_flag_history` only needs to be run once (and should be impotent thereafter).
+`scrape_ea_boards`, `fetch_ourcs_flag` and `fetch_thames_water_discharges` should be run regularly to keep the data displayed up-to-date, but `scrape_ourcs_flag_history` only needs to be run once (and should be impotent thereafter).
 
 Finally, the development server can be run on port 8000 with:
 
@@ -62,9 +68,11 @@ The site also acts as an [MCP](https://modelcontextprotocol.io/) server at `/mcp
 It is served by the same container as the rest of the site, is read-only, and (like the index page) needs no authentication.
 To use it, add `https://<live-domain>/mcp` as a remote custom connector in your preferred AI tool.
 
-It provides a single tool, `get_river_conditions`, which takes no arguments and returns the current OURCs flags, Jameson differentials (with indicative bands, where defined), EA advisory boards and whether transit are permitted.
+It provides two tools. `get_river_conditions` takes no arguments and returns the current OURCs flags, Jameson differentials (with indicative bands, where defined), EA advisory boards, whether transit are permitted, and the _number_ of active and recent (ended within 48 hours) sewage discharges.
 The flags, differentials and advisories are each keyed by reach (e.g. `isis`, `godstow`), and each advisory names the locks bounding its stretch of river.
 These are built from the same data and model properties as the index page (`flags.views.Index`), so the two cannot drift apart.
+`get_recent_sewage_discharges` returns the details of those discharges - the station, river, watercourse, and when each started, was first seen and was last updated - which the index page also lists (with the full history on `/discharges/`).
+Both flag `out_of_date` if no Thames Water monitor has given a reading for over two hours, and a lack of discharges should never be treated as evidence that the river is safe.
 Every call reads the database afresh, so nothing is cached.
 If no differentials are available, `differentials_available` is `false` and the `differentials` object is empty, and clients should treat that as missing data rather than "nothing to report".
 
@@ -76,7 +84,7 @@ Agents testing their own changes should run a server on a spare port instead (e.
 
 The differentials come from the unmanaged `jameson.Differential` model, which reads a `flag` table (`time`, `reach`, and `flow` columns) from the `jameson` database.
 Without access to Jameson's database, the table must be created by hand with some sample rows; otherwise the differentials will be reported as unavailable.
-The tool's tests (`flags/tests/test_mcp.py`) make real JSON-RPC calls to `/mcp` and mock the Jameson lookup.
+The tools' tests (`flags/tests/test_mcp.py`) make real JSON-RPC calls to `/mcp` and mock the Jameson lookup.
 
 
 ## Running in production
@@ -105,5 +113,5 @@ Once configured, the Celery services can be run with the commands:
     Worker: celery --app=core worker --log-level=info
     Scheduler: celery --app=core beat --log-level=info
 
-The scheduler will trigger an OURCs flag retrieval jobs every two minutes and an EA board scraping job every five minutes, which are then executed on the worker.
+The scheduler will trigger an OURCs flag retrieval jobs every two minutes, an EA board scraping job every five minutes, and a Thames Water discharge retrieval job every fifteen minutes, which are then executed on the worker.
 

@@ -122,4 +122,25 @@
       {% endfor %}
     </div>
     <!-- EA Advisories -->
+
+    <!-- Sewage Discharges -->
+    <div class="row">
+      <div class="col">
+        <h2>Sewage Discharges</h2>
+        <p>
+          Discharges reported by <a href="https://data.thameswater.co.uk/" target="_blank">Thames Water's</a> storm discharge monitors upstream of Oxford, on the Thames, the Cherwell and the Seacourt Stream.
+          Active discharges and those that ended in the last 48 hours are shown, and they are checked roughly every fifteen minutes.
+          These are only reports of discharges - the absence of one does not mean the river is safe.
+        </p>
+        {% if discharges_out_of_date %}<div class="alert alert-danger" role="alert">
+          We have not been able to retrieve readings from Thames Water in over two hours.
+        </div>{% endif %}
+        {% include 'discharges/event_table.html' with events=discharge_events empty_message="No discharges recorded at the monitored stations in the last 48 hours." %}
+        <a href="{% url 'discharges:history' %}" class="d-flex justify-content-between text-dark">
+          <div>View all discharges</div>
+          <div><span class="oi oi-chevron-right"></span></div>
+        </a>
+      </div>
+    </div>
+    <!-- Sewage Discharges -->
 {% endblock %}
