@@ -49,7 +49,7 @@ def get_current_differential(autoflag):
         flags.Reach.Common.GODS: jameson.Differential.Reach.GODSTOW,
     }[flags.Reach.Common(autoflag.tag)]
 
-    differentials = jameson.Differential.objects.using('jameson').filter(
+    differentials = jameson.Differential.filter(
         reach = reach,
         time__range = (timezone.now() - DIFFERENTIAL_TIME_WINDOW, timezone.now()),
         differential__range = DIFFERENTIAL_RANGE_WINDOW,
