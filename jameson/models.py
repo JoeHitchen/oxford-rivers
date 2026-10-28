@@ -54,7 +54,7 @@ class Differential(models.Model):
         """The most recent differential for each reach that has one, in reach order."""
         
         latest = (
-            cls.objects.using('jameson').filter(reach = reach).first()
+            cls.objects.filter(reach = reach).first()
             for reach in cls.Reach.values
         )
         return [differential for differential in latest if differential is not None]
