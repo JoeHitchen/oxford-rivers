@@ -53,9 +53,6 @@ class Differential(models.Model):
     def latest_by_reach(cls):
         """The most recent differential for each reach that has one, in reach order."""
         
-        latest = (
-            cls.objects.filter(reach = reach).first()
-            for reach in cls.Reach.values
-        )
+        latest = (cls.objects.filter(reach = reach).first() for reach in cls.Reach.values)
         return [differential for differential in latest if differential is not None]
 

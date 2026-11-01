@@ -19,10 +19,6 @@ class OxfordRiversMCP(MCPToolset):
         differentials (with indicative bands), EA stream advisory boards, and whether rowing and
         launch transits are permitted.
 
-        `differentials_available` is false if no differentials could be retrieved (for example, if
-        the Jameson database is unreachable). The empty `differentials` object then means the data
-        is missing, not that there is nothing to report.
-
         Transit permissions of APPROVAL require a specific approval process - refer the caller to
         the OURCs rules for further details.
 
@@ -38,7 +34,6 @@ class OxfordRiversMCP(MCPToolset):
                 reach.tag: self._serialise_ourcs_flag(reach)
                 for reach in context['flag_reaches']
             },
-            'differentials_available': bool(context['differentials']),
             'differentials': {
                 differential.tag: self._serialise_differential(differential)
                 for differential in context['differentials']

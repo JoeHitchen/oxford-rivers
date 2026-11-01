@@ -90,7 +90,6 @@ class Test_MCP(TestCase):
         """Describes value, staleness and band for each differential."""
 
         result = self.tool_call('get_river_conditions')
-        self.assertTrue(result['differentials_available'])
 
         self.assertEqual(list(result['differentials']), ['isis', 'godstow', 'radley'])
         self.assertEqual(result['differentials']['isis']['value'], 0.127)  # Rounded to 3 d.p.
@@ -101,20 +100,6 @@ class Test_MCP(TestCase):
         self.assertIsNone(result['differentials']['radley']['band'])
     
     
-    def test__conditions__differentials_missing(self):
-        """Returns the rest of the data, flagging the differentials as unavailable, if none are
-        found (the index view maps an unreachable Jameson database to the same empty list)."""
-        
-        self.differentials = []
-        result = self.tool_call('get_river_conditions')
-        
-        self.assertFalse(result['differentials_available'])
-        self.assertEqual(result['differentials'], {})
-        self.assertEqual(len(result['flags']), 2)
-        self.assertEqual(len(result['advisories']), models.Reach.objects.count())
-        self.assertEqual(len(result['transits']), 3)
-
-
     def test__conditions__advisories(self):
         """Describes the current EA board for every reach."""
 

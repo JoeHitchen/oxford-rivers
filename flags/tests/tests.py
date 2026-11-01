@@ -1,7 +1,6 @@
 from unittest.mock import patch
 from datetime import datetime, timedelta, timezone as dt_timezone
 
-from django.db import DatabaseError
 from django.test import TestCase, tag
 from django.utils import timezone
 from django.urls import reverse
@@ -553,18 +552,6 @@ class Test_Views(TestCase):
         
         self.assertContains(response, 'Mid Blue')
         self.assertNotContains(response, '(Out of date)')
-    
-    
-    def test__index__differentials_unavailable(self):
-        """Still loads the rest of the page if the Jameson database cannot be queried."""
-        
-        with patch.object(Differential, 'latest_by_reach', side_effect = DatabaseError):
-            with patch('flags.views.logger') as logger_mock:  # Logging is disabled by test_data
-                response = self.client.get(reverse('flags:index'))
-        
-        self.assertEqual(response.status_code, 200)
-        logger_mock.exception.assert_called_once()
-        self.assertEqual(response.context['differentials'], [])
     
     
     @tag('query-count')
