@@ -14,14 +14,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Differential',
             fields=[
+                ('pk', models.CompositePrimaryKey('time', 'reach', blank=True, editable=False, primary_key=True, serialize=False)),
                 ('reach', models.IntegerField(choices=[(1, 'The Isis'), (2, 'Godstow'), (3, 'Radley'), (4, 'Abingdon'), (5, 'Wallingford')])),
-                ('time', models.DateTimeField(primary_key=True, serialize=False)),
+                ('time', models.DateTimeField()),
                 ('differential', models.FloatField(db_column='flow')),
             ],
             options={
                 'db_table': 'flag',
                 'ordering': ['reach', '-time'],
-                'managed': False,
+                'indexes': [models.Index(fields=['reach'], name='reach_idx')],
             },
         ),
     ]
