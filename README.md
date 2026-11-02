@@ -73,8 +73,6 @@ To try it locally, run the development server on its default port, 8000, and use
 
 Agents testing their own changes should run a server on a spare port instead (e.g. `python manage.py runserver 8765`) and call `/mcp` on it directly, to avoid clashing with a development server already running on port 8000.
 
-The differentials come from the unmanaged `jameson.Differential` model, which reads a `flag` table (`time`, `reach`, and `flow` columns).
-Without access to the existing data, the table must be created by hand with some sample rows.
 The tool's tests (`flags/tests/test_mcp.py`) make real JSON-RPC calls to `/mcp` and mock the Jameson lookup.
 
 

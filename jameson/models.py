@@ -13,14 +13,16 @@ class Differential(models.Model):
         ABINGDON = (4, 'Abingdon')
         WALLINGFORD = (5, 'Wallingford')
     
+    pk = models.CompositePrimaryKey('time', 'reach')
     reach = models.IntegerField(choices = Reach.choices)
-    time = models.DateTimeField(primary_key = True)
+    time = models.DateTimeField()
     differential = models.FloatField(db_column = 'flow')
+    # ! WARNING: Additional fields exist in the database and have not been adopted into Django yet.
     
     class Meta:
         db_table = 'flag'
-        managed = False
         ordering = ['reach', '-time']
+        indexes = [models.Index(fields = ['reach'], name = 'reach_idx')]
     
     
     @property
