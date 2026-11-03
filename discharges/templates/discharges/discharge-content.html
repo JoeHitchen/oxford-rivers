@@ -1,0 +1,77 @@
+{% if discharge_summary.readings_out_of_date %}<div class="row">
+  <div class="col">
+    <div class="alert alert-danger" role="alert">
+      We have not been able to retrieve readings from Thames Water in over two hours.
+    </div>
+  </div>
+</div>{% endif %}
+<div class="row">
+  <div class="col-sm-4">
+    <div class="card text-center">
+      <div class="card-header">Online</div>
+      <div class="card-body p-2"><strong>{{ summary.stations_online }}</strong></div>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="card text-center {% if summary.stations_discharging %}bg-danger text-light{% endif %}">
+      <div class="card-header">Discharging Recently</div>
+      <div class="card-body p-2"><strong>{{ summary.stations_discharging }}&ensp;({{ summary.percentage_discharging }}%)</strong></div>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="card text-center">
+      <div class="card-header">Offline</div>
+      <div class="card-body p-2"><strong>{{ summary.stations_offline }}&ensp;({{ summary.percentage_offline }}%)</strong></div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <div class="card mb-3" style="overflow:hidden"><div class="table-responsive">
+      <table class="table table-sm mb-0">
+        <thead>
+          <tr class="bg-light">
+            <th class="border-top-0 border-bottom-0 pl-3">Station</th>
+            <th class="border-top-0 border-bottom-0 text-center">River</th>
+            <th class="border-top-0 border-bottom-0 text-center">Started</th>
+            <th class="border-top-0 border-bottom-0 text-center">Ended / Last Seen</th>
+          </tr>
+        </thead>
+        <tbody>{% for event in events %}
+          <tr class="{{ event.styling }}">
+            <td class="pl-3">
+              {{ event.station.name }}&ensp;<small>({{ event.station.watercourse }})</small>
+            </td>
+            <td class="text-center">{{ event.station.get_river_display }}</td>
+            <td class="text-center">{{ event.start_at|date:"d/m/Y H:i" }}</td>
+            <td class="text-center">{{ event.latest_update_seen|date:"d/m/Y H:i"|default:"-" }}</td>
+          </tr>{% empty %}
+          <tr>
+            <td colspan="4" class="text-center">{{ empty_message }}</td>
+          </tr>{% endfor %}
+        </tbody>
+        {% if show_history_link %}<tfoot class="pl-3">
+          <tr class="bg-light">
+            <td colspan="4" class="text-center">
+              <a href="{% url 'discharges:history' %}" class="d-flex justify-content-between text-dark">
+                <div>View all discharges</div>
+                <div><span class="oi oi-chevron-right"></span></div>
+              </a>
+            </td>
+          </tr>
+        </tfoot>{% endif %}
+      </table>
+    </div></div>
+  </div>
+</div>
+{% if pagination %}<div class="row">
+  <div class="col">
+    <nav>
+      <ul class="pagination justify-content-center">
+        {% if pagination.page_obj.has_previous %}<li class="page-item"><a class="page-link" href="?page={{ pagination.page_obj.previous_page_number }}">Newer</a></li>{% endif %}
+        <li class="page-item disabled"><span class="page-link">Page {{ pagination.page_obj.number }} of {{ pagination.paginator.num_pages }}</span></li>
+        {% if pagination.page_obj.has_next %}<li class="page-item"><a class="page-link" href="?page={{ pagination.page_obj.next_page_number }}">Older</a></li>{% endif %}
+      </ul>
+    </nav>
+  </div>
+</div>{% endif %}

@@ -1,0 +1,45 @@
+{% extends 'flags/base.html' %}
+
+{% block title %}Oxford Rivers - Sewage Discharges{% endblock %}
+
+{% block page_body %}
+    <div class="row">
+      <div class="col">
+        <h1>Sewage Discharges</h1>
+        <p>
+          Every discharge we have recorded from <a href="https://data.thameswater.co.uk/" target="_blank">Thames Water's</a> storm discharge monitoring stations upstream of Oxford on the Thames and the Cherwell.
+        </p>
+      </div>
+    </div>
+    <!-- Interpretation guide -->
+    <div class="row"><div class="col">
+      <div class="card card-dropdown">
+        <div
+            id="interpretationHeader"
+            class="card-header d-flex justify-content-between"
+            type="button"
+            data-toggle="collapse"
+            data-target="#interpretationBody"
+            style="border-bottom: 0px"
+        >
+          <span>How to interpret this information</span>
+          <span class="oi oi-chevron-bottom" id="interpretationArrow"></span>
+        </div>
+        <div class="collapse" id="interpretationBody"><div class="card-body">
+          <p>
+            The Thames Water storm discharge monitoring stations upstream of Oxford are designed to detect when sewage is being discharged into the river.
+            When a discharge is detected, Thames Water's system records the start time and end time of the discharge, and we collect this information from their <a href="https://data.thameswater.co.uk/" target="_blank">open data portal</a>.
+            We check the readings from the stations roughly every fifteen minutes to confirm that they are still online and that the discharge is still active.
+          </p>
+          <p>
+            Active discharges are highlighted in red, while discharges that have ended in the last 48 hours are highlighted in yellow.
+            Both are counted towards the number of recent discharges shown in the summary boxes.
+            A station is considered to be offline if we have not been able to retrieve readings from it in over two hours.
+            Any discharges that were active at the time it went offline will still be counted as recent discharges until it has been offline for 48 hours or connectivity is restored.
+          </p>
+        </div></div>
+      </div>
+    </div></div>
+
+    {% include 'discharges/discharge-content.html' with summary=discharge_summary events=page_obj empty_message="No discharges have been recorded." pagination=pagination %}
+{% endblock %}
