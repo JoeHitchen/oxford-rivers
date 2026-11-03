@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, timezone as dt_timezone
+from unittest.mock import patch
 
 from django.test import TestCase
 from django.urls import reverse
@@ -9,7 +10,7 @@ from flags import models as flag_models
 from .. import models
 
 
-class Test_History(TestCase):
+class Base(TestCase):
     fixtures = ['flags']
 
     def setUp(self):
@@ -41,6 +42,93 @@ class Test_History(TestCase):
             end_seen = end_ago and self.right_now - end_ago,
         )
 
+
+@patch('flags.views.jameson.Differential.latest_by_reach', return_value = [])
+class Test_Index(Base):
+
+    def test__summary(self, differentials_mock):
+        """Shows the number and percentage of stations discharging and offline."""
+
+        self.cherwell.last_reading_at = self.right_now - timedelta(hours = 3)
+        self.cherwell.save()
+        extra = self.make_station('Extra Test', models.Station.Rivers.THAMES)
+        self.make_station('Spare Test', models.Station.Rivers.THAMES)
+        self.make_event(self.thames, timedelta(hours = 2))
+        self.make_event(extra, timedelta(hours = 2))
+
+        response = self.client.get(reverse('flags:index'))
+
+        summary = response.context['discharge_summary']
+        self.assertEqual(summary['stations_discharging'], 2)
+        self.assertEqual(summary['stations_offline'], 1)
+        self.assertContains(response, '2&ensp;(67%)')  # Of the three online stations
+        self.assertContains(response, '1&ensp;(25%)')  # Of all four stations
+
+
+    def test__out_of_date(self, differentials_mock):
+        """Warns when no readings have been retrieved recently."""
+
+        response = self.client.get(reverse('flags:index'))
+        self.assertNotContains(response, 'retrieve readings from Thames Water')
+
+        models.Station.objects.update(last_reading_at = self.right_now - timedelta(hours = 3))
+        response = self.client.get(reverse('flags:index'))
+        self.assertContains(response, 'retrieve readings from Thames Water')
+
+    def test__events__empty(self, differentials_mock):
+        """Explains that no discharges have been recorded, without claiming safety."""
+
+        response = self.client.get(reverse('flags:index'))
+
+        self.assertContains(response, 'No discharges recorded at the monitored stations')
+        self.assertContains(response, 'should not be taken to mean the river water is clean')
+        self.assertEqual(len(response.context['discharge_events']), 0)
+
+
+    def test__events__ordering(self, differentials_mock):
+        """Lists active events first, then recently ended ones, and omits older ones."""
+
+        old = self.make_station('Old Test', models.Station.Rivers.THAMES)
+        ended = self.make_event(self.thames, timedelta(hours = 20), timedelta(hours = 10))
+        active = self.make_event(self.cherwell, timedelta(hours = 2))
+        self.make_event(old, timedelta(days = 5), timedelta(hours = 49))
+
+        response = self.client.get(reverse('flags:index'))
+
+        self.assertEqual(list(response.context['discharge_events']), [active, ended])
+        self.assertContains(response, 'Cherwell Test')
+        self.assertContains(response, 'Thames Test')
+        self.assertNotContains(response, 'Old Test')
+        self.assertContains(response, 'View all discharges')
+
+
+    def test__events__capping(self, differentials_mock):
+        """Shows only the first ten events: active first, then the most recently ended."""
+
+        active = self.make_event(self.cherwell, timedelta(hours = 50))
+        ended = [
+            self.make_event(self.thames, timedelta(hours = 20 + n), timedelta(hours = 10 + n))
+            for n in range(12)
+        ]
+
+        response = self.client.get(reverse('flags:index'))
+
+        self.assertEqual(list(response.context['discharge_events']), [active] + ended[:9])
+
+
+    def test__events__styling(self, differentials_mock):
+        """Highlights active events in red and recently ended events in amber."""
+
+        self.make_event(self.thames, timedelta(hours = 20), timedelta(hours = 10))
+        self.make_event(self.cherwell, timedelta(hours = 2))
+
+        response = self.client.get(reverse('flags:index'))
+
+        self.assertContains(response, 'table-danger', count = 1)
+        self.assertContains(response, 'table-warning', count = 1)
+
+
+class Test_History(Base):
 
     def test__summary_content(self):
         """Shows the headline numbers, and warns when no readings have been retrieved recently."""

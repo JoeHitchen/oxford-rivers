@@ -122,4 +122,19 @@
       {% endfor %}
     </div>
     <!-- EA Advisories -->
+
+    <!-- Sewage Discharges -->
+    <div class="row">
+      <div class="col">
+        <h2>Sewage Discharges</h2>
+        <p>
+          Discharges reported by <a href="https://data.thameswater.co.uk/" target="_blank">Thames Water's</a> storm discharge monitoring stations upstream of Oxford.
+          Active discharges and those that ended in the last 48 hours are shown, but <em>the absence of a discharge should not be taken to mean the river water is clean</em>.
+          They are checked roughly every fifteen minutes.
+        </p>
+      </div>
+    </div>
+
+    {% include 'discharges/discharge-content.html' with summary=discharge_summary events=discharge_events empty_message="No discharges recorded at the monitored stations in the last 48 hours." show_history_link=True %}
+    <!-- Sewage Discharges -->
 {% endblock %}
