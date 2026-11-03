@@ -1,5 +1,10 @@
+from datetime import timedelta
+
 from django.db import models
 from django.utils import timezone
+
+RECENT_WINDOW = timedelta(hours = 48)
+OUT_OF_DATE_AFTER = timedelta(hours = 2)
 
 
 class Station(models.Model):
@@ -29,6 +34,55 @@ class Station(models.Model):
 
     def __str__(self):
         return self.name
+
+
+    @classmethod
+    def summary(cls):
+        """The headline numbers across all monitored stations.
+
+        A station is offline if it has had no reading in the last two hours and no discharge
+        within the recent window.
+        """
+
+        online = (
+            models.Q(last_reading_at__gte = timezone.now() - OUT_OF_DATE_AFTER)
+            | models.Q(has_recent_discharge = True)
+        )
+        counts = cls.objects.annotate(
+            has_active_discharge = models.Exists(
+                DischargeEvent.objects.filter(
+                    station = models.OuterRef('pk'),
+                    end_at__isnull = True,
+                ),
+            ),
+            has_recent_discharge = models.Exists(
+                DischargeEvent.objects.filter(
+                    models.Q(end_at__isnull = True)
+                    | models.Q(end_at__gte = timezone.now() - RECENT_WINDOW),
+                    station = models.OuterRef('pk'),
+                ),
+            ),
+        ).aggregate(
+            total = models.Count('pk'),
+            online = models.Count('pk', filter = online),
+            offline = models.Count('pk', filter = ~online),
+            discharging = models.Count('pk', filter = models.Q(has_active_discharge = True)),
+        )
+
+        latest_reading = cls.objects.aggregate(newest = models.Max('last_reading_at'))['newest']
+
+        return {
+            'stations_total': counts['total'],
+            'stations_offline': counts['offline'],
+            'percentage_offline': round(100 * counts['offline'] / (counts['total'] or 1)),
+            'stations_online': counts['online'],
+            'stations_discharging': counts['discharging'],
+            'percentage_discharging': round(100 * counts['discharging'] / (counts['online'] or 1)),
+            'readings_out_of_date': (
+                latest_reading is None
+                or latest_reading < timezone.now() - OUT_OF_DATE_AFTER
+            ),
+        }
 
 
 class DischargeEvent(models.Model):
