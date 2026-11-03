@@ -3,6 +3,8 @@ from typing import Any
 from mcp_server import MCPToolset
 from django.utils import timezone
 
+from discharges import models as discharges
+
 from . import views
 
 
@@ -25,6 +27,11 @@ class OxfordRiversMCP(MCPToolset):
         Flags, differentials and advisories are each keyed by reach (e.g. `isis`, `godstow`).
         All times are Europe/London. Entries marked out_of_date have not been refreshed recently
         and should not be relied on.
+
+        `discharges` summarises how many of Thames Water's sewage discharge stations upstream of
+        Oxford are discharging, online and offline. These are only reports from the stations, so
+        zero discharging is NOT evidence that the river is safe. Call get_recent_sewage_discharges
+        for the details.
         """
 
         context = views.Index(request = self.request).get_context_data()
@@ -43,6 +50,32 @@ class OxfordRiversMCP(MCPToolset):
                 for reach in context['all_reaches']
             },
             'transits': context['transits'],
+            'discharges': context['discharge_summary'],
+        }
+
+
+    def get_recent_sewage_discharges(self) -> dict[str, Any]:
+        """Lists the sewage discharges reported by Thames Water's stations upstream of Oxford.
+
+        `summary` provides an overall summary of the discharges and mirrors the `discharges` entry
+        in get_river_conditions. `active` discharges are ongoing, and `recent` discharges ended
+        within the last `window_hours`. `latest_update_seen` is when our latest information on a
+        discharge is from, which can be up to `window_hours` old for an active discharge if its
+        station has gone quiet.
+
+        A lack of recent discharges should not be presented to the user as evidence that the river
+        is clean. All times are Europe/London.
+        """
+
+        events = list(discharges.DischargeEvent.recent_discharges())
+
+        return {
+            'summary': discharges.Station.summary(),
+            'window_hours': int(discharges.RECENT_WINDOW.total_seconds() // 3600),
+            'active': [self._serialise_discharge(event) for event in events if event.is_active],
+            'recent': [
+                self._serialise_discharge(event) for event in events if not event.is_active
+            ],
         }
 
 
@@ -84,4 +117,20 @@ class OxfordRiversMCP(MCPToolset):
             'last_updated': local_isoformat(reach.current_advisory.last_updated),
             'last_seen': local_isoformat(reach.current_advisory.last_seen),
             'out_of_date': reach.current_advisory.out_of_date,
+        }
+
+
+    @staticmethod
+    def _serialise_discharge(event):
+        return {
+            'station': event.station.name,
+            'river': event.station.river,
+            'watercourse': event.station.watercourse,
+            'start_at': local_isoformat(event.start_at),
+            'start_seen': local_isoformat(event.start_seen),
+            'end_at': event.end_at and local_isoformat(event.end_at),
+            'latest_update_seen': (
+                event.latest_update_seen
+                and local_isoformat(event.latest_update_seen)
+            ),
         }
