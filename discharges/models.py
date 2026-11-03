@@ -34,6 +34,35 @@ class Station(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def update_discharge_status(self, new_status = None, status_changed = None):
+        """Updates the records to reflect the latest status reported for the station."""
+
+        active_discharge = self.events.filter(end_at__isnull = True).first()
+
+        # Handle offline stations
+        if new_status in (None, 'Offline'):
+
+            # Close off expired discharges for offline stations
+            if active_discharge and self.last_reading_at < timezone.now() - RECENT_WINDOW:
+                active_discharge.end_at = self.last_reading_at
+                active_discharge.end_seen = self.last_reading_at
+                active_discharge.save()
+
+            return
+
+        # New discharge has started
+        if not active_discharge and new_status == 'Discharging':
+            self.events.create(start_at = status_changed)
+
+        # Old discharge has ended
+        elif active_discharge and new_status == 'Not discharging':
+            active_discharge.end_at = status_changed
+            active_discharge.end_seen = timezone.now()
+            active_discharge.save()
+
+        self.last_reading_at = timezone.now()
+        self.save()
 
 
     @classmethod
@@ -106,3 +135,38 @@ class DischargeEvent(models.Model):
     def __str__(self):
         return '{} - {}'.format(self.station, timezone.localtime(self.start_at))
 
+
+    @property
+    def is_active(self):
+        return self.end_at is None
+
+
+    @property
+    def is_recent(self):
+        return self.is_active or self.end_at >= timezone.now() - RECENT_WINDOW
+
+
+    def styling(self):
+        if self.is_active:
+            return 'table-danger'
+        if self.is_recent:
+            return 'table-warning'
+        return ''
+
+
+    @property
+    def latest_update_seen(self):
+        """The most recent confirmation of the discharge event being active or having ended."""
+        return self.end_seen or self.station.last_reading_at
+
+
+    @classmethod
+    def recent_discharges(cls):
+        """Active events, then those that ended within the recent window, newest first."""
+        return cls.objects.filter(
+            models.Q(end_at__isnull = True)
+            | models.Q(end_at__gte = timezone.now() - RECENT_WINDOW),
+        ).select_related('station').order_by(
+            models.F('end_at').desc(nulls_first = True),
+            '-start_at',
+        )
