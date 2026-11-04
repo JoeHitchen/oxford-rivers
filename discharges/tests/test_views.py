@@ -47,22 +47,27 @@ class Base(TestCase):
 class Test_Index(Base):
 
     def test__summary(self, differentials_mock):
-        """Shows the number and percentage of stations discharging and offline."""
+        """Shows the number and percentage of stations discharging, recently so, and offline."""
 
         self.cherwell.last_reading_at = self.right_now - timedelta(hours = 3)
         self.cherwell.save()
         extra = self.make_station('Extra Test', models.Station.Rivers.THAMES)
-        self.make_station('Spare Test', models.Station.Rivers.THAMES)
+        spare = self.make_station('Spare Test', models.Station.Rivers.THAMES)
+        self.make_station('Quiet Test', models.Station.Rivers.THAMES)
         self.make_event(self.thames, timedelta(hours = 2))
         self.make_event(extra, timedelta(hours = 2))
+        self.make_event(spare, timedelta(hours = 6), timedelta(hours = 4))
 
         response = self.client.get(reverse('flags:index'))
 
         summary = response.context['discharge_summary']
-        self.assertEqual(summary['stations_discharging'], 2)
+        self.assertEqual(summary['stations_actively_discharging'], 2)
+        self.assertEqual(summary['stations_discharged_recently'], 3)
         self.assertEqual(summary['stations_offline'], 1)
-        self.assertContains(response, '2&ensp;(67%)')  # Of the three online stations
-        self.assertContains(response, '1&ensp;(25%)')  # Of all four stations
+        self.assertContains(response, 'Discharged within 48h')
+        self.assertContains(response, '2&ensp;(50%)')  # Of the four online stations
+        self.assertContains(response, '3&ensp;(75%)')
+        self.assertContains(response, '1&ensp;(20%)')  # Of all five stations
 
 
     def test__out_of_date(self, differentials_mock):

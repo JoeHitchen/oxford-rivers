@@ -172,7 +172,7 @@ class Test_MCP(TestCase):
 
         result = self.tool_call('get_river_conditions')
 
-        self.assertEqual(result['discharges']['stations_discharging'], 0)
+        self.assertEqual(result['discharges']['stations_actively_discharging'], 0)
         self.assertTrue(result['discharges']['readings_out_of_date'])
 
 
@@ -188,8 +188,11 @@ class Test_MCP(TestCase):
             'stations_offline': 0,
             'percentage_offline': 0.0,
             'stations_online': 2,
-            'stations_discharging': 1,
-            'percentage_discharging': 50.0,
+            'stations_actively_discharging': 1,
+            'percentage_actively_discharging': 50.0,
+            'stations_discharged_recently': 2,
+            'percentage_discharged_recently': 100.0,
+            'recent_window_hours': 48,
             'readings_out_of_date': False,
         })
 
@@ -224,7 +227,7 @@ class Test_MCP(TestCase):
         self.assertEqual(result['recent'], [])
         self.assertTrue(result['summary']['readings_out_of_date'])
         self.assertEqual(result['summary']['stations_online'], 0)
-        self.assertEqual(result['summary']['percentage_discharging'], 0)
+        self.assertEqual(result['summary']['percentage_actively_discharging'], 0)
 
 
     def test__discharges__discharge_ordering(self):
@@ -275,7 +278,7 @@ class Test_MCP(TestCase):
 
         result = self.tool_call('get_recent_sewage_discharges')
 
-        self.assertEqual(result['summary']['stations_discharging'], 1)
+        self.assertEqual(result['summary']['stations_actively_discharging'], 1)
         self.assertEqual(
             {key: result[key] for key in ('window_hours', 'active', 'recent')},
             {'window_hours': 48, 'active': [expected_active], 'recent': [expected_recent]},
