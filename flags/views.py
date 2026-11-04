@@ -5,6 +5,7 @@ from django.views.generic.detail import DetailView
 from django.http import JsonResponse
 from django.utils import timezone
 
+from discharges import models as discharges
 from jameson import models as jameson
 
 from . import models, transits, analysis
@@ -38,6 +39,9 @@ class Index(FlagNavMixin, TemplateView):
         
         context['differentials'] = jameson.Differential.latest_by_reach()
         
+        context['discharge_summary'] = discharges.Station.summary()
+        context['discharge_events'] = discharges.DischargeEvent.recent_discharges()[:10]
+
         return context
 
 
