@@ -88,7 +88,7 @@ class Test_FetchDischarges(TestCase):
 
         result = data.fetch_thames_water_discharges()
 
-        self.assertEqual(result['stations_discharging'], 0)
+        self.assertEqual(result['stations_actively_discharging'], 0)
         self.assertEqual(result['stations_online'], 0)
         self.assertEqual(result['stations_offline'], 2)  # Never read
         self.assertFalse(models.DischargeEvent.objects.exists())
@@ -122,7 +122,7 @@ class Test_FetchDischarges(TestCase):
 
                 self.assertFalse(self.other.events.exists())
                 self.assertEqual(self.station.events.count(), 1)
-                self.assertEqual(result['stations_discharging'], 1)
+                self.assertEqual(result['stations_actively_discharging'], 1)
         self.other.refresh_from_db()
         self.assertIsNone(self.other.last_reading_at)
 
@@ -150,7 +150,7 @@ class Test_FetchDischarges(TestCase):
 
         result = data.fetch_thames_water_discharges()
 
-        self.assertEqual(result['stations_discharging'], 1)
+        self.assertEqual(result['stations_actively_discharging'], 1)
         event = self.station.events.get()
         self.assertEqual(event.start_at, datetime(2026, 10, 26, 10, 15, tzinfo = UTC))
         self.assertAlmostEqual(
@@ -183,7 +183,7 @@ class Test_FetchDischarges(TestCase):
         self.assertIsNone(event.end_at)
         self.station.refresh_from_db()
         self.assertGreater(self.station.last_reading_at, quiet_since)
-        self.assertEqual(result['stations_discharging'], 1)
+        self.assertEqual(result['stations_actively_discharging'], 1)
 
 
     def test__end_of_discharge(self, requests_mock):
@@ -202,7 +202,7 @@ class Test_FetchDischarges(TestCase):
         self.assertAlmostEqual(
             event.end_seen.timestamp(), timezone.now().timestamp(), delta = 5,
         )
-        self.assertEqual(result['stations_discharging'], 0)
+        self.assertEqual(result['stations_actively_discharging'], 0)
 
 
     def test__new_discharge_after_ended(self, requests_mock):
@@ -244,7 +244,7 @@ class Test_FetchDischarges(TestCase):
         self.assertEqual(self.station.last_reading_at, last_reading)
         self.other.refresh_from_db()
         self.assertIsNone(self.other.last_reading_at)
-        self.assertEqual(result['stations_discharging'], 1)  # Held, as it was seen recently
+        self.assertEqual(result['stations_actively_discharging'], 1)  # Held, as seen recently
         self.assertTrue(result['readings_out_of_date'])
 
 
@@ -277,7 +277,7 @@ class Test_FetchDischarges(TestCase):
         self.assertIsNotNone(lost.end_at)
         self.assertEqual(self.station.events.count(), 2)
         self.assertEqual(self.station.events.filter(end_at__isnull = True).count(), 1)
-        self.assertEqual(result['stations_discharging'], 1)
+        self.assertEqual(result['stations_actively_discharging'], 1)
 
 
     def test__offline__closes_lost_discharge(self, requests_mock):
@@ -290,7 +290,7 @@ class Test_FetchDischarges(TestCase):
 
         event.refresh_from_db()
         self.assertIsNotNone(event.end_at)
-        self.assertEqual(result['stations_discharging'], 0)
+        self.assertEqual(result['stations_actively_discharging'], 0)
 
 
     def test__offline__closes_dropped_station(self, requests_mock):
@@ -335,4 +335,4 @@ class Test_FetchDischarges(TestCase):
         result = tasks.fetch_thames_water_discharges()
 
         self.assertEqual(self.station.events.count(), 1)
-        self.assertEqual(result['stations_discharging'], 1)
+        self.assertEqual(result['stations_actively_discharging'], 1)

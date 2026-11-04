@@ -69,6 +69,9 @@ class Station(models.Model):
     def summary(cls):
         """The headline numbers across all monitored stations.
 
+        A station is actively discharging if it has an ongoing discharge, and has discharged
+        recently if it has an ongoing discharge or one that ended within the recent window.
+
         A station is offline if it has had no reading in the last two hours and no discharge
         within the recent window.
         """
@@ -95,7 +98,12 @@ class Station(models.Model):
             total = models.Count('pk'),
             online = models.Count('pk', filter = online),
             offline = models.Count('pk', filter = ~online),
-            discharging = models.Count('pk', filter = models.Q(has_active_discharge = True)),
+            actively_discharging = models.Count(
+                'pk', filter = models.Q(has_active_discharge = True),
+            ),
+            discharged_recently = models.Count(
+                'pk', filter = models.Q(has_recent_discharge = True),
+            ),
         )
 
         latest_reading = cls.objects.aggregate(newest = models.Max('last_reading_at'))['newest']
@@ -105,8 +113,15 @@ class Station(models.Model):
             'stations_offline': counts['offline'],
             'percentage_offline': round(100 * counts['offline'] / (counts['total'] or 1)),
             'stations_online': counts['online'],
-            'stations_discharging': counts['discharging'],
-            'percentage_discharging': round(100 * counts['discharging'] / (counts['online'] or 1)),
+            'stations_actively_discharging': counts['actively_discharging'],
+            'percentage_actively_discharging': round(
+                100 * counts['actively_discharging'] / (counts['online'] or 1),
+            ),
+            'stations_discharged_recently': counts['discharged_recently'],
+            'percentage_discharged_recently': round(
+                100 * counts['discharged_recently'] / (counts['online'] or 1),
+            ),
+            'recent_window_hours': int(RECENT_WINDOW.total_seconds() // 3600),
             'readings_out_of_date': (
                 latest_reading is None
                 or latest_reading < timezone.now() - OUT_OF_DATE_AFTER

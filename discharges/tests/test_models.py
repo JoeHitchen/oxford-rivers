@@ -32,8 +32,11 @@ class Test_Station_Summary(TestCase):
             'stations_offline': 0,
             'percentage_offline': 0,
             'stations_online': 0,
-            'stations_discharging': 0,
-            'percentage_discharging': 0,
+            'stations_actively_discharging': 0,
+            'percentage_actively_discharging': 0,
+            'stations_discharged_recently': 0,
+            'percentage_discharged_recently': 0,
+            'recent_window_hours': 48,
             'readings_out_of_date': True,
         })
 
@@ -42,8 +45,12 @@ class Test_Station_Summary(TestCase):
         """Counts discharging, online and offline stations, with percentages."""
 
         recent = timedelta(minutes = 10)
-        for n in range(1, 4):
-            self.make_station(n, recent, discharging = (n == 1))
+        self.make_station(1, recent, discharging = True)
+        self.make_station(2, recent).events.create(
+            start_at = timezone.now() - timedelta(hours = 3),
+            end_at = timezone.now() - timedelta(hours = 1),
+        )
+        self.make_station(3, recent)
         self.make_station(4, recent)
         self.make_station(5, timedelta(hours = 3))
         self.make_station(6)  # Never read
@@ -53,8 +60,11 @@ class Test_Station_Summary(TestCase):
             'stations_offline': 2,
             'percentage_offline': 33,
             'stations_online': 4,
-            'stations_discharging': 1,
-            'percentage_discharging': 25,
+            'stations_actively_discharging': 1,
+            'percentage_actively_discharging': 25,
+            'stations_discharged_recently': 2,
+            'percentage_discharged_recently': 50,
+            'recent_window_hours': 48,
             'readings_out_of_date': False,
         })
 
@@ -71,8 +81,8 @@ class Test_Station_Summary(TestCase):
         self.assertEqual(result['stations_offline'], 1)
 
 
-    def test__ended_events_not_discharging(self):
-        """Does not count stations whose events have all ended."""
+    def test__ended_events_not_actively_discharging(self):
+        """Does not count stations whose events have all ended as actively discharging."""
 
         station = self.make_station(1, timedelta(minutes = 10))
         station.events.create(
@@ -80,7 +90,10 @@ class Test_Station_Summary(TestCase):
             end_at = timezone.now() - timedelta(hours = 1),
         )
 
-        self.assertEqual(models.Station.summary()['stations_discharging'], 0)
+        result = models.Station.summary()
+
+        self.assertEqual(result['stations_actively_discharging'], 0)
+        self.assertEqual(result['stations_discharged_recently'], 1)
 
 
     def test__held_discharge(self):
@@ -91,7 +104,7 @@ class Test_Station_Summary(TestCase):
 
         result = models.Station.summary()
 
-        self.assertEqual(result['stations_discharging'], 1)
+        self.assertEqual(result['stations_actively_discharging'], 1)
         self.assertEqual(result['stations_online'], 2)
         self.assertEqual(result['stations_offline'], 0)
 
@@ -117,7 +130,8 @@ class Test_Station_Summary(TestCase):
 
         self.assertEqual(result['stations_online'], 1)
         self.assertEqual(result['stations_offline'], 1)
-        self.assertEqual(result['stations_discharging'], 0)
+        self.assertEqual(result['stations_actively_discharging'], 0)
+        self.assertEqual(result['stations_discharged_recently'], 1)
 
 
     def test__readings_out_of_date(self):

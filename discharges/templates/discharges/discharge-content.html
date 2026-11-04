@@ -6,19 +6,25 @@
   </div>
 </div>{% endif %}
 <div class="row">
-  <div class="col-sm-4">
+  <div class="col-sm-3">
     <div class="card text-center">
       <div class="card-header">Online</div>
       <div class="card-body p-2"><strong>{{ summary.stations_online }}</strong></div>
     </div>
   </div>
-  <div class="col-sm-4">
-    <div class="card text-center {% if summary.stations_discharging %}bg-danger text-light{% endif %}">
-      <div class="card-header">Discharging Recently</div>
-      <div class="card-body p-2"><strong>{{ summary.stations_discharging }}&ensp;({{ summary.percentage_discharging }}%)</strong></div>
+  <div class="col-sm-3">
+    <div class="card text-center {% if summary.stations_actively_discharging %}bg-danger text-light{% endif %}">
+      <div class="card-header">Actively Discharging</div>
+      <div class="card-body p-2"><strong>{{ summary.stations_actively_discharging }}&ensp;({{ summary.percentage_actively_discharging }}%)</strong></div>
     </div>
   </div>
-  <div class="col-sm-4">
+  <div class="col-sm-3">
+    <div class="card text-center {% if summary.stations_discharged_recently %}bg-warning{% endif %}">
+      <div class="card-header">Discharged within {{ summary.recent_window_hours }}h</div>
+      <div class="card-body p-2"><strong>{{ summary.stations_discharged_recently }}&ensp;({{ summary.percentage_discharged_recently }}%)</strong></div>
+    </div>
+  </div>
+  <div class="col-sm-3">
     <div class="card text-center">
       <div class="card-header">Offline</div>
       <div class="card-body p-2"><strong>{{ summary.stations_offline }}&ensp;({{ summary.percentage_offline }}%)</strong></div>

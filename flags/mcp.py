@@ -29,9 +29,10 @@ class OxfordRiversMCP(MCPToolset):
         and should not be relied on.
 
         `discharges` summarises how many of Thames Water's sewage discharge stations upstream of
-        Oxford are discharging, online and offline. These are only reports from the stations, so
-        zero discharging is NOT evidence that the river is safe. Call get_recent_sewage_discharges
-        for the details.
+        Oxford are online, offline, actively discharging (ongoing) and have discharged recently
+        (ongoing, or ended within the last `recent_window_hours`). These are only reports from the
+        stations, so zero discharges is NOT evidence that the river is safe. Call
+        get_recent_sewage_discharges for the details.
         """
 
         context = views.Index(request = self.request).get_context_data()

@@ -68,7 +68,7 @@ It provides two tools.
 
 - `get_river_conditions` takes no arguments and returns the current OURCs flags, Jameson differentials (with indicative bands, where defined), EA advisory boards, whether transit are permitted, and recent sewage discharges information.
 The flags, differentials and advisories are each keyed by reach (e.g. `isis`, `godstow`), and each advisory names the locks bounding its stretch of river.
-Sewage discharge information is provided in aggregate only.
+Sewage discharge information is provided in aggregate only, counting stations that are online, offline, actively discharging, and have discharged within the last 48 hours (including those still discharging).
 This tool intentionally sources its data from the index page view (`flags.views.Index`), so the two cannot drift apart.
 - `get_recent_sewage_discharges` lists the full details of the recent discharges, including for each the station discharging, when the discharge started and if/when it ended.
 
